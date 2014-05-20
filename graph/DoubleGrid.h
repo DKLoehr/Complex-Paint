@@ -22,6 +22,9 @@ private:
     sf::VertexArray m_lGrid;
     sf::VertexArray m_rGrid;
 
+    std::vector<sf::Text> m_xLabels;
+    std::vector<sf::Text> m_yLabels;
+
     sf::RectangleShape m_divider;
 public:
     DoubleGrid(sf::RenderWindow* w, sf::Font font, double xRange, double yRange, double xScale, double yScale,
@@ -32,5 +35,7 @@ public:
 
     void Draw();
 };
+
+std::string DoubleToString(double d, int precision);
 
 #endif // DOUBLEGRID_H

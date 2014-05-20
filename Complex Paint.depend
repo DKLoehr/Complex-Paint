@@ -351,14 +351,17 @@
 	<string>
 	"text.h"
 
-1400607424 source:c:\users\devon\desktop\workspace\complex paint\graph\doublegrid.cpp
+1400629926 source:c:\users\devon\desktop\workspace\complex paint\graph\doublegrid.cpp
 	"DoubleGrid.h"
 	<iostream>
+	<string>
+	<sstream>
+	<cmath>
 
-1400607545 c:\users\devon\desktop\workspace\complex paint\graph\doublegrid.h
+1400626611 c:\users\devon\desktop\workspace\complex paint\graph\doublegrid.h
 	<SFML/Graphics.hpp>
 
-1400607339 source:c:\users\devon\desktop\workspace\complex paint\main.cpp
+1400629953 source:c:\users\devon\desktop\workspace\complex paint\main.cpp
 	<SFML/Graphics.hpp>
 	"gui/button.h"
 	"gui/text.h"
