@@ -14,7 +14,7 @@ InputBox::InputBox(sf::RenderWindow* window, sf::Font font, int x, int y, int ch
     m_height = charHeight;
     m_isFocused = false;
 
-    m_stored.setString("{}");
+    m_stored.setString("");
     m_stored.setFont(m_f);
     m_stored.setCharacterSize(15);
     m_stored.setColor(sf::Color::Black);
@@ -25,25 +25,25 @@ InputBox::InputBox(sf::RenderWindow* window, sf::Font font, int x, int y, int ch
     m_stored.setPosition(m_x, m_y - 2);
 };
 
-void InputBox::Draw() {
-    m_w->draw(m_rectangle);
-    m_w->draw(m_stored);
-}
-
 void InputBox::EnterText(char n) {
     if(n == '0' || n == '1' || n == '2' || n == '3' || n == '4' || n == '5' ||
        n == '6' || n == '7' || n == '8' || n == '9' || n == ',' || n == '/' ||
        n == 8) { // n is a digit, comma, slash, or backspace
         std::string temp = m_stored.getString();
         if(n != 8) { // Some character
-            m_stored.setString(temp.substr(0, temp.length() - 1) + n + '}');
+            m_stored.setString(temp.substr(0, temp.length()) + n);
         } else if(n == 8) { // Backspace
             if(temp.length() > 2)
-                m_stored.setString(temp.substr(0, temp.length() - 2) + '}');
+                m_stored.setString(temp.substr(0, temp.length() - 1));
         }
     }
 }
 
 std::string InputBox::GetStoredString() {
     return m_stored.getString();
+}
+
+void InputBox::Draw() {
+    m_w->draw(m_rectangle);
+    m_w->draw(m_stored);
 }
