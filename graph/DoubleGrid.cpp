@@ -118,6 +118,22 @@ void DoubleGrid::ToggleGrid() {
     MakeGrid();
 }
 
+void DoubleGrid::SetRange(double xRange, double yRange) {
+    if(xRange > 0)
+        m_xRange = xRange;
+    if(yRange > 0)
+        m_yRange = yRange;
+    MakeGrid();
+}
+
+void DoubleGrid::SetScale(double xScale, double yScale) {
+    if(xScale > 0)
+        m_xScale = xScale;
+    if(yScale > 0)
+        m_yScale = yScale;
+    MakeGrid();
+}
+
 void DoubleGrid::Draw() {
     m_w->draw(m_lGrid);
     m_w->draw(m_rGrid);
