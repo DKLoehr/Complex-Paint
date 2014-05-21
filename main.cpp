@@ -16,11 +16,13 @@ int main() {
 
     InputBox equation = InputBox(&inputWindow, inFont, 1, 1, 200, 15);
 
-    DoubleGrid grid = DoubleGrid(&window, inFont, 10, 10, 2, 2, true);
-    grid.MakeGrid();
+    DoubleGrid grid = DoubleGrid(&window, 20);
+    grid.lGrid = Grid(&window, inFont, 0, 20, window.getSize().x / 2, window.getSize().y - 20, 10, 10, 2, 2, true);
+    grid.rGrid = Grid(&window, inFont, window.getSize().x / 2, 20, window.getSize().x / 2,
+                      window.getSize().y - 20, 10, 10, 2, 2, true);
 
     sf::CircleShape loc = sf::CircleShape(2, 30);
-    loc.setFillColor(sf::Color::White);
+    loc.setFillColor(sf::Color::Black);
 
     while(window.isOpen()) {
         sf::Event event;
@@ -32,10 +34,10 @@ int main() {
             } else if(event.type == sf::Event::MouseMoved) {
                 loc.setPosition(window.getSize().x / 2 + event.mouseMove.x - 1, event.mouseMove.y - 1);
             } else if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tab) {
-                grid.ToggleGrid();
+                grid.ToggleLines();
             }
         }
-        window.clear();
+        window.clear(sf::Color::White);
         inputWindow.clear();
 
         grid.Draw();
