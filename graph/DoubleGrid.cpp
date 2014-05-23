@@ -1,6 +1,11 @@
 #include "DoubleGrid.h"
 
-DoubleGrid::DoubleGrid(sf::RenderWindow* window, int heightOffset) {
+DoubleGrid::DoubleGrid(sf::RenderWindow* window, sf::Font f, int heightOffset) :
+    lGrid(Grid(window, f, 0, heightOffset, window->getSize().x / 2, window->getSize().y - heightOffset,
+               10, 10, 2, 2, true)),
+    rGrid(Grid(window, f, window->getSize().x / 2, heightOffset, window->getSize().x / 2,
+                 window->getSize().y - heightOffset, 10, 10, 2, 2, true))
+ {
     w = window;
     divider = sf::RectangleShape(sf::Vector2f(6, w->getSize().y - heightOffset));
     divider.setFillColor(sf::Color::Black);

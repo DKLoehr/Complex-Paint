@@ -10,7 +10,7 @@ private:
 
 public:
     /// Constructs the rectangle only, at heightOffset pixels from the top of the screen. Construct the grids separately.
-    DoubleGrid(sf::RenderWindow* w, int heightOffset);
+    DoubleGrid(sf::RenderWindow* w, sf::Font f, int heightOffset);
 
     Grid lGrid;
     Grid rGrid;
