@@ -20,6 +20,8 @@ int main() {
     grid.lGrid = Grid(&window, inFont, 0, 20, window.getSize().x / 2, window.getSize().y - 20, 10, 10, 2, 2, true);
     grid.rGrid = Grid(&window, inFont, window.getSize().x / 2, 20, window.getSize().x / 2,
                       window.getSize().y - 20, 10, 10, 2, 2, true);
+    grid.ToggleLines(); // Workaround for a very strange bug in which numbers don't appear until you toggle
+    grid.ToggleLines(); // Toggle back so we get to the original toggle value
 
     sf::CircleShape loc = sf::CircleShape(2, 30);
     loc.setFillColor(sf::Color::Black);

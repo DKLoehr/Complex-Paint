@@ -102,7 +102,6 @@ void Grid::MakeGrid() {
 
 void Grid::ToggleLines() {
     m_dispLines = !m_dispLines;
-    std::cout << "toggle" << std::endl;
     MakeGrid();
 }
 
