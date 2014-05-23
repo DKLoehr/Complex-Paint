@@ -32,10 +32,9 @@ int main() {
         }
         window.clear(sf::Color::White);
 
+        equation.Draw();
         grid.Draw();
         window.draw(loc);
-
-        equation.Draw();
 
         window.display();
     }

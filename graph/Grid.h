@@ -3,6 +3,12 @@
 
 #include <SFML/Graphics.hpp>
 
+/**
+* This class represents the graph onto which you might draw functions.
+* It consists of an x (horizontal) and y (vertical) axis, with either evenly spaced tick marks or full lines,
+* as well as labels on the axes to indicate scale.
+**/
+
 class Grid
 {
 private:
@@ -12,14 +18,14 @@ private:
     sf::Font m_f;
 
 
-    /* The following are all relative to the WINDOW, not the graph */
+    /** The following are all relative to the WINDOW, not the graph **/
     /// The coordinates of the top-left corner of the grid on the window
     sf::Vector2f m_position;
     /// Height and width of the grid
     sf::Vector2f m_size;
 
 
-    /* The following are all relative to the GRAPH */
+    /** The following are all relative to the GRAPH **/
     /// The coordinates of the center of the grid (usually (0,0))
     sf::Vector2f m_center;
     /// How far from the center we go in the x and y directions
@@ -30,8 +36,10 @@ private:
     double m_yScale;
 
 
-    /// Display all the lines (an actual grid) or just tick marks on the axes
+    /// If true, display all the lines (an actual grid; else, just display tick marks on the axes
     bool m_dispLines;
+    /// If true, display number labels on the axes. Otherwise, do not display anything
+    bool m_dispNumbers;
 
     /// The lines (or ticks) that we display
     sf::VertexArray m_lines;
@@ -44,17 +52,32 @@ public:
 
     Grid(sf::RenderWindow* w, sf::Font font, double xLoc, double yLoc, double width, double height,
          double xRange, double yRange, double xScale, double yScale,
-         bool dispLines = false, double centerX = 0, double centerY = 0);
+         bool dispLines = false, bool dispNumbers = true, double centerX = 0, double centerY = 0);
 
     /// Generate the lines and labels
     void MakeGrid();
-    /// Toggle between full lines or just tick marks on the axes
-    void ToggleLines();
+
+
+    /** Functions for modifying the window and changing settings **/
 
     /// Set the range shown in the window for x and y; 0 or negative means "use current range" for that axis
     void SetRange(double xRange, double yRange);
     /// Set the distance between tick marks/lines in the x and y direction; 0 or negative means "use current scale"
     void SetScale(double xScale, double yScale);
+    /// Set the local (graph) coordinates of the center point of the graph -- Does not change position on the window;
+    void SetCenter(sf::Vector2f centerCoords);
+    /// Toggle between full lines or just tick marks on the axes
+    void ToggleLines();
+    /// Toggle between displaying numbers on the axes or not displaying any numbers
+    void ToggleNumbers();
+
+
+    /** Functions for converting from graph coordinates to window coordinates and vice-versa **/
+
+    /// Given the location on the window, returns the coordinates of the point on the graph
+    sf::Vector2f WindowToGraph(sf::Vector2i wLoc);
+    /// Given the location on the graph, returns the coordinates of the pixel on the window
+    sf::Vector2i GraphToWindow(sf::Vector2f gLoc);
 
     /// Draw everything to the window
     void Draw();

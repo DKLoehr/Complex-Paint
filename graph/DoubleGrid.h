@@ -3,6 +3,12 @@
 
 #include "Grid.h"
 
+/**
+* This is a simple structure meant to hold the background onto which we draw;
+* specifically, the input (left) and output (right) grids, as well as a thin rectangle
+* between them to serve as a separator.
+**/
+
 struct DoubleGrid
 {
 private:

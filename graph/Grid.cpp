@@ -10,7 +10,7 @@ Grid::Grid() {
 
 Grid::Grid(sf::RenderWindow* w, sf::Font font, double xLoc, double yLoc, double width, double height,
            double xRange, double yRange, double xScale, double yScale,
-           bool dispLines, double centerX, double centerY) :
+           bool dispLines, bool dispNumbers, double centerX, double centerY) :
            m_w(w),
            m_f(font)
 {
@@ -24,6 +24,7 @@ Grid::Grid(sf::RenderWindow* w, sf::Font font, double xLoc, double yLoc, double 
     m_yScale = yScale;
 
     m_dispLines = dispLines;
+    m_dispNumbers = dispNumbers;
 
     MakeGrid();
 }
@@ -43,7 +44,7 @@ void Grid::MakeGrid() {
 
     // Create our label for the "origin"
     m_numberLabels.push_back(sf::Text("", m_f, 10));
-    m_numberLabels[0].setString(DoubleToString(m_center.x));
+    m_numberLabels[0].setString("(" + DoubleToString(m_center.x) + "," + DoubleToString(m_center.y) + ")");
     m_numberLabels[0].setPosition(m_position.x + m_size.x / 2 + 2, m_position.y + m_size.y / 2);
     m_numberLabels[0].setColor(sf::Color::Black);
 
@@ -61,7 +62,7 @@ void Grid::MakeGrid() {
         m_lines.append(sf::Vertex(m_lines[0].position + sf::Vector2f(m_size.x / 2 - length, iii * -delta)));
         m_lines.append(sf::Vertex(m_lines[1].position + sf::Vector2f(-m_size.x / 2 + length, iii * -delta)));
 
-        num.setString(DoubleToString(-iii * m_yScale, 1));
+        num.setString(DoubleToString(-iii * m_yScale + m_center.y, 1));
         num.setPosition(m_position.x + m_size.x / 2 + 2, m_position.y + m_size.y / 2 + iii * delta);
         m_numberLabels.push_back(num);
     }
@@ -90,7 +91,7 @@ void Grid::MakeGrid() {
         m_lines.append(sf::Vertex(m_lines[initialIndex].position + sf::Vector2f(iii * -delta, m_size.y / 2 - length)));
         m_lines.append(sf::Vertex(m_lines[initialIndex + 1].position + sf::Vector2f(iii * -delta, -m_size.y / 2 + length)));
 
-        num.setString(DoubleToString(-iii * m_xScale, 1));
+        num.setString(DoubleToString(-iii * m_xScale + m_center.x, 1));
         num.setPosition(m_position.x + m_size.x / 2 + 2 - iii * delta, m_position.y + m_size.y / 2);
         m_numberLabels.push_back(num);
     }
@@ -102,6 +103,11 @@ void Grid::MakeGrid() {
 
 void Grid::ToggleLines() {
     m_dispLines = !m_dispLines;
+    MakeGrid();
+}
+
+void Grid::ToggleNumbers() {
+    m_dispNumbers = !m_dispNumbers;
     MakeGrid();
 }
 
@@ -121,10 +127,17 @@ void Grid::SetScale(double xScale, double yScale) {
     MakeGrid();
 }
 
+void Grid::SetCenter(sf::Vector2f centerCoords) {
+    m_center = centerCoords;
+    MakeGrid();
+}
+
 void Grid::Draw() {
     m_w->draw(m_lines);
-    for(int iii = 0; iii < m_numberLabels.size(); iii++) {
-        m_w->draw(m_numberLabels[iii]);
+    if(m_dispNumbers) {
+        for(int iii = 0; iii < m_numberLabels.size(); iii++) {
+            m_w->draw(m_numberLabels[iii]);
+        }
     }
 }
 

@@ -2,12 +2,12 @@
 
 DoubleGrid::DoubleGrid(sf::RenderWindow* window, sf::Font f, int heightOffset) :
     lGrid(Grid(window, f, 0, heightOffset, window->getSize().x / 2, window->getSize().y - heightOffset,
-               10, 10, 2, 2, true)),
+               10, 10, 2, 2)),
     rGrid(Grid(window, f, window->getSize().x / 2, heightOffset, window->getSize().x / 2,
-                 window->getSize().y - heightOffset, 10, 10, 2, 2, true))
+                 window->getSize().y - heightOffset, 10, 10, 2, 2)),
+    divider(sf::RectangleShape(sf::Vector2f(6, window->getSize().y - heightOffset)))
  {
     w = window;
-    divider = sf::RectangleShape(sf::Vector2f(6, w->getSize().y - heightOffset));
     divider.setFillColor(sf::Color::Black);
     divider.setPosition((w->getSize().x - divider.getSize().x) / 2, heightOffset);
 }
