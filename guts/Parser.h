@@ -3,13 +3,17 @@
 #include <vector>
 #include <map>
 #include <complex>
-typedef complex<double> cx;
+#include <unordered_map>
+
 using namespace std;
 
-template <typename T> string toString(T t); //To convert numeric types to strings
-template <> string toString(cx c); //Specialized version for cx
+typedef std::complex<double> cx;
 
-static unordered_map<char*, cx (*T) (cx,cx)> ops;
+namespace parser {
+template <typename T> std::string toString(T t); //To convert numeric types to strings
+template <> std::string toString(cx c); //Specialized version for cx
+
+std::unordered_map<const char*, cx (* const)(cx,cx)> ops;
 //Functions and pointers to call actual operators
 cx add(cx a, cx b);
 cx sub(cx a, cx b);
@@ -19,67 +23,51 @@ cx div(cx a, cx b);
 cx pow(cx base, cx a);
 cx log(cx base, cx a);
 
-cx sin(cx a);
-cx cos(cx a);
-cx tan(cx a);
-cx asin(cx a);
-cx acos(cx a);
-cx atan(cx a);
-cx sqrt(cx a);
-cx abs(cx a);
+cx sin(cx a, cx b);
+cx cos(cx a, cx b);
+cx tan(cx a, cx b);
+cx asin(cx a, cx b);
+cx acos(cx a, cx b);
+cx atan(cx a, cx b);
+cx sqrt(cx a, cx b);
+cx abs(cx a, cx b);
 
-cx pi();
-cx e();
+cx pi(cx a, cx b);
+cx e(cx a, cx b);
 
-cx (* const static padd) (cx, cx);
-cx (* const static psub) (cx, cx);
-cx (* const static pmul) (cx, cx);
-cx (* const static pdiv) (cx, cx);
+cx var(cx a, cx b);
 
-cx (* const static ppow) (cx, cx);
-cx (* const static plog) (cx, cx);
+cx (* const padd)(cx, cx) = parser::add;
+cx (* const psub)(cx, cx) = parser::sub;
+cx (* const pmul)(cx, cx) = parser::mul;
+cx (* const pdiv)(cx, cx) = parser::div;
 
-cx (* const static psin) (cx);
-cx (* const static pcos) (cx);
-cx (* const static ptan) (cx);
-cx (* const static pasin) (cx);
-cx (* const static pacos) (cx);
-cx (* const static patan) (cx);
-cx (* const static psqrt) (cx);
-cx (* const static pabs) (cx);
+cx (* const ppow)(cx, cx) = parser::pow;
+cx (* const plog)(cx, cx) = parser::log;
 
-cx (* const static pe) (cx);
-cx (* const static ppi) (cx);
+cx (* const psin)(cx, cx) = parser::sin;
+cx (* const pcos)(cx, cx) = parser::cos;
+cx (* const ptan)(cx, cx) = parser::tan;
+cx (* const pasin)(cx, cx) = parser::asin;
+cx (* const pacos)(cx, cx) = parser::acos;
+cx (* const patan)(cx, cx) = parser::atan;
+cx (* const psqrt)(cx, cx) = parser::sqrt;
+cx (* const pabs)(cx, cx) = parser::abs;
+
+cx (* const pe)(cx, cx) = parser::e;
+cx (* const ppi)(cx, cx) = parser::pi;
+
+cx (* const pvar)(cx,cx) = parser::var;
 
 //initialize function pointers, put into map
 void init() {
-	padd = add;
-	psub = sub;
-	pmul = mul;
-	pdiv = div;
-	
-	ppow = pow;
-	plog = log;
-
-	psin = sin;
-	pcos = cos;
-	ptan = tan;
-	pasin = asin;
-	pacos = acos;
-	patan = atan;
-	psqrt = sqrt;
-	pabs = abs;
-
-	ppi = pi;
-	pe = e;
-
 	ops.emplace("+", padd);	
 	ops.emplace("-", psub);
 	ops.emplace("*",pmul);
 	ops.emplace("/",pdiv);
 	
 	ops.emplace("^",ppow);
-	ops.emplace("log",plog);
+	ops.emplace("ln",plog);
 
 	ops.emplace("sin",psin);
 	ops.emplace("cos",pcos);
@@ -88,53 +76,63 @@ void init() {
 	ops.emplace("acos",pacos);
 	ops.emplace("atan",patan);
 	ops.emplace("sqrt",psqrt);
-	ops.emplace("|",abs);
+	ops.emplace("abs", parser::abs);
 
 	ops.emplace("PI",ppi);
 	ops.emplace("E",pe);
 }
 	
-class Fct{
-public:
-	string name;
-	string fct;
-	makefct(string s); //Just passes string to Tree, which parses and stores it
-	cx eval(cx n); //create temporary Tree, copy of m_tree, and evaluate
-	Fct();
-	Fct(string s);
-	string toString();
-private:
-	Tree m_tree;
 
-}
 
-class Tree { //Hold decomposed expr
-	const static char[] ooo = {"(",")","^","^","*","/","+","-"} //take in pairs. Double "^" is intentional.
-	void parse();
-	vector<Node> m_nodes;
-	string toString();	
-	friend class Node;
-};
-
-class Node { 
-private:
-	Node(auto val);
-	bool reduced; //whether it has been reduced to smallest form or not
-	void spawn(auto childVal); //Add child node
-	void prune(auto childVal);
-	void prune(); //remove all children
-	vector<Node> m_child;
-	Node* m_parent;
-	auto m_val; //should always be char (for std. fcts, operators) or Variable
-	string toString();
-
-};
 
 struct Variable {
 public:
 	string name;
 	cx val;
+	std::string toString();
+};
+
+
+class Node { 
+private:
+	Node(Node *parent);
+	Node(parser::Variable value, Node* parent);
+	Node(std::string value, Node* parent);
+
+	bool reduced; //whether it has been reduced to smallest form or not
+	void spawn(std::string childVal); //Add child node
+	void prune(parser::Variable childVal);
+	void prune(); //remove all children
+
+	Node* m_parent;
+	Node* left;
+	Node* right;
+	string m_val; //should always be char (for std. fcts, operators) or Variable
 	string toString();
+
+};
+
+class Tree { //Hold decomposed expr
+	void parse();
+	bool simplified();
+	parser::Node root;
+	std::string toString();	
+	friend class Node;
+};
+
+class Fct{
+public:
+	std::string name;
+	std::string fct;
+	void makefct(std::string s); //Just passes string to Tree, which parses and stores it
+	cx eval(cx n); //create temporary Tree, copy of m_tree, and evaluate
+	Fct();
+	Fct(std::string s);
+	std::string toString();
+private:
+	parser::Tree m_tree;
+
+};
 }
 
 /**

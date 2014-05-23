@@ -1,5 +1,5 @@
 #include "Parser.h"
-
+namespace parser{
 template <typename T> string toString(T t) {
 	stringstream s;
 	s << t;
@@ -12,10 +12,12 @@ template<> string toString(cx c) {
 	return s.str();
 }
 
-Variable::toString() {
-	return toString(val);
+std::string Variable::toString() {
+	return parser::toString(val);
 }
 
-Node::Node(auto val) {
-	m_val = val
+Node::Node(string val, Node* parent) {
+	m_val = val;
+	m_parent = parent;
+}
 }
