@@ -20,22 +20,22 @@ cx sub(cx a, cx b);
 cx mul(cx a, cx b);
 cx div(cx a, cx b);
 
-cx pow(cx base, cx a);
-cx log(cx base, cx a);
+cx pow(cx base, cx a); //only raises e^a right now
+cx log(cx base, cx a); //Only does nat log of a right now
 
-cx sin(cx a, cx b);
-cx cos(cx a, cx b);
-cx tan(cx a, cx b);
-cx asin(cx a, cx b);
-cx acos(cx a, cx b);
-cx atan(cx a, cx b);
-cx sqrt(cx a, cx b);
-cx abs(cx a, cx b);
+cx sin(cx a, cx b = 0);
+cx cos(cx a, cx b = 0);
+cx tan(cx a, cx b = 0);
+cx asin(cx a, cx b = 0);
+cx acos(cx a, cx b = 0);
+cx atan(cx a, cx b = 0);
+cx sqrt(cx a, cx b = 0);
+cx abs(cx a, cx b = 0);
 
-cx pi(cx a, cx b);
-cx e(cx a, cx b);
+cx pi(cx a = 0, cx b = 0);
+cx e(cx a = 0, cx b = 0);
 
-cx var(cx a, cx b);
+cx var(cx a, cx b = 0);
 
 cx (* const padd)(cx, cx) = parser::add;
 cx (* const psub)(cx, cx) = parser::sub;
@@ -78,46 +78,41 @@ void init() {
 	ops.emplace("sqrt",psqrt);
 	ops.emplace("abs", parser::abs);
 
-	ops.emplace("PI",ppi);
-	ops.emplace("E",pe);
+	ops.emplace("pi",ppi);
+	ops.emplace("e",pe);
 }
 	
 
 
-
-struct Variable {
-public:
-	string name;
-	cx val;
-	std::string toString();
-};
-
-
 class Node { 
+	friend class Tree;
 private:
-	Node(Node *parent);
-	Node(parser::Variable value, Node* parent);
-	Node(std::string value, Node* parent);
-
-	bool reduced; //whether it has been reduced to smallest form or not
-	void spawn(std::string childVal); //Add child node
-	void prune(parser::Variable childVal);
-	void prune(); //remove all children
 
 	Node* m_parent;
-	Node* left;
-	Node* right;
+	Node* m_left;
+	Node* m_right;
 	string m_val; //should always be char (for std. fcts, operators) or Variable
+public:
+	Node(Node *parent = NULL, string val = "");
+	~Node();
 	string toString();
+	void spawn(string childVal = "", int side = -1);
+	void prune(int side = 0); 
 
 };
 
 class Tree { //Hold decomposed expr
-	void parse();
-	bool simplified();
-	parser::Node root;
-	std::string toString();	
-	friend class Node;
+private:
+	Node *m_root;
+	string delim[9] = {"+", "-", "*", "/", "^", "sin;cos;tan;log;abs;", "sqrt;asin;acos;atan;", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ln"}; 
+public:
+	Tree(string expr="");
+	~Tree();
+
+	string toString(Node *n);	
+	int parse(Node *root);
+	bool checkParenthesis(string s);
+	
 };
 
 class Fct{
@@ -130,7 +125,7 @@ public:
 	Fct(std::string s);
 	std::string toString();
 private:
-	parser::Tree m_tree;
+	Tree *m_tree;
 
 };
 }
