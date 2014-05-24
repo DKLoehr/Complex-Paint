@@ -18,10 +18,11 @@ Button::Button(sf::RenderWindow* window, sf::Font font, int x, int y, int width,
     m_text.setCharacterSize(15);
     m_text.setColor(sf::Color::Black);
     m_rectangle.setOutlineThickness(2);
-    m_rectangle.setOutlineColor(sf::Color(255, 255, 255));
+    m_rectangle.setOutlineColor(sf::Color::Black);
+    m_rectangle.setFillColor(sf::Color::White);
 
     m_rectangle.setPosition(x, y);
-    m_text.setPosition(x, y - 4);
+    m_text.setPosition(x, y - 2);
 }
 
 double Button::GetHeight() {

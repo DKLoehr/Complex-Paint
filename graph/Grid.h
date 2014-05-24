@@ -20,9 +20,9 @@ private:
 
     /** The following are all relative to the WINDOW, not the graph **/
     /// The coordinates of the top-left corner of the grid on the window
-    sf::Vector2f m_position;
+    sf::Vector2i m_position;
     /// Height and width of the grid
-    sf::Vector2f m_size;
+    sf::Vector2i m_size;
 
 
     /** The following are all relative to the GRAPH **/
@@ -54,11 +54,15 @@ public:
          double xRange, double yRange, double xScale, double yScale,
          bool dispLines = false, bool dispNumbers = true, double centerX = 0, double centerY = 0);
 
+
     /// Generate the lines and labels
     void MakeGrid();
+    /// Move the grid to a new position on the window
+    void SetPosition(sf::Vector2i pos);
+    void SetPosition(int xPos, int yPos);
 
 
-    /** Functions for modifying the window and changing settings **/
+    /** Functions for modifying the window and changing settings -- Primarily for the user **/
 
     /// Set the range shown in the window for x and y; 0 or negative means "use current range" for that axis
     void SetRange(double xRange, double yRange);

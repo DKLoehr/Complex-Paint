@@ -14,8 +14,8 @@ Grid::Grid(sf::RenderWindow* w, sf::Font font, double xLoc, double yLoc, double 
            m_w(w),
            m_f(font)
 {
-    m_position = sf::Vector2f(xLoc, yLoc);
-    m_size = sf::Vector2f(width, height);
+    m_position = sf::Vector2i(xLoc, yLoc);
+    m_size = sf::Vector2i(width, height);
 
     m_center = sf::Vector2f(centerX, centerY);
     m_xRange = xRange;
@@ -101,13 +101,13 @@ void Grid::MakeGrid() {
     }
 }
 
-void Grid::ToggleLines() {
-    m_dispLines = !m_dispLines;
+void Grid::SetPosition(sf::Vector2i pos) {
+    m_position = pos;
     MakeGrid();
 }
 
-void Grid::ToggleNumbers() {
-    m_dispNumbers = !m_dispNumbers;
+void Grid::SetPosition(int xPos, int yPos) {
+    m_position = sf::Vector2i(xPos, yPos);
     MakeGrid();
 }
 
@@ -129,6 +129,16 @@ void Grid::SetScale(double xScale, double yScale) {
 
 void Grid::SetCenter(sf::Vector2f centerCoords) {
     m_center = centerCoords;
+    MakeGrid();
+}
+
+void Grid::ToggleLines() {
+    m_dispLines = !m_dispLines;
+    MakeGrid();
+}
+
+void Grid::ToggleNumbers() {
+    m_dispNumbers = !m_dispNumbers;
     MakeGrid();
 }
 

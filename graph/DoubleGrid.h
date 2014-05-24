@@ -21,7 +21,8 @@ public:
     Grid lGrid;
     Grid rGrid;
 
-    sf::RectangleShape divider;
+    sf::RectangleShape horDivider;
+    sf::RectangleShape vertDivider;
 
     /// Toggle between lines or tick marks on the graphs
     void ToggleLines();
