@@ -17,9 +17,11 @@ DoubleGrid::DoubleGrid(sf::RenderWindow* window, sf::Font f, int heightOffset) :
     vertDivider.setPosition((w->getSize().x - vertDivider.getSize().x) / 2, heightOffset);
 }
 
-void DoubleGrid::ToggleLines() {
-    lGrid.ToggleLines();
-    rGrid.ToggleLines();
+void DoubleGrid::SetYPosition(int yPos) {
+    horDivider.setPosition(0, yPos);
+    vertDivider.setPosition((w->getSize().x - vertDivider.getSize().x) / 2, yPos);
+    lGrid.SetPosition(0, yPos);
+    rGrid.SetPosition(w->getSize().x /2, yPos);
 }
 
 void DoubleGrid::Draw() {

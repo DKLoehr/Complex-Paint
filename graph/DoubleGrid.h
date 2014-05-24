@@ -24,8 +24,8 @@ public:
     sf::RectangleShape horDivider;
     sf::RectangleShape vertDivider;
 
-    /// Toggle between lines or tick marks on the graphs
-    void ToggleLines();
+    /// Change the location of everything on the screen in the Y direction
+    void SetYPosition(int yPos);
 
     /// Draw everything to the window
     void Draw();

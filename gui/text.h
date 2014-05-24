@@ -28,10 +28,11 @@ private:
     int m_height;
 
     sf::Text m_stored;
+    sf::Text m_cap;
     sf::RenderWindow* m_w;
     sf::RectangleShape m_rectangle;
 public:
-    InputBox(sf::RenderWindow* window, sf::Font font, int x, int y, int charWidth, int charHeight);
+    InputBox(sf::RenderWindow* window, sf::Font font, int x, int y, int charWidth, int charHeight, std::string cap = "");
 
     void Draw();
     void EnterText(char n);

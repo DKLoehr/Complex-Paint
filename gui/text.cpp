@@ -2,7 +2,8 @@
 #include <string>
 #include "text.h"
 
-InputBox::InputBox(sf::RenderWindow* window, sf::Font font, int x, int y, int charWidth, int charHeight):
+InputBox::InputBox(sf::RenderWindow* window, sf::Font font, int x, int y, int charWidth, int charHeight,
+                   std::string cap):
     m_stored(),
     m_rectangle(sf::Vector2f(charWidth, charHeight))
 {
@@ -18,11 +19,18 @@ InputBox::InputBox(sf::RenderWindow* window, sf::Font font, int x, int y, int ch
     m_stored.setFont(m_f);
     m_stored.setCharacterSize(15);
     m_stored.setColor(sf::Color::Black);
+
+    m_cap.setString(cap);
+    m_cap.setFont(m_f);
+    m_cap.setCharacterSize(15);
+    m_cap.setColor(sf::Color::Black);
+
     m_rectangle.setOutlineThickness(2);
     m_rectangle.setOutlineColor(sf::Color(100,100,100));
 
-    m_rectangle.setPosition(m_x, m_y);
-    m_stored.setPosition(m_x, m_y - 2);
+    m_cap.setPosition(m_x, m_y - 2);
+    m_rectangle.setPosition(m_x + cap.length() * 10, m_y);
+    m_stored.setPosition(m_x + cap.length() * 10, m_y - 2);
 };
 
 void InputBox::EnterText(char n) {
@@ -46,4 +54,5 @@ std::string InputBox::GetStoredString() {
 void InputBox::Draw() {
     m_w->draw(m_rectangle);
     m_w->draw(m_stored);
+    m_w->draw(m_cap);
 }
