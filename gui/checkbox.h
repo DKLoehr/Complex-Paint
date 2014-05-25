@@ -13,6 +13,7 @@ public:
 
     void Toggle();
     bool IsToggled();
+    bool IsPressed(int xP, int yP);
 
     void Draw();
 };

@@ -72,8 +72,12 @@ public:
     void SetCenter(sf::Vector2f centerCoords);
     /// Toggle between full lines or just tick marks on the axes
     void ToggleLines();
+    /// Set whether or not we have full lines directly
+    void SetLines(bool hasLines);
     /// Toggle between displaying numbers on the axes or not displaying any numbers
     void ToggleNumbers();
+    /// Set whether or not we display numbers directly
+    void SetNumbers(bool showNums);
 
 
     /** Functions for converting from graph coordinates to window coordinates and vice-versa **/

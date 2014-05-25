@@ -137,8 +137,18 @@ void Grid::ToggleLines() {
     MakeGrid();
 }
 
+void Grid::SetLines(bool hasLines) {
+    m_dispLines = hasLines;
+    MakeGrid();
+}
+
 void Grid::ToggleNumbers() {
     m_dispNumbers = !m_dispNumbers;
+    MakeGrid();
+}
+
+void Grid::SetNumbers(bool showNums) {
+    m_dispNumbers = showNums;
     MakeGrid();
 }
 

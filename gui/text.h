@@ -32,12 +32,17 @@ private:
     sf::RenderWindow* m_w;
     sf::RectangleShape m_rectangle;
 public:
+    InputBox(); // Warning -- since this doesn't take a window, this is useless!
     InputBox(sf::RenderWindow* window, sf::Font font, int x, int y, int charWidth, int charHeight, std::string cap = "");
 
-    void Draw();
     void EnterText(char n);
+    void SetBoxColor(sf::Color c);
+
+    void Draw();
 
     std::string GetStoredString();
+    int GetStringAsInt(); // Only call if you know the string is just a single integer
+    sf::Vector2f GetStringAsVector(); // Only call if you know the string is of the form "(int, int)"
 };
 
 #endif //INPUT_BOX_H

@@ -1,6 +1,11 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include "text.h"
+#include <iostream>
+
+InputBox::InputBox() {
+
+}
 
 InputBox::InputBox(sf::RenderWindow* window, sf::Font font, int x, int y, int charWidth, int charHeight,
                    std::string cap):
@@ -36,19 +41,48 @@ InputBox::InputBox(sf::RenderWindow* window, sf::Font font, int x, int y, int ch
 void InputBox::EnterText(char n) {
     if(n == '0' || n == '1' || n == '2' || n == '3' || n == '4' || n == '5' ||
        n == '6' || n == '7' || n == '8' || n == '9' || n == ',' || n == '/' ||
-       n == 8) { // n is a digit, comma, slash, or backspace
+       n == '(' || n == ')' ||n == 8) { // n is a digit, comma, slash, or backspace
         std::string temp = m_stored.getString();
         if(n != 8) { // Some character
-            m_stored.setString(temp.substr(0, temp.length()) + n);
+            if(m_stored.getString().getSize() * 10 < m_width)
+                m_stored.setString(temp.substr(0, temp.length()) + n);
         } else if(n == 8) { // Backspace
-            if(temp.length() > 2)
-                m_stored.setString(temp.substr(0, temp.length() - 1));
+            m_stored.setString(temp.substr(0, temp.length() - 1));
         }
     }
 }
 
 std::string InputBox::GetStoredString() {
     return m_stored.getString();
+}
+
+int InputBox::GetStringAsInt() {
+    int ret = 0;
+    std::string str = m_stored.getString();
+    for(int i = str.length() - 1; i >= 0; i--) {
+        ret += pow(10, str.length() - 1 - i) * (str[i] - '0');
+    }
+    return ret;
+
+}
+
+sf::Vector2f InputBox::GetStringAsVector() {
+    std::string str = m_stored.getString();
+    std::string xStr = str.substr(1, str.find(',') - 1);
+    std::string yStr = str.substr(str.find(',') +  1, str.length() - 4);
+    std::cout << yStr << "\n";
+    int x = 0, y = 0;
+    for(int i = xStr.length() - 1; i >= 0; i--) {
+        x += pow(10, xStr.length() - 1 - i) * (xStr[i] - '0');
+    }
+    for(int i = yStr.length() - 1; i >= 0; i--) {
+        y += pow(10, yStr.length() - 1 - i) * (yStr[i] - '0');
+    }
+    return sf::Vector2f(x, y);
+}
+
+void InputBox::SetBoxColor(sf::Color c) {
+    m_rectangle.setFillColor(c);
 }
 
 void InputBox::Draw() {

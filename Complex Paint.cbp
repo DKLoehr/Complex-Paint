@@ -53,6 +53,8 @@
 		<Unit filename="graph/Grid.h" />
 		<Unit filename="gui/button.cpp" />
 		<Unit filename="gui/button.h" />
+		<Unit filename="gui/checkbox.cpp" />
+		<Unit filename="gui/checkbox.h" />
 		<Unit filename="gui/text.cpp" />
 		<Unit filename="gui/text.h" />
 		<Unit filename="main.cpp" />

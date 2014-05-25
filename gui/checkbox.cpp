@@ -28,6 +28,14 @@ bool Checkbox::IsToggled() {
     return m_isToggled;
 }
 
+bool Checkbox::IsPressed(int xP, int yP) {
+    if(m_rectangle.getPosition().x - 3 < xP && xP < m_width + m_rectangle.getPosition().x &&
+       m_y + 2 < yP && yP < m_y + m_height + 6)
+        return true;
+    else
+        return false;
+}
+
 void Checkbox::Draw() {
     m_w->draw(m_rectangle);
     m_w->draw(m_text);

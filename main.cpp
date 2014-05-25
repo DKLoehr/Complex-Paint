@@ -9,7 +9,7 @@ int main() {
     sf::Font inFont;
     if(!inFont.loadFromFile("VeraMono.ttf")){/*error handling*/}
 
-    // Main Window
+    /****** Main window ******/
     sf::RenderWindow window(sf::VideoMode(1265, 620), "Complex Paint Revamped");
     window.setPosition(sf::Vector2i(0, 100));
 
@@ -23,24 +23,20 @@ int main() {
     sf::CircleShape loc = sf::CircleShape(2, 30);
     loc.setFillColor(sf::Color::Black);
 
-    // Graph settings window
+
+    /****** Graph settings window ******/
     sf::RenderWindow graphOptions(sf::VideoMode(300, 200), "Graph Settings");
-    graphOptions.setVisible(true);
+    graphOptions.close();
 
     // The OK button
     Button okGraph = Button(&graphOptions, inFont, graphOptions.getSize().x / 2 - 54, graphOptions.getSize().y - 20,
                                 108, 15, "Save Changes");
 
-    // Title and input for the input (left-hand) graph
+    // Title and checkboxes for the input (left-hand) graph
     sf::Text inTitle = sf::Text("Input", inFont, 15);
     inTitle.setPosition(graphOptions.getSize().x / 4 - 25, 5);
     inTitle.setColor(sf::Color::Black);
 
-    InputBox xRangeI = InputBox(&graphOptions, inFont, 5, 30, 50, 15, "x Range");
-    InputBox yRangeI = InputBox(&graphOptions, inFont, 5, 50, 50, 15, "y Range");
-    InputBox xScaleI = InputBox(&graphOptions, inFont, 5, 70, 50, 15, "x Scale");
-    InputBox yScaleI = InputBox(&graphOptions, inFont, 5, 90, 50, 15, "y Scale");
-    InputBox centerI = InputBox(&graphOptions, inFont, 5, 110, 50, 15, "Center");
     Checkbox numbersI = Checkbox(&graphOptions, inFont, 5, 130, "Numbers", true);
     Checkbox linesI = Checkbox(&graphOptions, inFont, 5, 150, "Lines", false);
 
@@ -49,40 +45,68 @@ int main() {
     outTitle.setPosition(graphOptions.getSize().x * 3 / 4 - 30, 5);
     outTitle.setColor(sf::Color::Black);
 
-    InputBox xRangeO = InputBox(&graphOptions, inFont, graphOptions.getSize().x / 2 + 5, 30, 50, 15, "x Range");
-    InputBox yRangeO = InputBox(&graphOptions, inFont, graphOptions.getSize().x / 2 + 5, 50, 50, 15, "y Range");
-    InputBox xScaleO = InputBox(&graphOptions, inFont, graphOptions.getSize().x / 2 + 5, 70, 50, 15, "x Scale");
-    InputBox yScaleO = InputBox(&graphOptions, inFont, graphOptions.getSize().x / 2 + 5, 90, 50, 15, "y Scale");
-    InputBox centerO = InputBox(&graphOptions, inFont, graphOptions.getSize().x / 2 + 5, 110, 50, 15, "Center");
     Checkbox numbersO = Checkbox(&graphOptions, inFont, graphOptions.getSize().x / 2 + 5, 130, "Numbers", true);
     Checkbox linesO = Checkbox(&graphOptions, inFont, graphOptions.getSize().x / 2 + 5, 150, "Lines", false);
 
+    // Input boxes for both sides
+    std::vector<InputBox> graphInputs = std::vector<InputBox>(0);
+    //{
+        // The number beside each input box corresponds to its number, for determining which box is "active"
+        InputBox xRangeI = InputBox(&graphOptions, inFont, 5, 30, 55, 15, "x Range"); // 0
+        InputBox yRangeI = InputBox(&graphOptions, inFont, 5, 50, 55, 15, "y Range"); // 1
+        InputBox xScaleI = InputBox(&graphOptions, inFont, 5, 70, 55, 15, "x Scale"); // 2
+        InputBox yScaleI = InputBox(&graphOptions, inFont, 5, 90, 55, 15, "y Scale"); // 3
+        InputBox centerI = InputBox(&graphOptions, inFont, 5, 110, 55, 15, "Center"); // 4
+        // Output-side boxes
+        InputBox xRangeO = InputBox(&graphOptions, inFont, graphOptions.getSize().x / 2 + 5, 30, 55, 15, "x Range"); // 5
+        InputBox yRangeO = InputBox(&graphOptions, inFont, graphOptions.getSize().x / 2 + 5, 50, 55, 15, "y Range"); // 6
+        InputBox xScaleO = InputBox(&graphOptions, inFont, graphOptions.getSize().x / 2 + 5, 70, 55, 15, "x Scale"); // 7
+        InputBox yScaleO = InputBox(&graphOptions, inFont, graphOptions.getSize().x / 2 + 5, 90, 55, 15, "y Scale"); // 8
+        InputBox centerO = InputBox(&graphOptions, inFont, graphOptions.getSize().x / 2 + 5, 110, 55, 15, "Center"); // 9
 
-    // Equation setting window
+        graphInputs.push_back(xRangeI); // We have to create the input boxes then add them to the vector in two steps
+        graphInputs.push_back(yRangeI); // in order to deal with a bug where the caption isn't displayed if we do it
+        graphInputs.push_back(xScaleI); // in one step
+        graphInputs.push_back(yScaleI);
+        graphInputs.push_back(centerI);
+        graphInputs.push_back(xRangeO);
+        graphInputs.push_back(yRangeO);
+        graphInputs.push_back(xScaleO);
+        graphInputs.push_back(yScaleO);
+        graphInputs.push_back(centerO);
+
+        for(int iii = 0; iii < graphInputs.size(); iii++) {
+            graphInputs[iii].SetBoxColor(sf::Color(150, 150, 150));
+        }
+    //}
+
+    /****** Equation setting window ******/
     sf::RenderWindow eqOptions(sf::VideoMode(320, 240), "Equation and Parameters");
-    eqOptions.setVisible(false);
+    eqOptions.close();
 
     // Coordinates of the last known mouse position; for tracking which inputBox is "active"
-    int mouseX = 0;
-    int mouseY = 0;
+    //int mouseX = 0;
+    //int mouseY = 0;
 
-    while(window.isOpen()) {
+    // Variable containing the number of the active input box
+    int activeBox = 0;
+
+    while(window.isOpen() || graphOptions.isOpen()) {// || eqOptions.isOpen()) {
         sf::Event event;
-        while(window.pollEvent(event)) { // Main window Loop
+        while(window.pollEvent(event)) { // Main window loop
             if(event.type == sf::Event::Closed || (event.type == sf::Event::KeyPressed &&
                                                    event.key.code == sf::Keyboard::Escape)) {
                 window.close();
             } else if(event.type == sf::Event::MouseMoved) {
                 loc.setPosition(window.getSize().x / 2 + event.mouseMove.x - 1, event.mouseMove.y - 1);
-            } else if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tab) {
-                grid.lGrid.ToggleLines();
-                grid.rGrid.ToggleLines();
             } else if(event.type == sf::Event::MouseButtonPressed) {
                 if(graphModify.IsPressed(event.mouseButton.x, event.mouseButton.y)) {
-                    graphOptions.setVisible(true);
+                    graphOptions.create(sf::VideoMode(300, 200), "Graph Settings");
+                    window.close();
                 }
                 else if(eqModify.IsPressed(event.mouseButton.x, event.mouseButton.y)) {
-                    eqOptions.setVisible(true);
+                    eqOptions.create(sf::VideoMode(320, 240), "Equation and Parameters");
+                    window.close();
                 }
             }
         }
@@ -90,17 +114,55 @@ int main() {
         while(graphOptions.pollEvent(event)) {
             if(event.type == sf::Event::Closed || (event.type == sf::Event::KeyPressed &&
                                                    event.key.code == sf::Keyboard::Escape)) {
-                graphOptions.setVisible(false);
+                window.create(sf::VideoMode(1265, 620), "Complex Paint Revamped");
+                graphOptions.close();
             } else if(event.type == sf::Event::MouseMoved) {
-                mouseX = event.mouseButton.x;
-                mouseY = event.mouseButton.y;
+                graphInputs[activeBox].SetBoxColor(sf::Color(150, 150, 150));
+                int x = event.mouseMove.x;
+                int y = event.mouseMove.y;
+                if(y < 30) y = 30;
+                if(y > 150) y = 150;
+                activeBox = (y - 30) / 20;
+                if(x > graphOptions.getSize().x / 2) activeBox += 5;
+                if(activeBox > 9) activeBox %= 10;
+                graphInputs[activeBox].SetBoxColor(sf::Color::White);
+            }  else if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tab) {
+                graphInputs[activeBox].SetBoxColor(sf::Color(150, 150, 150));
+                activeBox = ++activeBox % 10;
+                graphInputs[activeBox].SetBoxColor(sf::Color::White);
             } else if(event.type == sf::Event::TextEntered) {
-                /*if(mouseX <= graphOptions.getSize().y / 2 ) { // On the left side: input
-                    if(mouseY < 45)
-                        xRangeI.EnterText(event.text.unicode);
-                    else if (mouseY < 65)
-                        yRangeI.EnterText(event.text.unicode);
-                }*/
+                graphInputs[activeBox].EnterText(event.text.unicode);
+            } else if(event.type == sf::Event::MouseButtonPressed) {
+                if(numbersI.IsPressed(event.mouseButton.x, event.mouseButton.y))
+                    numbersI.Toggle();
+                if(linesI.IsPressed(event.mouseButton.x, event.mouseButton.y))
+                    linesI.Toggle();
+                if(numbersO.IsPressed(event.mouseButton.x, event.mouseButton.y))
+                    numbersO.Toggle();
+                if(linesO.IsPressed(event.mouseButton.x, event.mouseButton.y))
+                    linesO.Toggle();
+                if(okGraph.IsPressed(event.mouseButton.x, event.mouseButton.y)) {
+                    grid.lGrid.SetRange(graphInputs[0].GetStringAsInt(),
+                                        graphInputs[1].GetStringAsInt());
+                    grid.lGrid.SetScale(graphInputs[2].GetStringAsInt(),
+                                        graphInputs[3].GetStringAsInt());
+                    if(graphInputs[4].GetStoredString() != "")
+                        grid.lGrid.SetCenter(graphInputs[4].GetStringAsVector());
+                    grid.lGrid.SetNumbers(numbersI.IsToggled());
+                    grid.lGrid.SetLines(linesI.IsToggled());
+
+                    grid.rGrid.SetRange(graphInputs[5].GetStringAsInt(),
+                                        graphInputs[6].GetStringAsInt());
+                    grid.rGrid.SetScale(graphInputs[7].GetStringAsInt(),
+                                        graphInputs[8].GetStringAsInt());
+                    if(graphInputs[9].GetStoredString() != "")
+                        grid.rGrid.SetCenter(graphInputs[9].GetStringAsVector());
+                    grid.rGrid.SetNumbers(numbersO.IsToggled());
+                    grid.rGrid.SetLines(linesO.IsToggled());
+
+                    window.create(sf::VideoMode(1265, 620), "Complex Paint Revamped");
+                    graphOptions.close();
+                }
             }
         }
 
@@ -128,23 +190,13 @@ int main() {
         graphOptions.draw(inTitle);
         graphOptions.draw(outTitle);
         okGraph.Draw();
-
-        xRangeI.Draw();
-        yRangeI.Draw();
-        xScaleI.Draw();
-        yScaleI.Draw();
-        centerI.Draw();
         numbersI.Draw();
         linesI.Draw();
-
-        xRangeO.Draw();
-        yRangeO.Draw();
-        xScaleO.Draw();
-        yScaleO.Draw();
-        centerO.Draw();
         numbersO.Draw();
         linesO.Draw();
-
+        for(int iii = 0; iii < graphInputs.size(); iii++) {
+           graphInputs[iii].Draw();
+        }
 
         // Display everything we've drawn
         window.display();
