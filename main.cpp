@@ -99,15 +99,16 @@ int main() {
                 window.close();
             } else if(event.type == sf::Event::MouseMoved) {
                 loc.setPosition(window.getSize().x / 2 + event.mouseMove.x - 1, event.mouseMove.y - 1);
-            } else if(event.type == sf::Event::MouseButtonPressed) {
-                if(graphModify.IsPressed(event.mouseButton.x, event.mouseButton.y)) {
+            } else if((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::G) ||
+                      (event.type == sf::Event::MouseButtonPressed &&
+                       graphModify.IsPressed(event.mouseButton.x, event.mouseButton.y))) {
                     graphOptions.create(sf::VideoMode(300, 200), "Graph Settings");
                     window.close();
-                }
-                else if(eqModify.IsPressed(event.mouseButton.x, event.mouseButton.y)) {
+            } else if((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::E) ||
+                      (event.type == sf::Event::MouseButtonPressed &&
+                       eqModify.IsPressed(event.mouseButton.x, event.mouseButton.y))) {
                     eqOptions.create(sf::VideoMode(320, 240), "Equation and Parameters");
                     window.close();
-                }
             }
         }
 
@@ -128,11 +129,15 @@ int main() {
                 graphInputs[activeBox].SetBoxColor(sf::Color::White);
             }  else if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tab) {
                 graphInputs[activeBox].SetBoxColor(sf::Color(150, 150, 150));
-                activeBox = ++activeBox % 10;
+                if(sf::Keyboard::isKeyPressed(sf::Keyboard::RShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+                    activeBox = (activeBox + 9) % 10;
+                else
+                    activeBox = ++activeBox % 10;
                 graphInputs[activeBox].SetBoxColor(sf::Color::White);
             } else if(event.type == sf::Event::TextEntered) {
                 graphInputs[activeBox].EnterText(event.text.unicode);
-            } else if(event.type == sf::Event::MouseButtonPressed) {
+            } else if(event.type == sf::Event::MouseButtonPressed &&
+                      !okGraph.IsPressed(event.mouseButton.x, event.mouseButton.y)) {
                 if(numbersI.IsPressed(event.mouseButton.x, event.mouseButton.y))
                     numbersI.Toggle();
                 if(linesI.IsPressed(event.mouseButton.x, event.mouseButton.y))
@@ -141,7 +146,9 @@ int main() {
                     numbersO.Toggle();
                 if(linesO.IsPressed(event.mouseButton.x, event.mouseButton.y))
                     linesO.Toggle();
-                if(okGraph.IsPressed(event.mouseButton.x, event.mouseButton.y)) {
+                } else if((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Return) ||
+                          (event.type == sf::Event::MouseButtonPressed &&
+                           okGraph.IsPressed(event.mouseButton.x, event.mouseButton.y))) {
                     grid.lGrid.SetRange(graphInputs[0].GetStringAsInt(),
                                         graphInputs[1].GetStringAsInt());
                     grid.lGrid.SetScale(graphInputs[2].GetStringAsInt(),
@@ -162,7 +169,6 @@ int main() {
 
                     window.create(sf::VideoMode(1265, 620), "Complex Paint Revamped");
                     graphOptions.close();
-                }
             }
         }
 

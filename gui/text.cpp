@@ -68,9 +68,12 @@ int InputBox::GetStringAsInt() {
 
 sf::Vector2f InputBox::GetStringAsVector() {
     std::string str = m_stored.getString();
-    std::string xStr = str.substr(1, str.find(',') - 1);
-    std::string yStr = str.substr(str.find(',') +  1, str.length() - 4);
-    std::cout << yStr << "\n";
+    if(str.find('(') != std::string::npos)
+        str = str.substr(1, std::string::npos);
+    if(str.find(')') != std::string::npos)
+        str = str.substr(0, str.length() - 1);
+    std::string xStr = str.substr(0, str.find(','));
+    std::string yStr = str.substr(str.find(',') +  1, str.length());
     int x = 0, y = 0;
     for(int i = xStr.length() - 1; i >= 0; i--) {
         x += pow(10, xStr.length() - 1 - i) * (xStr[i] - '0');

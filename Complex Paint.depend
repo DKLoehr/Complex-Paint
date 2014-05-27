@@ -346,7 +346,7 @@
 	<SFML/Graphics.hpp>
 	<string>
 
-1400985149 source:c:\users\devon\desktop\workspace\complex paint\gui\text.cpp
+1401192851 source:c:\users\devon\desktop\workspace\complex paint\gui\text.cpp
 	<SFML/Graphics.hpp>
 	<string>
 	"text.h"
@@ -358,7 +358,7 @@
 1400939217 c:\users\devon\desktop\workspace\complex paint\graph\doublegrid.h
 	"Grid.h"
 
-1400986376 source:c:\users\devon\desktop\workspace\complex paint\main.cpp
+1401193868 source:c:\users\devon\desktop\workspace\complex paint\main.cpp
 	<SFML/Graphics.hpp>
 	"gui/button.h"
 	"gui/text.h"
