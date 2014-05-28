@@ -152,6 +152,35 @@ void Grid::SetNumbers(bool showNums) {
     MakeGrid();
 }
 
+sf::Vector2f Grid::WindowToGraph(sf::Vector2f wLoc) {
+    double x = wLoc.x - (m_position.x + m_size.x / 2);
+    double y = -(wLoc.y - (m_position.y + m_size.y / 2));
+    x /= m_size.x / 2 / m_xRange;
+    y /= m_size.y / 2 / m_yRange;
+    x += m_center.x;
+    y += m_center.y;
+    return sf::Vector2f(x, y);
+}
+
+sf::Vector2f Grid::WindowToGraph(double xPos, double yPos) {
+    return WindowToGraph(sf::Vector2f(xPos, yPos));
+}
+
+sf::Vector2f Grid::GraphToWindow(sf::Vector2f gLoc) {
+    double x = gLoc.x - m_center.x;
+    double y = gLoc.y - m_center.y;
+    x *= m_size.x / 2 / m_xRange;
+    y *= m_size.y / 2 / m_yRange;
+    x += m_position.x + m_size.x / 2;
+    y += m_position.y + m_size.y / 2;
+    y += 2 * (m_size.y / 2 + m_position.y - y);
+    return sf::Vector2f(x, y);
+}
+
+sf::Vector2f Grid::GraphToWindow(double xPos, double yPos) {
+    return GraphToWindow(sf::Vector2f(xPos, yPos));
+}
+
 void Grid::Draw() {
     m_w->draw(m_lines);
     if(m_dispNumbers) {

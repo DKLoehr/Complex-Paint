@@ -105,7 +105,10 @@ int main() {
                                                    event.key.code == sf::Keyboard::Escape)) {
                 window.close();
             } else if(event.type == sf::Event::MouseMoved) {
-                loc.setPosition(window.getSize().x / 2 + event.mouseMove.x - 1, event.mouseMove.y - 1);
+                sf::Vector2f graphCoords = grid.lGrid.WindowToGraph(event.mouseMove.x, event.mouseMove.y);
+                loc.setPosition(grid.rGrid.GraphToWindow(graphCoords));
+                graphCoords = grid.rGrid.GraphToWindow(graphCoords);
+                std::cout << "(" << graphCoords.x << "," << graphCoords.y << ")\n";
             } else if((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::G) ||
                       (event.type == sf::Event::MouseButtonPressed &&
                        graphModify.IsPressed(event.mouseButton.x, event.mouseButton.y))) {
@@ -129,16 +132,17 @@ int main() {
                 graphInputs[activeBox].SetBoxColor(sf::Color(150, 150, 150));
                 int x = event.mouseMove.x;
                 int y = event.mouseMove.y;
-                if(y < 30) y = 30;
-                if(y > 150) y = 150;
-                activeBox = (y - 30) / 20;
+                if(y <= graphOptions.getSize().y * 3 / 20) y = graphOptions.getSize().y * 3 / 20 + 1;
+                if(y >= graphOptions.getSize().y * 13 / 20) y = graphOptions.getSize().y * 12 / 20 + 1;
+                std::cout << y << "\n";
+                activeBox = (y - graphOptions.getSize().y * 3 / 20) / (graphOptions.getSize().y / 10);
                 if(x > graphOptions.getSize().x / 2) activeBox += 5;
                 if(activeBox > 9) activeBox %= 10;
                 graphInputs[activeBox].SetBoxColor(sf::Color::White);
             }  else if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tab) {
                 graphInputs[activeBox].SetBoxColor(sf::Color(150, 150, 150));
                 if(sf::Keyboard::isKeyPressed(sf::Keyboard::RShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
-                    activeBox = (activeBox + 9) % 10;
+                    activeBox = (activeBox + 9) % 10; // Decrement by 1, avoiding negatives
                 else
                     activeBox = ++activeBox % 10;
                 graphInputs[activeBox].SetBoxColor(sf::Color::White);

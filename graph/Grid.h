@@ -83,9 +83,11 @@ public:
     /** Functions for converting from graph coordinates to window coordinates and vice-versa **/
 
     /// Given the location on the window, returns the coordinates of the point on the graph
-    sf::Vector2f WindowToGraph(sf::Vector2i wLoc);
+    sf::Vector2f WindowToGraph(sf::Vector2f wLoc);
+    sf::Vector2f WindowToGraph(double xPos, double yPos);
     /// Given the location on the graph, returns the coordinates of the pixel on the window
-    sf::Vector2i GraphToWindow(sf::Vector2f gLoc);
+    sf::Vector2f GraphToWindow(sf::Vector2f gLoc);
+    sf::Vector2f GraphToWindow(double xPos, double yPos);
 
     /// Draw everything to the window
     void Draw();
