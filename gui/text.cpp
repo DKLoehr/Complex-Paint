@@ -39,9 +39,9 @@ InputBox::InputBox(sf::RenderWindow* window, sf::Font font, int x, int y, int ch
 };
 
 void InputBox::EnterText(char n) {
-    if(n == '0' || n == '1' || n == '2' || n == '3' || n == '4' || n == '5' ||
+    if(true/*n == '0' || n == '1' || n == '2' || n == '3' || n == '4' || n == '5' ||
        n == '6' || n == '7' || n == '8' || n == '9' || n == ',' || n == '/' ||
-       n == '(' || n == ')' ||n == 8) { // n is a digit, comma, slash, or backspace
+       n == '(' || n == ')' ||n == 8*/) { // n is a digit, comma, slash, or backspace
         std::string temp = m_stored.getString();
         if(n != 8) { // Some character
             if(m_stored.getString().getSize() * 10 < m_width)

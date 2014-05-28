@@ -1,4 +1,4 @@
-#include "Checkbox.h"
+#include "checkbox.h"
 
 Checkbox::Checkbox(sf::RenderWindow* window, sf::Font font, int x, int y, std::string cap, bool isToggled)
     : Button(window, font, x, y, 11, 11, "")

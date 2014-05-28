@@ -12,6 +12,28 @@ template<> string toString(cx c) {
 	return s.str();
 }
 
+void init() {
+	parseops = std::unordered_map<const char*, cx (* const)(cx,cx)>();
+	parseops.emplace("+", padd);	
+	parseops.emplace("-", psub);
+	parseops.emplace("*",pmul);
+	parseops.emplace("/",pdiv);
+	
+	parseops.emplace("^",ppow);
+	parseops.emplace("ln",plog);
+
+	parseops.emplace("sin",psin);
+	parseops.emplace("cos",pcos);
+	parseops.emplace("tan",ptan);
+	parseops.emplace("asin",pasin);
+	parseops.emplace("acos",pacos);
+	parseops.emplace("atan",patan);
+	parseops.emplace("sqrt",psqrt);
+	parseops.emplace("abs", parser::abs);
+
+	parseops.emplace("pi",ppi);
+	parseops.emplace("e",pe);
+}
 
 cx add(cx a, cx b) {
 	return a + b;
@@ -217,7 +239,7 @@ int Tree::parse(Node *root) {
 				root->m_left = new Node(root, "");
 				root->m_right = new Node(root, "");
 				root->m_val = s[i];
-				ops.emplace("A", pvar);
+				parseops.emplace("A", pvar);
 				//ops.emplace(s[i], pvar); SHOULD ACTUALLY BE SOMETHING LIKE THIS
 			}
 		}
@@ -225,4 +247,22 @@ int Tree::parse(Node *root) {
 	if(delimIndex == -1) return 3;
 	return 0;
 }
+
+Fct::Fct() {
+	m_fct = "";
+	m_tree=NULL;
+}		
+
+Fct::Fct(string s) {
+	m_fct = s;
+	makefct(s);
 }
+
+void Fct::makefct(string s) {
+	m_tree = new Tree(s);
+}
+
+string Fct::toString() {
+	return m_fct;
+}
+

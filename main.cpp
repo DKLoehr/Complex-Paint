@@ -2,6 +2,7 @@
 #include "gui/button.h"
 #include "gui/text.h"
 #include "gui/checkbox.h"
+#include "guts/Parser.h"
 #include "graph/DoubleGrid.h"
 #include <iostream>
 
@@ -97,7 +98,11 @@ int main() {
             if(event.type == sf::Event::Closed || (event.type == sf::Event::KeyPressed &&
                                                    event.key.code == sf::Keyboard::Escape)) {
                 window.close();
-            } else if(event.type == sf::Event::MouseMoved) {
+            } else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Return) {
+		    parser::Fct* f = new Fct(equation.GetStoredString());
+            } else if(event.type == sf::Event::TextEntered) {
+		    equation.EnterText(event.text.unicode);
+	    }else if(event.type == sf::Event::MouseMoved) {
                 loc.setPosition(window.getSize().x / 2 + event.mouseMove.x - 1, event.mouseMove.y - 1);
             } else if(event.type == sf::Event::MouseButtonPressed) {
                 if(graphModify.IsPressed(event.mouseButton.x, event.mouseButton.y)) {

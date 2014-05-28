@@ -1,3 +1,6 @@
+#ifndef _PARSER_H_
+#define _PARSER_H_
+
 #include <iostream>
 #include <cmath>
 #include <vector>
@@ -13,7 +16,7 @@ namespace parser {
 template <typename T> std::string toString(T t); //To convert numeric types to strings
 template <> std::string toString(cx c); //Specialized version for cx
 
-std::unordered_map<const char*, cx (* const)(cx,cx)> ops;
+extern std::unordered_map<const char*, cx (* const)(cx,cx)> parseops;
 //Functions and pointers to call actual operators
 cx add(cx a, cx b);
 cx sub(cx a, cx b);
@@ -60,29 +63,7 @@ cx (* const ppi)(cx, cx) = parser::pi;
 cx (* const pvar)(cx,cx) = parser::var;
 
 //initialize function pointers, put into map
-void init() {
-	ops.emplace("+", padd);	
-	ops.emplace("-", psub);
-	ops.emplace("*",pmul);
-	ops.emplace("/",pdiv);
-	
-	ops.emplace("^",ppow);
-	ops.emplace("ln",plog);
-
-	ops.emplace("sin",psin);
-	ops.emplace("cos",pcos);
-	ops.emplace("tan",ptan);
-	ops.emplace("asin",pasin);
-	ops.emplace("acos",pacos);
-	ops.emplace("atan",patan);
-	ops.emplace("sqrt",psqrt);
-	ops.emplace("abs", parser::abs);
-
-	ops.emplace("pi",ppi);
-	ops.emplace("e",pe);
-}
-	
-
+void init(); 
 
 class Node { 
 	friend class Tree;
@@ -117,18 +98,18 @@ public:
 
 class Fct{
 public:
-	std::string name;
-	std::string fct;
+	string m_fct;
 	void makefct(std::string s); //Just passes string to Tree, which parses and stores it
 	cx eval(cx n); //create temporary Tree, copy of m_tree, and evaluate
 	Fct();
 	Fct(std::string s);
-	std::string toString();
+	string toString();
 private:
 	Tree *m_tree;
 
 };
 }
+#endif
 
 /**
  * ___THE NOTES BELOW ARE FOR CORE FUNCTIONALITY: CLASS CAN BE EXTENDED LATER____ 
