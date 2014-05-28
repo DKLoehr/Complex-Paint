@@ -36,13 +36,16 @@ public:
     InputBox(sf::RenderWindow* window, sf::Font font, int x, int y, int charWidth, int charHeight, std::string cap = "");
 
     void EnterText(char n);
+    void SetString(std::string str);
     void SetBoxColor(sf::Color c);
 
-    void Draw();
+    bool IsValid(char n);
 
     std::string GetStoredString();
     int GetStringAsInt(); // Only call if you know the string is just a single integer
     sf::Vector2f GetStringAsVector(); // Only call if you know the string is of the form "(int, int)"
+
+    void Draw();
 };
 
 #endif //INPUT_BOX_H

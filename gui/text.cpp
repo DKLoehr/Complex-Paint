@@ -39,17 +39,26 @@ InputBox::InputBox(sf::RenderWindow* window, sf::Font font, int x, int y, int ch
 };
 
 void InputBox::EnterText(char n) {
-    if(n == '0' || n == '1' || n == '2' || n == '3' || n == '4' || n == '5' ||
-       n == '6' || n == '7' || n == '8' || n == '9' || n == ',' || n == '/' ||
-       n == '(' || n == ')' ||n == 8) { // n is a digit, comma, slash, or backspace
+    if(IsValid(n)) { // n is a valid character
         std::string temp = m_stored.getString();
         if(n != 8) { // Some character
-            if(m_stored.getString().getSize() * 10 < m_width)
-                m_stored.setString(temp.substr(0, temp.length()) + n);
+            m_stored.setString(temp.substr(0, temp.length()) + n);
         } else if(n == 8) { // Backspace
             m_stored.setString(temp.substr(0, temp.length() - 1));
         }
     }
+}
+
+void InputBox::SetString(std::string str) {
+    m_stored.setString(str);
+}
+
+bool InputBox::IsValid(char n) {
+    if(n == 8 || n == 32 || n == 33 || (n >= 40 && n <= 57) || (n >= 65 && n <= 90) || n == 94 ||
+       (n >= 97 && n <= 122) || n == 127)
+        return true;
+    else
+        return false;
 }
 
 std::string InputBox::GetStoredString() {
@@ -90,6 +99,12 @@ void InputBox::SetBoxColor(sf::Color c) {
 
 void InputBox::Draw() {
     m_w->draw(m_rectangle);
+    std::string str = m_stored.getString();
+    if((str.length()) * 10 > m_width) {
+        std::string strShown = str.substr(str.length() - m_width / 10 - 1, std::string::npos);
+        m_stored.setString(strShown);
+    }
     m_w->draw(m_stored);
+    m_stored.setString(str);
     m_w->draw(m_cap);
 }

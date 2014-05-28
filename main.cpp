@@ -10,6 +10,7 @@ int main() {
     if(!inFont.loadFromFile("VeraMono.ttf")){/*error handling*/}
 
     /****** Main window ******/
+    //{
     sf::RenderWindow window(sf::VideoMode(1265, 620), "Complex Paint Revamped");
     window.setPosition(sf::Vector2i(0, 100));
 
@@ -22,9 +23,11 @@ int main() {
 
     sf::CircleShape loc = sf::CircleShape(2, 30);
     loc.setFillColor(sf::Color::Black);
+    //}
 
 
     /****** Graph settings window ******/
+    //{
     sf::RenderWindow graphOptions(sf::VideoMode(300, 200), "Graph Settings");
     graphOptions.close();
 
@@ -79,21 +82,25 @@ int main() {
             graphInputs[iii].SetBoxColor(sf::Color(150, 150, 150));
         }
     //}
+    //} // End graph setting window
 
     /****** Equation setting window ******/
+    //{
     sf::RenderWindow eqOptions(sf::VideoMode(320, 240), "Equation and Parameters");
     eqOptions.close();
 
-    // Coordinates of the last known mouse position; for tracking which inputBox is "active"
-    //int mouseX = 0;
-    //int mouseY = 0;
+    InputBox eqEnter = InputBox(&eqOptions, inFont, 5, 5, 100, 15, "");
+
+    //} // End equation setting window
 
     // Variable containing the number of the active input box
     int activeBox = 0;
 
-    while(window.isOpen() || graphOptions.isOpen()) {// || eqOptions.isOpen()) {
+    while(window.isOpen() || graphOptions.isOpen() || eqOptions.isOpen()) {
         sf::Event event;
-        while(window.pollEvent(event)) { // Main window loop
+
+        /** Event Handling for the main window **/
+        while(window.pollEvent(event)) {
             if(event.type == sf::Event::Closed || (event.type == sf::Event::KeyPressed &&
                                                    event.key.code == sf::Keyboard::Escape)) {
                 window.close();
@@ -112,6 +119,7 @@ int main() {
             }
         }
 
+        /** Event Handling for the graph window **/
         while(graphOptions.pollEvent(event)) {
             if(event.type == sf::Event::Closed || (event.type == sf::Event::KeyPressed &&
                                                    event.key.code == sf::Keyboard::Escape)) {
@@ -172,13 +180,23 @@ int main() {
             }
         }
 
+        /** Event Handling for the equation window **/
         while(eqOptions.pollEvent(event)) {
             if(event.type == sf::Event::Closed || (event.type == sf::Event::KeyPressed &&
                                                    event.key.code == sf::Keyboard::Escape)) {
-                eqOptions.setVisible(false);
+                window.create(sf::VideoMode(1265, 620), "Complex Paint Revamped");
+                eqOptions.close();
+            } else if(event.type == sf::Event::TextEntered) {
+                eqEnter.EnterText(event.text.unicode);
+            } else if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Return) {
+                equation.SetString(eqEnter.GetStoredString());
+                window.create(sf::VideoMode(1265, 620), "Complex Paint Revamped");
+                eqOptions.close();
             }
         }
 
+        /** Draw everything to the windows **/
+        //{
         window.clear(sf::Color::White);
         graphOptions.clear(sf::Color::White);
         eqOptions.clear(sf::Color::White);
@@ -193,21 +211,28 @@ int main() {
         window.draw(loc);
 
         // Draw everything on the graph options window
-        graphOptions.draw(inTitle);
-        graphOptions.draw(outTitle);
-        okGraph.Draw();
-        numbersI.Draw();
-        linesI.Draw();
-        numbersO.Draw();
-        linesO.Draw();
-        for(int iii = 0; iii < graphInputs.size(); iii++) {
-           graphInputs[iii].Draw();
+        if(graphOptions.isOpen()) {
+            graphOptions.draw(inTitle);
+            graphOptions.draw(outTitle);
+            okGraph.Draw();
+            numbersI.Draw();
+            linesI.Draw();
+            numbersO.Draw();
+            linesO.Draw();
+            for(int iii = 0; iii < graphInputs.size(); iii++) {
+                graphInputs[iii].Draw();
+            }
         }
 
+        // Draw everything on the equation options window
+        if(eqOptions.isOpen()) {
+            eqEnter.Draw();
+        }
         // Display everything we've drawn
         window.display();
         graphOptions.display();
         eqOptions.display();
+    //} // End drawing segment
     }
     return 0;
 }
