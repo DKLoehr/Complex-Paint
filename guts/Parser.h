@@ -84,14 +84,16 @@ public:
 
 class Tree { //Hold decomposed expr
 private:
+	string toString(Node *n);
+	int parse(Node *root);
 	Node *m_root;
 	string delim[9] = {"+", "-", "*", "/", "^", "sin;cos;tan;log;abs;", "sqrt;asin;acos;atan;", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ln"}; 
 public:
 	Tree(string expr="");
 	~Tree();
 
-	string toString(Node *n);	
-	int parse(Node *root);
+	string toString();	
+	int parse();
 	bool checkParenthesis(string s);
 	
 };

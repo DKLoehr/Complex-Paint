@@ -1,5 +1,7 @@
 #include "Parser.h"
 namespace parser{
+ std::unordered_map<const char*, cx (* const)(cx,cx)> parseops;
+
 template <typename T> string toString(T t) {
 	stringstream s;
 	s << t;
@@ -142,6 +144,7 @@ void Node::prune(int side) {
 
 Tree::Tree(string expr) {
 	m_root = new Node(NULL, expr);
+	parse();
 }
 
 
@@ -159,6 +162,10 @@ string Tree::toString(Node* n) {
 	else return n->toString();
 }
 
+string Tree::toString() {
+	return toString(m_root);
+}
+
 bool Tree::checkParenthesis(string s) {
 	int i = 0;
 	int count = 0;
@@ -166,6 +173,10 @@ bool Tree::checkParenthesis(string s) {
 		if(s[i] == '(') count++;
 		else if(s[i] == ')') count--;
 	return count == 0;
+}
+
+int Tree::parse() {
+	return parse(m_root);
 }
 
 int Tree::parse(Node *root) {
@@ -239,8 +250,8 @@ int Tree::parse(Node *root) {
 				root->m_left = new Node(root, "");
 				root->m_right = new Node(root, "");
 				root->m_val = s[i];
-				parseops.emplace("A", pvar);
-				//ops.emplace(s[i], pvar); SHOULD ACTUALLY BE SOMETHING LIKE THIS
+				parseops.emplace("A",pvar);
+				//parseops.emplace(s[i], pvar); //SHOULD ACTUALLY BE SOMETHING LIKE THIS
 			}
 		}
 	}
@@ -255,7 +266,7 @@ Fct::Fct() {
 
 Fct::Fct(string s) {
 	m_fct = s;
-	makefct(s);
+	makefct(m_fct);
 }
 
 void Fct::makefct(string s) {
@@ -263,6 +274,6 @@ void Fct::makefct(string s) {
 }
 
 string Fct::toString() {
-	return m_fct;
+	return m_fct + "\n" + m_tree->toString();
 }
-
+}
