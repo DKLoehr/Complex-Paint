@@ -29,8 +29,9 @@ bool Checkbox::IsToggled() {
 }
 
 bool Checkbox::IsPressed(int xP, int yP) {
-    if(m_rectangle.getPosition().x - 3 < xP && xP < m_width + m_rectangle.getPosition().x &&
-       m_y + 2 < yP && yP < m_y + m_height + 6)
+    if((m_rectangle.getPosition().x - 3) * m_w->getSize().x / m_wWidth < xP &&
+       xP < (m_width + m_rectangle.getPosition().x) *  m_w->getSize().x / m_wWidth &&
+       (m_y + 2) * m_w->getSize().y / m_wHeight < yP && yP < (m_y + m_height + 6) * m_w->getSize().y / m_wHeight)
         return true;
     else
         return false;

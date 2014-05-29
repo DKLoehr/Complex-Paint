@@ -12,6 +12,8 @@ Button::Button(sf::RenderWindow* window, sf::Font font, int x, int y, int width,
     m_y = y;
     m_width = width;
     m_height = height;
+    m_wWidth = window->getSize().x;
+    m_wHeight = window->getSize().y;
 
     m_text.setString(str);
     m_text.setFont(m_f);
@@ -35,7 +37,8 @@ void Button::Draw() {
 }
 
 bool Button::IsPressed(int xP, int yP) {
-    if(m_x - 3 < xP && xP < m_x + m_width + 3 && m_y - 3 < yP && yP < m_y + m_height + 2)
+    if((m_x - 3) * m_w->getSize().x / m_wWidth < xP && xP < (m_x + m_width + 3) * m_w->getSize().x / m_wWidth &&
+       (m_y - 3) * m_w->getSize().y / m_wHeight < yP && yP < (m_y + m_height + 2) * m_w->getSize().y / m_wHeight)
         return true;
     else
         return false;

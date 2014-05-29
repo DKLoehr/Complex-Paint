@@ -12,6 +12,8 @@ protected:
     int m_y;
     int m_width;
     int m_height;
+    int m_wWidth;
+    int m_wHeight;
 
     sf::Text m_text;
     sf::Font m_f;

@@ -65,8 +65,8 @@ std::string InputBox::GetStoredString() {
     return m_stored.getString();
 }
 
-int InputBox::GetStringAsInt() {
-    int ret = 0;
+double InputBox::GetStringAsDouble() {
+    double ret = 0;
     std::string str = m_stored.getString();
     for(int i = str.length() - 1; i >= 0; i--) {
         ret += pow(10, str.length() - 1 - i) * (str[i] - '0');

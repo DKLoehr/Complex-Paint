@@ -42,7 +42,7 @@ public:
     bool IsValid(char n);
 
     std::string GetStoredString();
-    int GetStringAsInt(); // Only call if you know the string is just a single integer
+    double GetStringAsDouble(); // Only call if you know the string is just a single number
     sf::Vector2f GetStringAsVector(); // Only call if you know the string is of the form "(int, int)"
 
     void Draw();

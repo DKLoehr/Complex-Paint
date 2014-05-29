@@ -89,7 +89,7 @@ int main() {
     sf::RenderWindow eqOptions(sf::VideoMode(320, 240), "Equation and Parameters");
     eqOptions.close();
 
-    InputBox eqEnter = InputBox(&eqOptions, inFont, 5, 5, 100, 15, "");
+    InputBox eqEnter = InputBox(&eqOptions, inFont, 5, 5, 310, 15, "");
 
     //} // End equation setting window
 
@@ -108,7 +108,6 @@ int main() {
                 sf::Vector2f graphCoords = grid.lGrid.WindowToGraph(event.mouseMove.x, event.mouseMove.y);
                 loc.setPosition(grid.rGrid.GraphToWindow(graphCoords));
                 graphCoords = grid.rGrid.GraphToWindow(graphCoords);
-                std::cout << "(" << graphCoords.x << "," << graphCoords.y << ")\n";
             } else if((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::G) ||
                       (event.type == sf::Event::MouseButtonPressed &&
                        graphModify.IsPressed(event.mouseButton.x, event.mouseButton.y))) {
@@ -133,8 +132,7 @@ int main() {
                 int x = event.mouseMove.x;
                 int y = event.mouseMove.y;
                 if(y <= graphOptions.getSize().y * 3 / 20) y = graphOptions.getSize().y * 3 / 20 + 1;
-                if(y >= graphOptions.getSize().y * 13 / 20) y = graphOptions.getSize().y * 12 / 20 + 1;
-                std::cout << y << "\n";
+                if(y >= graphOptions.getSize().y * 13 / 20 - 5) y = graphOptions.getSize().y * 12 / 20 + 1;
                 activeBox = (y - graphOptions.getSize().y * 3 / 20) / (graphOptions.getSize().y / 10);
                 if(x > graphOptions.getSize().x / 2) activeBox += 5;
                 if(activeBox > 9) activeBox %= 10;
@@ -161,19 +159,19 @@ int main() {
                 } else if((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Return) ||
                           (event.type == sf::Event::MouseButtonPressed &&
                            okGraph.IsPressed(event.mouseButton.x, event.mouseButton.y))) {
-                    grid.lGrid.SetRange(graphInputs[0].GetStringAsInt(),
-                                        graphInputs[1].GetStringAsInt());
-                    grid.lGrid.SetScale(graphInputs[2].GetStringAsInt(),
-                                        graphInputs[3].GetStringAsInt());
+                    grid.lGrid.SetRange(graphInputs[0].GetStringAsDouble(),
+                                        graphInputs[1].GetStringAsDouble());
+                    grid.lGrid.SetScale(graphInputs[2].GetStringAsDouble(),
+                                        graphInputs[3].GetStringAsDouble());
                     if(graphInputs[4].GetStoredString() != "")
                         grid.lGrid.SetCenter(graphInputs[4].GetStringAsVector());
                     grid.lGrid.SetNumbers(numbersI.IsToggled());
                     grid.lGrid.SetLines(linesI.IsToggled());
 
-                    grid.rGrid.SetRange(graphInputs[5].GetStringAsInt(),
-                                        graphInputs[6].GetStringAsInt());
-                    grid.rGrid.SetScale(graphInputs[7].GetStringAsInt(),
-                                        graphInputs[8].GetStringAsInt());
+                    grid.rGrid.SetRange(graphInputs[5].GetStringAsDouble(),
+                                        graphInputs[6].GetStringAsDouble());
+                    grid.rGrid.SetScale(graphInputs[7].GetStringAsDouble(),
+                                        graphInputs[8].GetStringAsDouble());
                     if(graphInputs[9].GetStoredString() != "")
                         grid.rGrid.SetCenter(graphInputs[9].GetStringAsVector());
                     grid.rGrid.SetNumbers(numbersO.IsToggled());
