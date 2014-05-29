@@ -111,12 +111,7 @@ Node::~Node() {
 }
 
 string Node::toString() {
-	string retVal = m_val;
-	if(m_right != NULL)
-		retVal += ", right";
-	if(m_left != NULL)
-		retVal += ", left";
-	return retVal;
+	return m_val;
 }
 
 //side == -1 => new left node
@@ -152,26 +147,28 @@ Tree::~Tree() {
 	delete m_root;
 }
 
-string Tree::toString(Node* n) {
+string Tree::toString(Node* n, string path) {
 	if(n->m_left != NULL && n->m_right != NULL)
-		return n->toString() + "; " + toString(n->m_left) + "; " + toString(n->m_right) + "; ";
+		return n->toString() + "; " + path + "L"+ " " + toString(n->m_left, path+"L") + "; " + path +"R" + " "+ toString(n->m_right, path+"R") + ";  ";
 	else if(n->m_left != NULL)
-		return n->toString() + "; " + toString(n->m_left) + "; ";
+		return n->toString() + ";  " +path + "L" + toString(n->m_left, path+"L") + ";  ";
 	else if(n->m_right != NULL)
-		return n->toString() + "; " + toString(n->m_right) + "; ";
+		return n->toString() + ";  " + path + "R" + toString(n->m_right, path+"R") + ";  ";
 	else return n->toString();
 }
 
 string Tree::toString() {
-	return toString(m_root);
+	return toString(m_root, "O");
 }
 
 bool Tree::checkParenthesis(string s) {
 	int i = 0;
 	int count = 0;
-	while(s[i] != 0)
+	while(s[i] != NULL) {
 		if(s[i] == '(') count++;
 		else if(s[i] == ')') count--;
+		++i;
+	}
 	return count == 0;
 }
 
@@ -183,28 +180,27 @@ int Tree::parse(Node *root) {
 	string& s = root->m_val;
 	if(!checkParenthesis(s)) return 1;	
 	int length = s.length();
-	//remove overall enclosing parenthesis
 	if(s[0] == '(' && s[length-1] == ')') {
-		s.erase(length-1);
-		s.erase(0);
+		s.erase(length-1, 1);
+		s.erase(0, 1);
 		length -= 2;
 	}
 
 	int delimIndex = -1;
-	for(int i = 0; i < length && delimIndex == -1; i++) {
-		int pcount = 0; //parenthesis counter
-		if(s[i] == '(') { //skips contents of parenthesis
-			pcount++;
-			while(pcount != 0) {
-				i++;
-				if(s[i] == ')') pcount++;
-				else if(s[i] == '(') pcount--;
+	//Loop through delimiters
+	for(int j = 0; j < 5 && delimIndex == -1; j++) {
+		for(int i = 0; i < length && delimIndex == -1; i++) {
+			//skip paren
+			if(s[i] == '(') { 
+				int parenthCount = 1;
+				while(parenthCount!= 0) {
+					++i;
+					if(s[i] == '(') ++parenthCount;
+					else if(s[i] == ')') --parenthCount;
+				}
 			}
-		}
-		//looking for delimiters
-		//arithmetic operators
-		for(int j = 0; j < 5 && delimIndex == -1; j++) 
-			if(s[i]== delim[j][0]) {
+			//check if is current delimiter
+			else if(s[i]== (delim[j])[0]) {
 				delimIndex = i;
 				root->m_left = new Node(root, s.substr(0, i));
 				root->m_right = new Node(root, s.substr(i+1));
@@ -212,50 +208,8 @@ int Tree::parse(Node *root) {
 				parse(root->m_left);
 				parse(root->m_right);
 			}
-		//3 and 4 char func
-		for(int k = 0; k < 2 && delimIndex == -1; k++) {
-			if(delim[5+k].find(s.substr(i, i+3+k) + ";") != -1) {
-				delimIndex = i;
-				root->m_left = new Node(root, s.substr(i+3+k));
-				root->m_right = new Node(root, "");
-				root->m_val = s.substr(i, i+3+k);
-				parse(root->m_left);
-			}
-		}
-		if(delimIndex == -1) {
-			// ln
-			if(s.substr(i, i+2).compare(delim[8]) == 0) {
-				delimIndex = i;
-				root->m_left = new Node(root, s.substr(i+3));
-				root->m_right = new Node(root, "");
-				root->m_val = s.substr(i, i+4);
-				parse(root->m_left);
-			}
-			else if(s[i] == 'e') {
-				delimIndex = i;
-				root->m_left = new Node(root, "");
-				root->m_right = new Node(root, "");
-				root->m_val = s[i];
-			}
-			else if(s.substr(i, i+2).compare("pi") == 0) {
-				delimIndex = i;
-				root->m_left = new Node(root, s.substr(0, i));
-				root->m_right = new Node(root, s.substr(i+2));
-				root->m_val = s.substr(i, i+2);
-				parse(root->m_left);
-				parse(root->m_right);
-			}
-			else if(delim[7].find(s[i]) != -1) {
-				delimIndex == i;
-				root->m_left = new Node(root, "");
-				root->m_right = new Node(root, "");
-				root->m_val = s[i];
-				parseops.emplace("A",pvar);
-				//parseops.emplace(s[i], pvar); //SHOULD ACTUALLY BE SOMETHING LIKE THIS
-			}
 		}
 	}
-	if(delimIndex == -1) return 3;
 	return 0;
 }
 

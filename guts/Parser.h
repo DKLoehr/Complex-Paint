@@ -84,7 +84,7 @@ public:
 
 class Tree { //Hold decomposed expr
 private:
-	string toString(Node *n);
+	string toString(Node *n, string path);
 	int parse(Node *root);
 	Node *m_root;
 	string delim[9] = {"+", "-", "*", "/", "^", "sin;cos;tan;log;abs;", "sqrt;asin;acos;atan;", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ln"}; 
