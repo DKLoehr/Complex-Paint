@@ -87,7 +87,7 @@ private:
 	string toString(Node *n, string path);
 	int parse(Node *root);
 	Node *m_root;
-	string delim[9] = {"+", "-", "*", "/", "^", "sin;cos;tan;log;abs;", "sqrt;asin;acos;atan;", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ln"}; 
+	string delim[9] = {"+", "-", "*", "/", "^", "sin;cos;tan;log;abs;", "sqrt;asin;acos;atan;", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ln;"}; 
 public:
 	Tree(string expr="");
 	~Tree();

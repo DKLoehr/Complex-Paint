@@ -3,14 +3,13 @@
 
 int main() {
 	using namespace parser;
-	string func = "5/pi*(X+Y)";
+	string func = "3/(sin(X*53/2)+5/7*5)";
 	Fct *f = new Fct(func);
 	std::cout << f->toString();
 	return 0;
 }
 
 //		TODO
-// 1. FIX FCT PARSING. LINE 219 OUT OF BOUNDS
 //
 //		LOG
 // 	X

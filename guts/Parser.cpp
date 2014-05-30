@@ -186,10 +186,10 @@ int Tree::parse(Node *root) {
 		length -= 2;
 	}
 
-	int delimIndex = -1;
+	bool foundDelim = false;
 	//Loop through delimiters
-	for(int j = 0; j < 5 && delimIndex == -1; j++) {
-		for(int i = 0; i < length && delimIndex == -1; i++) {
+	for(int j = 0; j < 9 && !foundDelim; j++) {
+		for(int i = 0; i < length && !foundDelim; i++) {
 			//skip paren
 			if(s[i] == '(') { 
 				int parenthCount = 1;
@@ -200,11 +200,51 @@ int Tree::parse(Node *root) {
 				}
 			}
 			//check if is current delimiter
-			else if(s[i]== (delim[j])[0]) {
-				delimIndex = i;
+			else if(s[i]== (delim[j])[0] && j < 5) {
+				foundDelim = true;
 				root->m_left = new Node(root, s.substr(0, i));
 				root->m_right = new Node(root, s.substr(i+1));
 				root->m_val = s[i];
+				parse(root->m_left);
+				parse(root->m_right);
+			}
+			//Length 3 fct
+			else if(i+3 < length && j == 5 && delim[j].find(s.substr(i, i+3) + ";") != -1) {
+				std::cout << "length 3 fcts \n";
+				foundDelim = true;
+				root->m_left = new Node(root, s.substr(0, i));
+				root->m_right = new Node(root, s.substr(i+3));
+				root->m_val = s.substr(i, i+3);
+				parse(root->m_left);
+				parse(root->m_right);
+			}
+			//Length 4 fct
+			else if(i+4 < length && j == 6 && delim[j].find(s.substr(i, i+4) + ";") != -1) {
+				std::cout << "length 4 fcts \n";
+				foundDelim = true;
+				root->m_left = new Node(root, s.substr(0, i));
+				root->m_right = new Node(root, s.substr(i+4));
+				root->m_val = s.substr(i, i+4);
+				parse(root->m_left);
+				parse(root->m_right);
+			}
+			//Length 2 fct
+			else if(i+2 < length && j == 8 && delim[j].find(s.substr(i, i+2) + ";") != -1) {
+				std::cout << "finding ln \n";
+				foundDelim = true;
+				root->m_left = new Node(root, s.substr(0, i));
+				root->m_right = new Node(root, s.substr(i+2));
+				root->m_val = s.substr(i, i+2);
+				parse(root->m_left);
+				parse(root->m_right);
+			}
+			else if(i+2 < length && j == 7 && delim[j].find(s[i]) != -1) {
+				std::cout << "finding var \n";
+				foundDelim = true;
+				root->m_left = new Node(root, s.substr(0, i));
+				root->m_right = new Node(root, s.substr(i+1));
+				root->m_val = s[i];
+				parseops.emplace("A", pvar);
 				parse(root->m_left);
 				parse(root->m_right);
 			}
