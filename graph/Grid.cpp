@@ -153,8 +153,13 @@ void Grid::SetNumbers(bool showNums) {
 }
 
 sf::Vector2f Grid::WindowToGraph(sf::Vector2f wLoc) {
-    double x = wLoc.x - (m_position.x + m_size.x / 2);
-    double y = -(wLoc.y - (m_position.y + m_size.y / 2));
+    double x = wLoc.x, y = wLoc.y;
+    if(x < m_position.x) x = m_position.x;
+    if(x > m_position.x + m_size.x) x = m_position.x + m_size.x;
+    if(y < m_position.y) y = m_position.y;
+    if(y > m_position.y + m_size.y) x = m_position.y + m_size.y;
+    x -= (m_position.x + m_size.x / 2);
+    y = -(y - (m_position.y + m_size.y / 2));
     x /= m_size.x / 2 / m_xRange;
     y /= m_size.y / 2 / m_yRange;
     x += m_center.x;
@@ -174,6 +179,10 @@ sf::Vector2f Grid::GraphToWindow(sf::Vector2f gLoc) {
     x += m_position.x + m_size.x / 2;
     y += m_position.y + m_size.y / 2;
     y += 2 * (m_size.y / 2 + m_position.y - y);
+    if(x < m_position.x) x = m_position.x;
+    if(x > m_position.x + m_size.x) x = m_position.x + m_size.x;
+    if(y < m_position.y) y = m_position.y;
+    if(y > m_position.y + m_size.y) x = m_position.y + m_size.y;
     return sf::Vector2f(x, y);
 }
 

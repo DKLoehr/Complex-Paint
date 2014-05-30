@@ -1,4 +1,6 @@
 #include <SFML/Graphics.hpp>
+#include <complex>
+#include <random>
 #include "gui/button.h"
 #include "gui/text.h"
 #include "gui/checkbox.h"
@@ -95,6 +97,9 @@ int main() {
 
     // Variable containing the number of the active input box
     int activeBox = 0;
+    auto locPos = std::complex<double>(0.0, 0.0);
+    auto factor = std::complex<double>(.37, .5);
+    std::vector<sf::CircleShape> figs = std::vector<sf::CircleShape>(0);
 
     while(window.isOpen() || graphOptions.isOpen() || eqOptions.isOpen()) {
         sf::Event event;
@@ -107,17 +112,42 @@ int main() {
             } else if(event.type == sf::Event::MouseMoved) {
                 sf::Vector2f graphCoords = grid.lGrid.WindowToGraph(event.mouseMove.x, event.mouseMove.y);
                 loc.setPosition(grid.rGrid.GraphToWindow(graphCoords));
-                graphCoords = grid.rGrid.GraphToWindow(graphCoords);
             } else if((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::G) ||
                       (event.type == sf::Event::MouseButtonPressed &&
                        graphModify.IsPressed(event.mouseButton.x, event.mouseButton.y))) {
-                    graphOptions.create(sf::VideoMode(300, 200), "Graph Settings");
-                    window.close();
+                graphOptions.create(sf::VideoMode(300, 200), "Graph Settings");
+                window.close();
             } else if((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::E) ||
                       (event.type == sf::Event::MouseButtonPressed &&
                        eqModify.IsPressed(event.mouseButton.x, event.mouseButton.y))) {
-                    eqOptions.create(sf::VideoMode(320, 240), "Equation and Parameters");
-                    window.close();
+                eqOptions.create(sf::VideoMode(320, 240), "Equation and Parameters");
+                window.close();
+            } else if(event.type == sf::Event::MouseButtonPressed) {
+                int sign = 1;
+                sf::Vector2f graphCoords;
+                if(event.mouseButton.x < window.getSize().x / 2 &&
+                   event.mouseButton.y > 160) { // Only change these if we're inside the left window
+                    graphCoords = grid.lGrid.WindowToGraph(event.mouseButton.x, event.mouseButton.y);
+                    locPos = {graphCoords.x, graphCoords.y};
+                    figs.clear();
+                }
+                for(int iii = 0; iii < 100; iii++) {
+                    locPos = locPos * factor + std::complex<double>(1,5);
+                    /*std::random_device rseed;
+                    std::mt19937 rgen(rseed);
+                    std::uniform_int_distribution<int> idist(0, 100);
+                    if(idist(rgen) < 50) sign = 1;
+                    else sign = -1;
+                    std::cout << sign << "\n";
+                    locPos = factor * sqrt(locPos - std::complex<double>(1 + 1.618, 0));*/
+                    graphCoords = sf::Vector2f(locPos.real(), locPos.imag());
+                    sf::CircleShape newLoc = sf::CircleShape(2, 30);
+                    newLoc.setPosition(grid.rGrid.GraphToWindow(graphCoords) - sf::Vector2f(1,1));
+                    newLoc.setFillColor(sf::Color::Black);
+                    figs.push_back(newLoc);
+                    //loc.setPosition(grid.rGrid.GraphToWindow(graphCoords));
+                    std::cout << graphCoords.x << ", " << graphCoords.y << "\n";
+                }
             }
         }
 
@@ -209,6 +239,9 @@ int main() {
 
         graphModify.Draw();
         eqModify.Draw();
+        for(int iii = 0; iii < figs.size(); iii++) {
+            window.draw(figs[iii]);
+        }
 
         window.draw(loc);
 
