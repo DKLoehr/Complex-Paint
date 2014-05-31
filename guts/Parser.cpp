@@ -244,7 +244,7 @@ int Tree::parse(Node *root) {
 				root->m_left = new Node(root, s.substr(0, i));
 				root->m_right = new Node(root, s.substr(i+1));
 				root->m_val = s[i];
-				parseops.emplace("A", pvar);
+				parseops.emplace(&s[i], pvar);
 				parse(root->m_left);
 				parse(root->m_right);
 			}
@@ -265,6 +265,10 @@ Fct::Fct(string s) {
 
 void Fct::makefct(string s) {
 	m_tree = new Tree(s);
+}
+
+cx Fct::eval() {
+	return m_tree->value();
 }
 
 string Fct::toString() {
