@@ -1,21 +1,27 @@
 #ifndef CHECKBOX_H
 #define CHECKBOX_H
 
-#include "button.h"
+#include "GUI.h"
 
-class Checkbox : public Button
+class Checkbox : public GUI
 {
 private:
-    sf::Text m_cap;
+    //sf::Text m_cap;
     bool m_isToggled;
+
+
+
 public:
     Checkbox(sf::RenderWindow* window, sf::Font font, int x, int y, std::string cap, bool isToggled);
 
-    void Toggle(); // OnEnter
-    bool IsToggled(); // Replace with a string calling thing
-    bool IsPressed(int xP, int yP); //
+    void Toggle();
 
-    void Draw(); //
+    void SetPosition(sf::Vector2f newPos);
+    void SetPosition(double x, double y);
+
+    bool OnEnter(); // Toggles, and returns the newly toggled value
+    bool OnClick(double xP, double yP); // Returns true if the checkbox was clicked
+    void OnTextEntered(char n); // Does nothing
 };
 
 #endif // CHECKBOX_H

@@ -1,15 +1,12 @@
 #include "Checkbox.h"
 
 Checkbox::Checkbox(sf::RenderWindow* window, sf::Font font, int x, int y, std::string cap, bool isToggled)
-    : Button(window, font, x, y, 11, 11, "")
+    : GUI(window, font, x, y, 11, 11)
 {
     m_isToggled = !isToggled;
     Toggle(); // Toggle so we update our string
 
     m_cap.setString(cap);
-    m_cap.setFont(m_f);
-    m_cap.setCharacterSize(15);
-    m_cap.setColor(sf::Color::Black);
 
     m_rectangle.setPosition(x + cap.length() * 10, y + 5);
     m_text.setPosition(x + cap.length() * 10 + 1, y);
@@ -24,23 +21,31 @@ void Checkbox::Toggle() {
         m_text.setString("");
 }
 
-bool Checkbox::IsToggled() {
+void Checkbox::SetPosition(sf::Vector2f newPos) {
+    SetPosition(newPos.x, newPos.y);
+}
+
+void Checkbox::SetPosition(double x, double y) {
+    std::string str = m_cap.getString();
+    m_rectangle.setPosition(x + str.length() * 10, y + 5);
+    m_text.setPosition(x + str.length() * 10 + 1, y);
+    m_cap.setPosition(x, y);
+}
+bool Checkbox::OnEnter() {
+    Toggle();
     return m_isToggled;
 }
 
-bool Checkbox::IsPressed(int xP, int yP) {
-    if((m_rectangle.getPosition().x - 3) * m_w->getSize().x / m_wWidth < xP &&
-       xP < (m_width + m_rectangle.getPosition().x) *  m_w->getSize().x / m_wWidth &&
-       (m_y + 2) * m_w->getSize().y / m_wHeight < yP && yP < (m_y + m_height + 6) * m_w->getSize().y / m_wHeight)
-        return true;
-    else
-        return false;
+bool Checkbox::OnClick(double xP, double yP) {
+    double xScale = m_w->getSize().x / m_wSize.x, yScale = m_w->getSize().y / m_wSize.y;
+
+    if((m_position.x - 3) * xScale < xP && xP < (m_position.x + m_size.x + 3) * xScale &&
+       (m_position.y - 3) * yScale < yP && yP < (m_position.y + m_size.y + 2) * yScale)
+        Toggle();
+
+    return m_isToggled;
 }
 
-void Checkbox::Draw() {
-    m_w->draw(m_rectangle);
-    m_text.setFont(m_f); // Dealing with an incredibly weird and annoying bug
-    m_w->draw(m_text);
-    m_cap.setFont(m_f); // Dealing with an incredibly weird and annoying bug
-    m_w->draw(m_cap);
+void Checkbox::OnTextEntered(char n) {
+    return;
 }

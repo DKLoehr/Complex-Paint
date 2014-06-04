@@ -42,13 +42,9 @@ std::string GUI::GetText() {
     return m_text.getString();
 }
 
-void GUI::SetPosition(double x, double y) {
-    SetPosition(sf::Vector2f(x, y));
-}
-
 void GUI::Draw() {
-    //m_text.setFont(m_f); // Workaround for an obnoxious bug
-    //m_cap.setFont(m_f);
+    m_text.setFont(m_f); // Workaround for an obnoxious bug
+    m_cap.setFont(m_f);
 
     m_w->draw(m_rectangle);
     m_w->draw(m_text);

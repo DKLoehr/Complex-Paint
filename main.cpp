@@ -143,12 +143,12 @@ int main1() {
                 loc.setPosition(grid.rGrid.GraphToWindow(graphCoords));
             } else if((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::G) ||
                       (event.type == sf::Event::MouseButtonPressed &&
-                       graphModify.IsPressed(event.mouseButton.x, event.mouseButton.y))) {
+                       graphModify.OnClick(event.mouseButton.x, event.mouseButton.y))) {
                 graphOptions.create(sf::VideoMode(300, 200), "Graph Settings");
                 window.close();
             } else if((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::E) ||
                       (event.type == sf::Event::MouseButtonPressed &&
-                       eqModify.IsPressed(event.mouseButton.x, event.mouseButton.y))) {
+                       eqModify.OnClick(event.mouseButton.x, event.mouseButton.y))) {
                 eqOptions.create(sf::VideoMode(320, 240), "Equation and Parameters");
                 window.close();
             } else if(event.type == sf::Event::MouseButtonPressed) {
@@ -199,37 +199,37 @@ int main1() {
                     activeBox = ++activeBox % 10;
                 graphInputs[activeBox].SetBoxColor(sf::Color::White);
             } else if(event.type == sf::Event::TextEntered) {
-                graphInputs[activeBox].EnterText(event.text.unicode);
+                graphInputs[activeBox].OnTextEntered(event.text.unicode);
             } else if(event.type == sf::Event::MouseButtonPressed &&
-                      !okGraph.IsPressed(event.mouseButton.x, event.mouseButton.y)) {
-                if(numbersI.IsPressed(event.mouseButton.x, event.mouseButton.y))
+                      !okGraph.OnClick(event.mouseButton.x, event.mouseButton.y)) {
+                if(numbersI.OnClick(event.mouseButton.x, event.mouseButton.y))
                     numbersI.Toggle();
-                if(linesI.IsPressed(event.mouseButton.x, event.mouseButton.y))
+                if(linesI.OnClick(event.mouseButton.x, event.mouseButton.y))
                     linesI.Toggle();
-                if(numbersO.IsPressed(event.mouseButton.x, event.mouseButton.y))
+                if(numbersO.OnClick(event.mouseButton.x, event.mouseButton.y))
                     numbersO.Toggle();
-                if(linesO.IsPressed(event.mouseButton.x, event.mouseButton.y))
+                if(linesO.OnClick(event.mouseButton.x, event.mouseButton.y))
                     linesO.Toggle();
                 } else if((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Return) ||
                           (event.type == sf::Event::MouseButtonPressed &&
-                           okGraph.IsPressed(event.mouseButton.x, event.mouseButton.y))) {
+                           okGraph.OnClick(event.mouseButton.x, event.mouseButton.y))) {
                     grid.lGrid.SetRange(graphInputs[0].GetStringAsDouble(),
                                         graphInputs[1].GetStringAsDouble());
                     grid.lGrid.SetScale(graphInputs[2].GetStringAsDouble(),
                                         graphInputs[3].GetStringAsDouble());
-                    if(graphInputs[4].GetStoredString() != "")
+                    if(graphInputs[4].GetText() != "")
                         grid.lGrid.SetCenter(graphInputs[4].GetStringAsVector());
-                    grid.lGrid.SetNumbers(numbersI.IsToggled());
-                    grid.lGrid.SetLines(linesI.IsToggled());
+                    grid.lGrid.SetNumbers(numbersI.GetText() == "x");
+                    grid.lGrid.SetLines(linesI.GetText() == "x");
 
                     grid.rGrid.SetRange(graphInputs[5].GetStringAsDouble(),
                                         graphInputs[6].GetStringAsDouble());
                     grid.rGrid.SetScale(graphInputs[7].GetStringAsDouble(),
                                         graphInputs[8].GetStringAsDouble());
-                    if(graphInputs[9].GetStoredString() != "")
+                    if(graphInputs[9].GetText() != "")
                         grid.rGrid.SetCenter(graphInputs[9].GetStringAsVector());
-                    grid.rGrid.SetNumbers(numbersO.IsToggled());
-                    grid.rGrid.SetLines(linesO.IsToggled());
+                    grid.rGrid.SetNumbers(numbersO.GetText() == "x");
+                    grid.rGrid.SetLines(linesO.GetText() == "x");
 
                     window.create(sf::VideoMode(1265, 620), "Complex Paint Revamped");
                     graphOptions.close();
@@ -243,9 +243,9 @@ int main1() {
                 window.create(sf::VideoMode(1265, 620), "Complex Paint Revamped");
                 eqOptions.close();
             } else if(event.type == sf::Event::TextEntered) {
-                eqEnter.EnterText(event.text.unicode);
+                eqEnter.OnTextEntered(event.text.unicode);
             } else if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Return) {
-                equation.SetString(eqEnter.GetStoredString());
+                equation.SetText(eqEnter.GetText());
                 window.create(sf::VideoMode(1265, 620), "Complex Paint Revamped");
                 eqOptions.close();
             }

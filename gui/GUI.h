@@ -24,12 +24,12 @@ public:
 
     void SetBoxColor(sf::Color c);
 
-    virtual void SetPosition(sf::Vector2f newPos) {}
-    virtual void SetPosition(double x, double y);
+    virtual void SetPosition(sf::Vector2f newPos) = 0;
+    virtual void SetPosition(double x, double y) = 0;
 
-    virtual void OnEnter() {}
-    virtual void OnClick(int xP, int yP) {}
-    virtual void OnTextEntered(char n) {}
+    virtual bool OnEnter() = 0;
+    virtual bool OnClick(double xP, double yP) = 0; // Returns true if the gui element was clicked
+    virtual void OnTextEntered(char n) = 0;
 
     void SetText(std::string str);
     std::string GetText();
