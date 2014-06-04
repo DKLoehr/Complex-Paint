@@ -58,6 +58,8 @@
 		<Unit filename="gui/text.cpp" />
 		<Unit filename="gui/text.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="runner.cpp" />
+		<Unit filename="runner.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

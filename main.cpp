@@ -5,25 +5,54 @@
 #include "gui/text.h"
 #include "gui/checkbox.h"
 #include "graph/DoubleGrid.h"
+#include "runner.h"
 #include <iostream>
 
+int main1();
+int main2();
+
 int main() {
+    main1();
+    //main2();
+    return 0;
+}
+
+int main2() {
+    sf::Font inFont;
+    if(!inFont.loadFromFile("VeraMono.ttf")){/*error handling*/}
+
+    sf::RenderWindow window(sf::VideoMode(1265, 725), "Complex Paint Revamped");
+    window.setPosition(sf::Vector2i(0, 0));
+
+    Runner run = Runner(&window, inFont);
+
+    while(window.isOpen()) {
+        sf::Event event;
+        while(window.pollEvent(event)) {
+            if(event.type == sf::Event::Closed)
+                window.close();
+        };
+        run.Draw();
+    }
+}
+
+int main1() {
     sf::Font inFont;
     if(!inFont.loadFromFile("VeraMono.ttf")){/*error handling*/}
 
     /****** Main window ******/
     //{
-    sf::RenderWindow window(sf::VideoMode(1265, 620), "Complex Paint Revamped");
-    window.setPosition(sf::Vector2i(0, 100));
+    sf::RenderWindow window(sf::VideoMode(1265, 725), "Complex Paint Revamped");
+    window.setPosition(sf::Vector2i(0, 0));
 
     InputBox equation = InputBox(&window, inFont, 1, 1, 200, 15);
 
-    DoubleGrid grid = DoubleGrid(&window, inFont, 160);
+    DoubleGrid grid = DoubleGrid(&window, inFont, 200);
 
     Button graphModify = Button(&window, inFont, window.getSize().x / 2 - 54, 140, 117, 15, "Modify Graphs");
     Button eqModify = Button(&window, inFont, 210, 2, 135, 15, "Modify Equation");
 
-    sf::CircleShape loc = sf::CircleShape(2, 30);
+    sf::CircleShape loc = sf::CircleShape(1, 30);
     loc.setFillColor(sf::Color::Black);
     //}
 
@@ -131,17 +160,13 @@ int main() {
                     locPos = {graphCoords.x, graphCoords.y};
                     figs.clear();
                 }
-                for(int iii = 0; iii < 100; iii++) {
-                    locPos = locPos * factor + std::complex<double>(1,5);
-                    /*std::random_device rseed;
-                    std::mt19937 rgen(rseed);
-                    std::uniform_int_distribution<int> idist(0, 100);
-                    if(idist(rgen) < 50) sign = 1;
+                for(int iii = 0; iii < 10000; iii++) {
+                    //locPos = locPos * factor + std::complex<double>(1,5);
+                    if(rand() < RAND_MAX / 2) sign = 1;
                     else sign = -1;
-                    std::cout << sign << "\n";
-                    locPos = factor * sqrt(locPos - std::complex<double>(1 + 1.618, 0));*/
+                    locPos = std::complex<double>(sign, 0) * sqrt(locPos + std::complex<double>(1, 0));
                     graphCoords = sf::Vector2f(locPos.real(), locPos.imag());
-                    sf::CircleShape newLoc = sf::CircleShape(2, 30);
+                    sf::CircleShape newLoc = sf::CircleShape(1, 30);
                     newLoc.setPosition(grid.rGrid.GraphToWindow(graphCoords) - sf::Vector2f(1,1));
                     newLoc.setFillColor(sf::Color::Black);
                     figs.push_back(newLoc);

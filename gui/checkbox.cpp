@@ -39,6 +39,8 @@ bool Checkbox::IsPressed(int xP, int yP) {
 
 void Checkbox::Draw() {
     m_w->draw(m_rectangle);
+    m_text.setFont(m_f); // Dealing with an incredibly weird and annoying bug
     m_w->draw(m_text);
+    m_cap.setFont(m_f); // Dealing with an incredibly weird and annoying bug
     m_w->draw(m_cap);
 }

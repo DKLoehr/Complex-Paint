@@ -88,6 +88,8 @@ void Grid::MakeGrid() {
         if(num.getPosition().x < m_size.x + m_position.x) // Don't display numbers outside of our boundary
             m_numberLabels.push_back(num);
 
+        m_w->draw(num);
+
         m_lines.append(sf::Vertex(m_lines[initialIndex].position + sf::Vector2f(iii * -delta, m_size.y / 2 - length)));
         m_lines.append(sf::Vertex(m_lines[initialIndex + 1].position + sf::Vector2f(iii * -delta, -m_size.y / 2 + length)));
 
@@ -194,6 +196,7 @@ void Grid::Draw() {
     m_w->draw(m_lines);
     if(m_dispNumbers) {
         for(int iii = 0; iii < m_numberLabels.size(); iii++) {
+            m_numberLabels[iii].setFont(m_f); // Dealing with an incredibly weird and annoying bug
             m_w->draw(m_numberLabels[iii]);
         }
     }

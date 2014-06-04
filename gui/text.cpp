@@ -3,8 +3,29 @@
 #include "text.h"
 #include <iostream>
 
-InputBox::InputBox() {
+InputBox::InputBox():
+    m_stored(),
+    m_cap(),
+    m_rectangle(),
+    m_f()
+{
+    if(!m_f.loadFromFile("VeraMono.ttf")){/*error handling*/}
+    m_width = 1;
+    m_height = 1;
+    m_isFocused = false;
 
+    m_stored.setString("");
+    m_stored.setFont(m_f);
+    m_stored.setCharacterSize(15);
+    m_stored.setColor(sf::Color::Black);
+
+    m_cap.setString("");
+    m_stored.setFont(m_f);
+    m_cap.setCharacterSize(15);
+    m_cap.setColor(sf::Color::Black);
+
+    m_rectangle.setOutlineThickness(2);
+    m_rectangle.setOutlineColor(sf::Color(100,100,100));
 }
 
 InputBox::InputBox(sf::RenderWindow* window, sf::Font font, int x, int y, int charWidth, int charHeight,
@@ -104,7 +125,10 @@ void InputBox::Draw() {
         std::string strShown = str.substr(str.length() - m_width / 10 - 1, std::string::npos);
         m_stored.setString(strShown);
     }
+    m_stored.setFont(m_f); // Dealing with an incredibly weird and annoying bug
     m_w->draw(m_stored);
     m_stored.setString(str);
+
+    m_cap.setFont(m_f); // Dealing with an incredibly weird and annoying bug
     m_w->draw(m_cap);
 }
