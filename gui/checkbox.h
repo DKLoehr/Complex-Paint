@@ -11,11 +11,11 @@ private:
 public:
     Checkbox(sf::RenderWindow* window, sf::Font font, int x, int y, std::string cap, bool isToggled);
 
-    void Toggle();
-    bool IsToggled();
-    bool IsPressed(int xP, int yP);
+    void Toggle(); // OnEnter
+    bool IsToggled(); // Replace with a string calling thing
+    bool IsPressed(int xP, int yP); //
 
-    void Draw();
+    void Draw(); //
 };
 
 #endif // CHECKBOX_H

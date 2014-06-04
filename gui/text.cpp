@@ -12,7 +12,6 @@ InputBox::InputBox():
     if(!m_f.loadFromFile("VeraMono.ttf")){/*error handling*/}
     m_width = 1;
     m_height = 1;
-    m_isFocused = false;
 
     m_stored.setString("");
     m_stored.setFont(m_f);
@@ -39,7 +38,6 @@ InputBox::InputBox(sf::RenderWindow* window, sf::Font font, int x, int y, int ch
     m_y = y;
     m_width = charWidth;
     m_height = charHeight;
-    m_isFocused = false;
 
     m_stored.setString("");
     m_stored.setFont(m_f);

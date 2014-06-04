@@ -3,7 +3,7 @@
 	"button.h"
 	<iostream>
 
-1401899785 c:\users\devon\desktop\workspace\complex paint\gui\button.h
+1401901785 c:\users\devon\desktop\workspace\complex paint\gui\button.h
 	<SFML/Graphics.hpp>
 	<string>
 	"text.h"
@@ -342,7 +342,7 @@
 	<string>
 	<vector>
 
-1401901033 c:\users\devon\desktop\workspace\complex paint\gui\text.h
+1401901785 c:\users\devon\desktop\workspace\complex paint\gui\text.h
 	<SFML/Graphics.hpp>
 	<string>
 
@@ -382,7 +382,7 @@
 1401818915 source:c:\users\devon\desktop\workspace\complex paint\gui\checkbox.cpp
 	"Checkbox.h"
 
-1400985701 c:\users\devon\desktop\workspace\complex paint\gui\checkbox.h
+1401901785 c:\users\devon\desktop\workspace\complex paint\gui\checkbox.h
 	"button.h"
 
 1401897528 source:c:\users\devon\desktop\workspace\complex paint\runner.cpp
@@ -398,9 +398,9 @@
 	"graph/DoubleGrid.h"
 	<iostream>
 
-1401899751 source:c:\users\devon\desktop\workspace\complex paint\gui\gui.cpp
+1401901785 source:c:\users\devon\desktop\workspace\complex paint\gui\gui.cpp
 	"GUI.h"
 
-1401901033 c:\users\devon\desktop\workspace\complex paint\gui\gui.h
+1401901785 c:\users\devon\desktop\workspace\complex paint\gui\gui.h
 	<SFML/Graphics.hpp>
 

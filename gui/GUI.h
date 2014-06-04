@@ -28,9 +28,12 @@ public:
 
     virtual void OnEnter() {}
     virtual void OnClick(int xP, int yP) {}
-    virtual void OnText(char n) {}
+    virtual void OnTextEntered(char n) {}
 
-    virtual void Draw() {}
+    void SetText(std::string str);
+    std::string GetText();
+
+    virtual void Draw();
 };
 
 #endif // GUI_H

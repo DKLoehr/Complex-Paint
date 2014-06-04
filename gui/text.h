@@ -21,7 +21,6 @@ public:
 class InputBox {
 private:
     sf::Font m_f;
-    bool m_isFocused;
     int m_x;
     int m_y;
     int m_width;

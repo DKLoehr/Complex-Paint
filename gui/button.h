@@ -23,12 +23,12 @@ protected:
 public:
     Button(sf::RenderWindow* window, sf::Font font, int x, int y, int width, int height, std::string str);
 
-    bool IsPressed(int xP,int yP); //only activates if the button was actually at the x and y location
+    bool IsPressed(int xP,int yP); //
 
-    void Draw();
+    void Draw(); //
 
-    void SetText(std::string str);
-//    std::string GetText();
+    void SetText(std::string str); //
+    std::string GetText(); //
 };
 
 #endif //BUTTON_H

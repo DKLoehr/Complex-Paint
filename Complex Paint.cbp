@@ -16,6 +16,7 @@
 				<Compiler>
 					<Add option="-g" />
 					<Add directory="graph" />
+					<Add directory="gui" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -27,6 +28,7 @@
 				<Compiler>
 					<Add option="-O2" />
 					<Add directory="graph" />
+					<Add directory="gui" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -51,6 +53,8 @@
 		<Unit filename="graph/DoubleGrid.h" />
 		<Unit filename="graph/Grid.cpp" />
 		<Unit filename="graph/Grid.h" />
+		<Unit filename="gui/GUI.cpp" />
+		<Unit filename="gui/GUI.h" />
 		<Unit filename="gui/button.cpp" />
 		<Unit filename="gui/button.h" />
 		<Unit filename="gui/checkbox.cpp" />
