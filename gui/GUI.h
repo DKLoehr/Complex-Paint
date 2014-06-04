@@ -20,6 +20,7 @@ protected:
     sf::RectangleShape m_rectangle;
 public:
     GUI();
+    GUI(sf::RenderWindow* window, sf::Font font, double x, double y, double width, double height);
 
     void SetBoxColor(sf::Color c);
 
