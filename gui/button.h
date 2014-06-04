@@ -25,12 +25,10 @@ public:
 
     bool IsPressed(int xP,int yP); //only activates if the button was actually at the x and y location
 
-    double GetHeight();
-
     void Draw();
 
     void SetText(std::string str);
-    std::string GetText();
+//    std::string GetText();
 };
 
 #endif //BUTTON_H

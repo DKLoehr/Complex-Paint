@@ -27,10 +27,6 @@ Button::Button(sf::RenderWindow* window, sf::Font font, int x, int y, int width,
     m_text.setPosition(x, y - 2);
 }
 
-double Button::GetHeight() {
-    return m_height;
-}
-
 void Button::Draw() {
     m_w->draw(m_rectangle);
     m_text.setFont(m_f); // Dealing with an incredibly weird and annoying bug
@@ -47,8 +43,4 @@ bool Button::IsPressed(int xP, int yP) {
 
 void Button::SetText(std::string str){
     m_text.setString(str);
-}
-
-std::string Button::GetText(){
-    return m_text.getString();
 }

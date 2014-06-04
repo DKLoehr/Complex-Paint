@@ -160,7 +160,7 @@ int main1() {
                     locPos = {graphCoords.x, graphCoords.y};
                     figs.clear();
                 }
-                for(int iii = 0; iii < 10000; iii++) {
+                for(int iii = 0; iii < 1000; iii++) {
                     //locPos = locPos * factor + std::complex<double>(1,5);
                     if(rand() < RAND_MAX / 2) sign = 1;
                     else sign = -1;
@@ -171,7 +171,6 @@ int main1() {
                     newLoc.setFillColor(sf::Color::Black);
                     figs.push_back(newLoc);
                     //loc.setPosition(grid.rGrid.GraphToWindow(graphCoords));
-                    std::cout << graphCoords.x << ", " << graphCoords.y << "\n";
                 }
             }
         }

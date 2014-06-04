@@ -27,6 +27,8 @@ private:
     int m_width;
     int m_height;
 
+    bool IsValid(char n);
+
     sf::Text m_stored;
     sf::Text m_cap;
     sf::RenderWindow* m_w;
@@ -35,17 +37,16 @@ public:
     InputBox(); // Warning -- since this doesn't take a window, this is useless!
     InputBox(sf::RenderWindow* window, sf::Font font, int x, int y, int charWidth, int charHeight, std::string cap = "");
 
-    void EnterText(char n);
-    void SetString(std::string str);
-    void SetBoxColor(sf::Color c);
+    void EnterText(char n);         //
+    void SetString(std::string str);//
+    void SetBoxColor(sf::Color c);  //
 
-    bool IsValid(char n);
 
-    std::string GetStoredString();
+    std::string GetStoredString();  //
     double GetStringAsDouble(); // Only call if you know the string is just a single number
     sf::Vector2f GetStringAsVector(); // Only call if you know the string is of the form "(int, int)"
 
-    void Draw();
+    void Draw(); //
 };
 
 #endif //INPUT_BOX_H
