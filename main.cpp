@@ -12,8 +12,8 @@ int main1();
 int main2();
 
 int main() {
-    main1();
-    //main2();
+    //main1();
+    main2();
     return 0;
 }
 
@@ -24,20 +24,21 @@ int main2() {
     sf::RenderWindow window(sf::VideoMode(1265, 725), "Complex Paint Revamped");
     window.setPosition(sf::Vector2i(0, 0));
 
-    Runner run = Runner(&window, inFont);
+    Runner run = Runner(&window, &inFont);
 
     while(window.isOpen()) {
         run.HandleEvents();
         run.Draw();
     }
+    return 0;
 }
 
-int main1() {
+int main1() {/*
     sf::Font inFont;
     if(!inFont.loadFromFile("VeraMono.ttf")){/*error handling*/}
 
     /****** Main window ******/
-    //{
+    /*//{
     sf::RenderWindow window(sf::VideoMode(1265, 725), "Complex Paint Revamped");
     window.setPosition(sf::Vector2i(0, 0));
 
@@ -55,7 +56,7 @@ int main1() {
 
     /****** Graph settings window ******/
     //{
-    sf::RenderWindow graphOptions(sf::VideoMode(300, 200), "Graph Settings");
+    /*sf::RenderWindow graphOptions(sf::VideoMode(300, 200), "Graph Settings");
     graphOptions.close();
 
     // The OK button
@@ -113,7 +114,7 @@ int main1() {
 
     /****** Equation setting window ******/
     //{
-    sf::RenderWindow eqOptions(sf::VideoMode(320, 240), "Equation and Parameters");
+    /*sf::RenderWindow eqOptions(sf::VideoMode(320, 240), "Equation and Parameters");
     eqOptions.close();
 
     InputBox eqEnter = InputBox(&eqOptions, inFont, 5, 5, 310, 15, "");
@@ -130,7 +131,7 @@ int main1() {
         sf::Event event;
 
         /** Event Handling for the main window **/
-        while(window.pollEvent(event)) {
+     /*   while(window.pollEvent(event)) {
             if(event.type == sf::Event::Closed || (event.type == sf::Event::KeyPressed &&
                                                    event.key.code == sf::Keyboard::Escape)) {
                 window.close();
@@ -172,7 +173,7 @@ int main1() {
         }
 
         /** Event Handling for the graph window **/
-        while(graphOptions.pollEvent(event)) {
+       /* while(graphOptions.pollEvent(event)) {
             if(event.type == sf::Event::Closed || (event.type == sf::Event::KeyPressed &&
                                                    event.key.code == sf::Keyboard::Escape)) {
                 window.create(sf::VideoMode(1265, 620), "Complex Paint Revamped");
@@ -233,7 +234,7 @@ int main1() {
         }
 
         /** Event Handling for the equation window **/
-        while(eqOptions.pollEvent(event)) {
+        /*while(eqOptions.pollEvent(event)) {
             if(event.type == sf::Event::Closed || (event.type == sf::Event::KeyPressed &&
                                                    event.key.code == sf::Keyboard::Escape)) {
                 window.create(sf::VideoMode(1265, 620), "Complex Paint Revamped");
@@ -249,7 +250,7 @@ int main1() {
 
         /** Draw everything to the windows **/
         //{
-        window.clear(sf::Color::White);
+       /* window.clear(sf::Color::White);
         graphOptions.clear(sf::Color::White);
         eqOptions.clear(sf::Color::White);
 
@@ -292,3 +293,4 @@ int main1() {
     }
     return 0;
 }
+*/

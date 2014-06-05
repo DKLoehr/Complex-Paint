@@ -13,39 +13,51 @@
 class Runner
 {
 private:
+    int activeBox;
+
     sf::RenderWindow* window;
-    sf::Font inFont;
+    sf::Font* inFont;
 
     std::vector<GUI*> elements; // An alternate way of accessing each gui element
 
     DoubleGrid grid;
     sf::CircleShape loc;
 
-    InputBox xRangeL; // 0
-    InputBox yRangeL; // 1
-    InputBox xScaleL; // 2
-    InputBox yScaleL; // 3
-    InputBox centerL; // 4
-    InputBox xRangeR; // 5
-    InputBox yRangeR; // 6
-    InputBox xScaleR; // 7
-    InputBox yScaleR; // 8
-    InputBox centerR; // 9
+    sf::Text lTitle;
+    sf::Text rTitle;
+
+    InputBox xRangeL;   // 0
+    InputBox yRangeL;   // 1
+    InputBox xScaleL;   // 2
+    InputBox yScaleL;   // 3
+    InputBox centerL;   // 4
+    InputBox xRangeR;   // 5
+    InputBox yRangeR;   // 6
+    InputBox xScaleR;   // 7
+    InputBox yScaleR;   // 8
+    InputBox centerR;   // 9
 
     Checkbox numbersL;  // 10
     Checkbox linesL;    // 11
     Checkbox numbersR;  // 12
-    Checkbox linesR;    //13
+    Checkbox linesR;    // 13
 
-    Button okGraph; // 14
+    Button okGraph;     // 14
 
-    InputBox equation;
+    InputBox equation;  // 15
+
+    Button okEquation;  // 16
 
     void Init();
 public:
-    Runner(sf::RenderWindow* w, sf::Font font);
+    Runner(sf::RenderWindow* w, sf::Font* font);
 
     void HandleEvents();
+
+    void SetActiveElement(double x, double y);
+    void StepActiveElement(bool increment); // Increased activeBox by 1 if true, decreases if false, keeping it in valid bounds
+    void UpdateGraphs(); // Apply changes from the graph input elements to the two graphs
+    void UpdateEquation();
 
     void Draw();
 };

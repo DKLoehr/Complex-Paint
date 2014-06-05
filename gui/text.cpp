@@ -7,7 +7,7 @@ InputBox::InputBox() {
 
 }
 
-InputBox::InputBox(sf::RenderWindow* window, sf::Font font, int x, int y, int width, int height,
+InputBox::InputBox(sf::RenderWindow* window, sf::Font* font, int x, int y, int width, int height,
                    std::string cap):
     GUI(window, font, x, y, width, height)
 {
@@ -29,6 +29,15 @@ bool InputBox::IsValid(char n) {
         return false;
 }
 
+void InputBox::SetActive(bool active) {
+    isActive = active;
+    if(isActive) {
+        m_rectangle.setFillColor(sf::Color::White);
+    } else {
+        m_rectangle.setFillColor(sf::Color(150, 150, 150));
+    }
+}
+
 void InputBox::SetPosition(sf::Vector2f newPos) {
     SetPosition(newPos.x, newPos.y);
 }
@@ -45,10 +54,28 @@ bool InputBox::OnEnter() {
 }
 
 bool InputBox::OnClick(double xP, double yP) {
-    return false;
+    double xScale = m_w->getSize().x / m_wSize.x, yScale = m_w->getSize().y / m_wSize.y;
+    int cap = (((std::string)m_cap.getString()).length() + 1) * 10;
+
+    if((m_position.x - 3) * xScale < xP && xP < (m_position.x + m_size.x + cap + 5) * xScale &&
+       (m_position.y - 3) * yScale < yP && yP < (m_position.y + m_size.y + 2) * yScale)
+        return true;
+    else
+        return false;
 }
 
 void InputBox::OnTextEntered(char n) {
+    if(IsValid(n)) { // n is a valid character
+        std::string temp = m_text.getString();
+        if(n != 8) { // Some character
+            m_text.setString(temp.substr(0, temp.length()) + n);
+        } else if(n == 8) { // Backspace
+            m_text.setString(temp.substr(0, temp.length() - 1));
+        }
+    }
+}
+
+void InputBox::EnterText(char n) {
     if(IsValid(n)) { // n is a valid character
         std::string temp = m_text.getString();
         if(n != 8) { // Some character

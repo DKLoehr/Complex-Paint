@@ -6,17 +6,16 @@ GUI::GUI()
 
 }
 
-GUI::GUI(sf::RenderWindow* window, sf::Font font, double x, double y, double width, double height) :
+GUI::GUI(sf::RenderWindow* window, sf::Font* font, double x, double y, double width, double height) :
     m_w(window),
     m_f(font),
     m_position(x, y),
     m_size(width, height),
     m_wSize(window->getSize()),
-    m_text("", font),
-    m_cap("", font),
+    m_text("", *font),
+    m_cap("", *font),
     m_rectangle(sf::Vector2f(width, height))
 {
-    isFirstRun = true;
     m_text.setColor(sf::Color::Black);
     m_text.setCharacterSize(15);
 
@@ -36,6 +35,14 @@ void GUI::SetBoxColor(sf::Color c) {
     m_rectangle.setFillColor(c);
 }
 
+sf::Vector2f GUI::GetPosition() {
+    return m_position;
+}
+
+sf::Vector2f GUI::GetSize() {
+    return m_size;
+}
+
 void GUI::SetText(std::string str) {
     m_text.setString(str);
 }
@@ -45,12 +52,6 @@ std::string GUI::GetText() {
 }
 
 void GUI::Draw() {
-    if(isFirstRun) {  // Workaround for an obnoxious bug
-        isFirstRun = false;
-        m_text.setFont(m_f);
-        m_cap.setFont(m_f);
-    }
-
     m_w->draw(m_rectangle);
     m_w->draw(m_text);
     m_w->draw(m_cap);

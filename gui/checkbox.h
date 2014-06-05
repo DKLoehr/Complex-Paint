@@ -11,14 +11,16 @@ private:
 
 public:
     Checkbox(); // Note: This does not take a window, so it is useless
-    Checkbox(sf::RenderWindow* window, sf::Font font, int x, int y, std::string cap, bool isToggled);
+    Checkbox(sf::RenderWindow* window, sf::Font* font, int x, int y, std::string cap, bool isToggled);
 
     void Toggle();
+
+    void SetActive(bool active);
 
     void SetPosition(sf::Vector2f newPos);
     void SetPosition(double x, double y);
 
-    bool OnEnter(); // Toggles, and returns the newly toggled value
+    bool OnEnter(); // Toggles, and returns true
     bool OnClick(double xP, double yP); // Returns true if the checkbox was clicked
     void OnTextEntered(char n); // Does nothing
 };

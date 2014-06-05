@@ -2,12 +2,14 @@
 #define GUI_H
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
+
+class Runner;
 
 class GUI
 {
 protected:
     bool isActive;
-    bool isFirstRun;
 
     sf::RenderWindow* m_w;
 
@@ -15,15 +17,17 @@ protected:
     sf::Vector2f m_size;     // Width and heights
     sf::Vector2f m_wSize;    // Initial width and height of the window (for dealing with resizing)
 
-    sf::Font m_f;
+    sf::Font* m_f;
     sf::Text m_text;
     sf::Text m_cap;
     sf::RectangleShape m_rectangle;
 public:
     GUI();
-    GUI(sf::RenderWindow* window, sf::Font font, double x, double y, double width, double height);
+    GUI(sf::RenderWindow* window, sf::Font* font, double x, double y, double width, double height);
 
     void SetBoxColor(sf::Color c);
+
+    virtual void SetActive(bool active) = 0;
 
     virtual void SetPosition(sf::Vector2f newPos) = 0;
     virtual void SetPosition(double x, double y) = 0;
@@ -31,6 +35,9 @@ public:
     virtual bool OnEnter() = 0;
     virtual bool OnClick(double xP, double yP) = 0; // Returns true if the gui element was clicked
     virtual void OnTextEntered(char n) = 0;
+
+    sf::Vector2f GetPosition();
+    sf::Vector2f GetSize();
 
     void SetText(std::string str);
     std::string GetText();
