@@ -7,6 +7,7 @@ class GUI
 {
 protected:
     bool isActive;
+    bool isFirstRun;
 
     sf::RenderWindow* m_w;
 

@@ -1,4 +1,5 @@
 #include "GUI.h"
+#include <iostream>
 
 GUI::GUI()
 {
@@ -15,6 +16,7 @@ GUI::GUI(sf::RenderWindow* window, sf::Font font, double x, double y, double wid
     m_cap("", font),
     m_rectangle(sf::Vector2f(width, height))
 {
+    isFirstRun = true;
     m_text.setColor(sf::Color::Black);
     m_text.setCharacterSize(15);
 
@@ -43,8 +45,11 @@ std::string GUI::GetText() {
 }
 
 void GUI::Draw() {
-    m_text.setFont(m_f); // Workaround for an obnoxious bug
-    m_cap.setFont(m_f);
+    if(isFirstRun) {  // Workaround for an obnoxious bug
+        isFirstRun = false;
+        m_text.setFont(m_f);
+        m_cap.setFont(m_f);
+    }
 
     m_w->draw(m_rectangle);
     m_w->draw(m_text);
