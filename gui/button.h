@@ -6,6 +6,7 @@
 class Button : public GUI
 {
 public:
+    Button(); // Note: this doesn't take a window, and so won't create a useful object
     Button(sf::RenderWindow* window, sf::Font font, int x, int y, int width, int height, std::string str);
 
     void SetPosition(sf::Vector2f newPos);

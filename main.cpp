@@ -12,8 +12,8 @@ int main1();
 int main2();
 
 int main() {
-    main1();
-    //main2();
+    //main1();
+    main2();
     return 0;
 }
 
@@ -27,11 +27,7 @@ int main2() {
     Runner run = Runner(&window, inFont);
 
     while(window.isOpen()) {
-        sf::Event event;
-        while(window.pollEvent(event)) {
-            if(event.type == sf::Event::Closed)
-                window.close();
-        };
+        run.HandleEvents();
         run.Draw();
     }
 }
@@ -63,40 +59,40 @@ int main1() {
     graphOptions.close();
 
     // The OK button
-    Button okGraph = Button(&graphOptions, inFont, graphOptions.getSize().x / 2 - 54, graphOptions.getSize().y - 20,
+    Button okGraph = Button(&window, inFont, window.getSize().x * 7 / 8 - 54, 175,
                                 108, 15, "Save Changes");
 
     // Title and checkboxes for the input (left-hand) graph
-    sf::Text inTitle = sf::Text("Input", inFont, 15);
-    inTitle.setPosition(graphOptions.getSize().x / 4 - 25, 5);
+    sf::Text inTitle = sf::Text("Left Graph", inFont, 15);
+    inTitle.setPosition(window.getSize().x * 13 / 16 - 50, 5);
     inTitle.setColor(sf::Color::Black);
 
-    Checkbox numbersI = Checkbox(&graphOptions, inFont, 5, 130, "Numbers", true);
-    Checkbox linesI = Checkbox(&graphOptions, inFont, 5, 150, "Lines", false);
+    Checkbox numbersI = Checkbox(&window, inFont, window.getSize().x * 3 / 4 + 5, 130, "Numbers", true);
+    Checkbox linesI = Checkbox(&window, inFont, window.getSize().x * 3 / 4 + 5, 150, "Lines", false);
 
     // Title and input for the output (right-hand) graph
-    sf::Text outTitle = sf::Text("Output", inFont, 15);
-    outTitle.setPosition(graphOptions.getSize().x * 3 / 4 - 30, 5);
+    sf::Text outTitle = sf::Text("Right Graph", inFont, 15);
+    outTitle.setPosition(window.getSize().x * 15 / 16 - 55, 5);
     outTitle.setColor(sf::Color::Black);
 
-    Checkbox numbersO = Checkbox(&graphOptions, inFont, graphOptions.getSize().x / 2 + 5, 130, "Numbers", true);
-    Checkbox linesO = Checkbox(&graphOptions, inFont, graphOptions.getSize().x / 2 + 5, 150, "Lines", false);
+    Checkbox numbersO = Checkbox(&window, inFont, window.getSize().x * 7 / 8 + 5, 130, "Numbers", true);
+    Checkbox linesO = Checkbox(&window, inFont, window.getSize().x * 7 / 8 + 5, 150, "Lines", false);
 
     // Input boxes for both sides
     std::vector<InputBox> graphInputs = std::vector<InputBox>(0);
     //{
         // The number beside each input box corresponds to its number, for determining which box is "active"
-        InputBox xRangeI = InputBox(&graphOptions, inFont, 5, 30, 55, 15, "x Range"); // 0
-        InputBox yRangeI = InputBox(&graphOptions, inFont, 5, 50, 55, 15, "y Range"); // 1
-        InputBox xScaleI = InputBox(&graphOptions, inFont, 5, 70, 55, 15, "x Scale"); // 2
-        InputBox yScaleI = InputBox(&graphOptions, inFont, 5, 90, 55, 15, "y Scale"); // 3
-        InputBox centerI = InputBox(&graphOptions, inFont, 5, 110, 55, 15, "Center"); // 4
+        InputBox xRangeI = InputBox(&window, inFont, window.getSize().x * 3 / 4 + 5, 30, 55, 15, "x Range"); // 0
+        InputBox yRangeI = InputBox(&window, inFont, window.getSize().x * 3 / 4 + 5, 50, 55, 15, "y Range"); // 1
+        InputBox xScaleI = InputBox(&window, inFont, window.getSize().x * 3 / 4 + 5, 70, 55, 15, "x Scale"); // 2
+        InputBox yScaleI = InputBox(&window, inFont, window.getSize().x * 3 / 4 + 5, 90, 55, 15, "y Scale"); // 3
+        InputBox centerI = InputBox(&window, inFont, window.getSize().x * 3 / 4 + 5, 110, 55, 15, "Center "); // 4
         // Output-side boxes
-        InputBox xRangeO = InputBox(&graphOptions, inFont, graphOptions.getSize().x / 2 + 5, 30, 55, 15, "x Range"); // 5
-        InputBox yRangeO = InputBox(&graphOptions, inFont, graphOptions.getSize().x / 2 + 5, 50, 55, 15, "y Range"); // 6
-        InputBox xScaleO = InputBox(&graphOptions, inFont, graphOptions.getSize().x / 2 + 5, 70, 55, 15, "x Scale"); // 7
-        InputBox yScaleO = InputBox(&graphOptions, inFont, graphOptions.getSize().x / 2 + 5, 90, 55, 15, "y Scale"); // 8
-        InputBox centerO = InputBox(&graphOptions, inFont, graphOptions.getSize().x / 2 + 5, 110, 55, 15, "Center"); // 9
+        InputBox xRangeO = InputBox(&window, inFont, window.getSize().x * 7 / 8 + 5, 30, 55, 15, "x Range"); // 5
+        InputBox yRangeO = InputBox(&window, inFont, window.getSize().x * 7 / 8 + 5, 50, 55, 15, "y Range"); // 6
+        InputBox xScaleO = InputBox(&window, inFont, window.getSize().x * 7 / 8 + 5, 70, 55, 15, "x Scale"); // 7
+        InputBox yScaleO = InputBox(&window, inFont, window.getSize().x * 7 / 8 + 5, 90, 55, 15, "y Scale"); // 8
+        InputBox centerO = InputBox(&window, inFont, window.getSize().x * 7 / 8 + 5, 110, 55, 15, "Center "); // 9
 
         graphInputs.push_back(xRangeI); // We have to create the input boxes then add them to the vector in two steps
         graphInputs.push_back(yRangeI); // in order to deal with a bug where the caption isn't displayed if we do it
@@ -270,9 +266,9 @@ int main1() {
         window.draw(loc);
 
         // Draw everything on the graph options window
-        if(graphOptions.isOpen()) {
-            graphOptions.draw(inTitle);
-            graphOptions.draw(outTitle);
+        if(true){//graphOptions.isOpen()) {
+            window.draw(inTitle);
+            window.draw(outTitle);
             okGraph.Draw();
             numbersI.Draw();
             linesI.Draw();
@@ -282,6 +278,7 @@ int main1() {
                 graphInputs[iii].Draw();
             }
         }
+        xRangeI.Draw();
 
         // Draw everything on the equation options window
         if(eqOptions.isOpen()) {
