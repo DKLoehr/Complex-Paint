@@ -3,9 +3,16 @@
 
 int main() {
 	using namespace parser;
-	string func = "3/(sin(X*53/2)+5/7*5)";
-	Fct *f = new Fct(func);
-	std::cout << f->toString();
+	string func = "X^2";
+	Tree* fct = new Tree(func);
+	fct->setVar("X",5);
+	fct->setVar("A",10);
+	std::cout << "Tree:  " << fct->toString() << "\n";
+	std::cout << fct->getVar("X") << "\n";
+
+
+	std::cout << fct->eval() << "\n";
+
 	return 0;
 }
 

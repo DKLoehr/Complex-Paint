@@ -1,6 +1,5 @@
 #include "Parser.h"
 namespace parser{
- std::unordered_map<const char*, cx (* const)(cx,cx)> parseops;
 
 template <typename T> string toString(T t) {
 	stringstream s;
@@ -14,28 +13,14 @@ template<> string toString(cx c) {
 	return s.str();
 }
 
-void init() {
-	parseops = std::unordered_map<const char*, cx (* const)(cx,cx)>();
-	parseops.emplace("+", padd);	
-	parseops.emplace("-", psub);
-	parseops.emplace("*",pmul);
-	parseops.emplace("/",pdiv);
-	
-	parseops.emplace("^",ppow);
-	parseops.emplace("ln",plog);
-
-	parseops.emplace("sin",psin);
-	parseops.emplace("cos",pcos);
-	parseops.emplace("tan",ptan);
-	parseops.emplace("asin",pasin);
-	parseops.emplace("acos",pacos);
-	parseops.emplace("atan",patan);
-	parseops.emplace("sqrt",psqrt);
-	parseops.emplace("abs", parser::abs);
-
-	parseops.emplace("pi",ppi);
-	parseops.emplace("e",pe);
+cx stringToCx(string s) {
+	std::istringstream is('(' + s + ",0)");
+	cx a;
+	is >> a;
+	return a;
 }
+
+
 
 cx add(cx a, cx b) {
 	return a + b;
@@ -91,11 +76,8 @@ cx e(cx a, cx b) {
 }
 
 cx var(cx a, cx b) {
-	return a;
+	return 0;
 }
-
-
-
 
 
 Node::Node(Node * parent, string val) {
@@ -137,14 +119,48 @@ void Node::prune(int side) {
 	}
 }
 
+//	TREE
+string Tree::delim[] = {"+", "-", "*", "/", "^", "sin;cos;tan;log;abs;", "sqrt;asin;acos;atan;", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ln;"}; 
+bool Tree::initd = false;
+std::unordered_map<std::string, cx (* const)(cx,cx)> Tree::parseops = std::unordered_map<std::string, cx (* const)(cx,cx)>();
+cx Tree::variables[26];
+
 Tree::Tree(string expr) {
+	if(!initd) {
+		initd = true;
+		init();
+	}
 	m_root = new Node(NULL, expr);
+	m_fct = expr;
 	parse();
 }
 
 
 Tree::~Tree() {
 	delete m_root;
+}
+
+void Tree::init() {
+	Tree::parseops.emplace("+", padd);	
+	Tree::parseops.emplace("-", psub);
+	Tree::parseops.emplace("*",pmul);
+	Tree::parseops.emplace("/",pdiv);
+
+	Tree::parseops.emplace("^",ppow);
+	Tree::parseops.emplace("ln",plog);
+
+	Tree::parseops.emplace("sin",psin);
+	Tree::parseops.emplace("cos",pcos);
+	Tree::parseops.emplace("tan",ptan);
+	Tree::parseops.emplace("asin",pasin);
+	Tree::parseops.emplace("acos",pacos);
+	Tree::parseops.emplace("atan",patan);
+	Tree::parseops.emplace("sqrt",psqrt);
+	Tree::parseops.emplace("abs", parser::abs);
+
+	Tree::parseops.emplace("pi",ppi);
+	Tree::parseops.emplace("e",pe);
+	std::cout << "initializing map" << "\n";	
 }
 
 string Tree::toString(Node* n, string path) {
@@ -164,7 +180,7 @@ string Tree::toString() {
 bool Tree::checkParenthesis(string s) {
 	int i = 0;
 	int count = 0;
-	while(s[i] != NULL) {
+	while(s[i] != 0) {
 		if(s[i] == '(') count++;
 		else if(s[i] == ')') count--;
 		++i;
@@ -199,7 +215,7 @@ int Tree::parse(Node *root) {
 					else if(s[i] == ')') --parenthCount;
 				}
 			}
-			//check if is current delimiter
+			//arithmetic
 			else if(s[i]== (delim[j])[0] && j < 5) {
 				foundDelim = true;
 				root->m_left = new Node(root, s.substr(0, i));
@@ -238,40 +254,60 @@ int Tree::parse(Node *root) {
 				parse(root->m_left);
 				parse(root->m_right);
 			}
-			else if(i+2 < length && j == 7 && delim[j].find(s[i]) != -1) {
+			else if(j == 7 && delim[j].find(s[i]) != -1) {
 				std::cout << "finding var \n";
 				foundDelim = true;
 				root->m_left = new Node(root, s.substr(0, i));
 				root->m_right = new Node(root, s.substr(i+1));
 				root->m_val = s[i];
-				parseops.emplace(&s[i], pvar);
-				parse(root->m_left);
-				parse(root->m_right);
 			}
 		}
 	}
 	return 0;
 }
 
-Fct::Fct() {
-	m_fct = "";
-	m_tree=NULL;
-}		
-
-Fct::Fct(string s) {
-	m_fct = s;
-	makefct(m_fct);
+cx Tree::value(Node *root) {
+	try {
+		return parseops.at(root->m_val)( value(root->m_left), value(root->m_right));
+	}
+	catch(const out_of_range& err) {
+		int varInd = delim[7].find(root->m_val);
+		if(varInd != -1) {
+			return variables[varInd];
+		}
+		else {
+			std::cout << "ERR: VARIABLE NOT FOUND \n";
+			return -1;
+		}
+	}
 }
 
-void Fct::makefct(string s) {
-	m_tree = new Tree(s);
+void Tree::setVar(string var, cx a) {
+	try {
+		variables[delim[7].find(var)] = a;
+	}
+	catch(const std::out_of_range& err) {
+		std::cout << "variables does not exist \n";
+	}
 }
 
-cx Fct::eval() {
-	return m_tree->value();
+cx Tree::getVar(string var) {
+	try {
+		return variables[delim[7].find(var)];
+	}
+	catch(const std::out_of_range& err) {
+		std::cout << "variables does not exist \n";
+	}
 }
 
-string Fct::toString() {
-	return m_fct + "\n" + m_tree->toString();
+
+cx Tree::eval() {
+	return value(m_root);
 }
+
+bool Tree::isInitd() {
+	return Tree::initd;
+}
+
+
 }
