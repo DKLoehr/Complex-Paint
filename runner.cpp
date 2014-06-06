@@ -134,7 +134,13 @@ void Runner::HandleEvents() {
                 else
                     elements[activeBox]->OnClick(event.mouseButton.x, event.mouseButton.y);
             } else { // In one of the graphs
-                graphCoords = grid.lGrid.WindowToGraph(event.mouseButton.x, event.mouseButton.y);
+                if(event.mouseButton.x < window->getSize().x / 2) {
+                    leftToRight = true;
+                    graphCoords = grid.lGrid.WindowToGraph(event.mouseButton.x, event.mouseButton.y);
+                } else {
+                    leftToRight = false;
+                    graphCoords = grid.rGrid.WindowToGraph(event.mouseButton.x, event.mouseButton.y);
+                }
                 locPos = std::complex<double>(graphCoords.x, graphCoords.y);
                 Iterate(!isIterating); // Stop iterating if we were iterating, or start if we weren't
             }
@@ -149,19 +155,22 @@ void Runner::Iterate(bool keepIterating) {
     }
     isIterating = keepIterating;
     if(keepIterating) {
-        for(int iii = 0; iii < 10; iii++) { // Iterate 10 points at once
+        for(int iii = 0; iii < 30; iii++) { // Iterate 20 points at once
             int sign = 1;
             if(rand() < RAND_MAX / 2)
                 sign = 1;
             else
                 sign = -1;
-            locPos = std::complex<double>(sign, 0) * sqrt(locPos + std::complex<double>(0, .5));
+            locPos = std::complex<double>(sign, 0) * sqrt(locPos - std::complex<double>(-1, 0));
             graphCoords = sf::Vector2f(locPos.real(), locPos.imag());
             sf::CircleShape newLoc = sf::CircleShape(1, 30);
-            newLoc.setPosition(grid.rGrid.GraphToWindow(graphCoords));// - sf::Vector2f(1,1));
+            if(leftToRight)
+                newLoc.setPosition(grid.rGrid.GraphToWindow(graphCoords) - sf::Vector2f(1, 1));
+            else
+                newLoc.setPosition(grid.lGrid.GraphToWindow(graphCoords) - sf::Vector2f(1, 1));
+            leftToRight = !leftToRight; // Flip which grid is the inp
             newLoc.setFillColor(sf::Color::Black);
             points.push_back(newLoc);
-            loc.setPosition(grid.rGrid.GraphToWindow(graphCoords));
         }
     }
 }

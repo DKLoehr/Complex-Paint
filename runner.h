@@ -15,6 +15,7 @@ class Runner
 private:
     int activeBox;
     bool isIterating;
+    bool leftToRight;
 
     sf::RenderWindow* window;
     sf::Font* inFont;
