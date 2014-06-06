@@ -123,7 +123,7 @@ void Node::prune(int side) {
 string Tree::delim[] = {"+", "-", "*", "/", "^", "sin;cos;tan;log;abs;", "sqrt;asin;acos;atan;", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ln;"}; 
 bool Tree::initd = false;
 std::unordered_map<std::string, cx (* const)(cx,cx)> Tree::parseops = std::unordered_map<std::string, cx (* const)(cx,cx)>();
-cx Tree::variables[26];
+std::unordered_map<std::string, Tree*> Tree::variables = std::unordered_map<std::string, Tree*>();
 
 Tree::Tree(string expr) {
 	if(!initd) {
@@ -257,8 +257,9 @@ int Tree::parse(Node *root) {
 			else if(j == 7 && delim[j].find(s[i]) != -1) {
 				std::cout << "finding var \n";
 				foundDelim = true;
-				root->m_left = new Node(root, s.substr(0, i));
-				root->m_right = new Node(root, s.substr(i+1));
+				variables.emplace(&s[i], new Tree("0") );
+				//root->m_left = new Node(root, s.substr(0, i));
+				//root->m_right = new Node(root, s.substr(i+1));
 				root->m_val = s[i];
 			}
 		}
@@ -271,20 +272,19 @@ cx Tree::value(Node *root) {
 		return parseops.at(root->m_val)( value(root->m_left), value(root->m_right));
 	}
 	catch(const out_of_range& err) {
-		int varInd = delim[7].find(root->m_val);
-		if(varInd != -1) {
-			return variables[varInd];
+		if(-1 != delim[7].find(root->m_val)) {
+			return variables.at(root->m_val)->eval();
 		}
 		else {
-			std::cout << "ERR: VARIABLE NOT FOUND \n";
-			return -1;
+			std::cout << "WARNING: variable not found \n";
+			return stringToCx(root->m_val);
 		}
 	}
 }
 
-void Tree::setVar(string var, cx a) {
+void Tree::setVar(string var, string a) {
 	try {
-		variables[delim[7].find(var)] = a;
+		variables[var] = parseops.at(a)();
 	}
 	catch(const std::out_of_range& err) {
 		std::cout << "variables does not exist \n";
@@ -293,10 +293,10 @@ void Tree::setVar(string var, cx a) {
 
 cx Tree::getVar(string var) {
 	try {
-		return variables[delim[7].find(var)];
+		return variables[var].toString();
 	}
 	catch(const std::out_of_range& err) {
-		std::cout << "variables does not exist \n";
+		std::cout << "variable undefined or does not exist \n";
 	}
 }
 

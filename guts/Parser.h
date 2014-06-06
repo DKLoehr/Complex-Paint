@@ -82,7 +82,7 @@ class Tree { //Hold decomposed expr
 private:
 	static string delim[9];
 	static bool initd;
-	static cx variables[26];	
+	static std::unordered_map<std::string, Tree*> variables;	
 
 	string toString(Node *n, string path);
 	string m_fct;
@@ -103,6 +103,7 @@ public:
 	void setVar(string var, cx a);
 	cx getVar(string var);
 	bool isInitd();
+	void setVar(string var, string a);
 	void printMapVal(const char* key);
 };
 
