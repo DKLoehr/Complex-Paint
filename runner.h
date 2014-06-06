@@ -14,6 +14,7 @@ class Runner
 {
 private:
     int activeBox;
+    bool isIterating;
 
     sf::RenderWindow* window;
     sf::Font* inFont;
@@ -36,25 +37,27 @@ private:
     InputBox xScaleR;   // 7
     InputBox yScaleR;   // 8
     InputBox centerR;   // 9
-
     Checkbox numbersL;  // 10
     Checkbox linesL;    // 11
     Checkbox numbersR;  // 12
     Checkbox linesR;    // 13
-
     Button okGraph;     // 14
 
     InputBox equation;  // 15
-
     Button okEquation;  // 16
+
+    std::vector<sf::CircleShape> points;
+    std::complex<double> locPos;
+    sf::Vector2f graphCoords;
 
     void Init();
 public:
     Runner(sf::RenderWindow* w, sf::Font* font);
 
     void HandleEvents();
+    void Iterate(bool keepIterating);
 
-    void SetActiveElement(double x, double y);
+    void SetActiveElement(double x, double y); // Determines what activeBox should be based on the mouse coordinates
     void StepActiveElement(bool increment); // Increased activeBox by 1 if true, decreases if false, keeping it in valid bounds
     void UpdateGraphs(); // Apply changes from the graph input elements to the two graphs
     void UpdateEquation();

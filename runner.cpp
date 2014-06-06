@@ -9,9 +9,11 @@ Runner::Runner(sf::RenderWindow* w, sf::Font* font) :
 
 
 void Runner::Init() {
-    activeBox = 0;
-
+    isIterating = false;
     grid = DoubleGrid(window, *inFont, 200);
+
+    locPos = std::complex<double>(0, 0);
+    graphCoords = sf::Vector2f(0, 0);
 
     lTitle = sf::Text("Left Graph", *inFont, 15);
     lTitle.setPosition(window->getSize().x * 13 / 16 - 50, 5);
@@ -67,7 +69,7 @@ void Runner::Init() {
     elements.push_back(&yScaleR);
 
     centerR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 110, 55, 15, "Center "); // 11
-    centerR.SetText("2");
+    centerR.SetText("(0,0)");
     elements.push_back(&centerR);
 
     numbersR = Checkbox(window, inFont, window->getSize().x * 7 / 8 + 5, 130, "Numbers", true); // 12
@@ -86,6 +88,14 @@ void Runner::Init() {
     okEquation = Button(window, inFont, equation.GetPosition().x + equation.GetSize().x + 7, equation.GetPosition().y,
                         108, 15, "Save Changes"); // 16
     elements.push_back(&okEquation);
+
+    activeBox = 15;
+    for(int iii = 0; iii < elements.size(); iii++) {
+        elements[iii]->SetActive(false);
+    }
+    elements[activeBox]->SetActive(true);
+
+    points = std::vector<sf::CircleShape>(0);
 
     loc = sf::CircleShape(1, 30);
     loc.setFillColor(sf::Color::Black);
@@ -108,10 +118,50 @@ void Runner::HandleEvents() {
             else
                 elements[activeBox]->OnEnter();
         } else if(event.type == sf::Event::MouseMoved) {
-            SetActiveElement(event.mouseMove.x, event.mouseMove.y);
+            if(event.mouseMove.y < 200) // Upper part of the screen
+                SetActiveElement(event.mouseMove.x, event.mouseMove.y);
+            else // In one of the graphs
+                loc.setPosition(grid.rGrid.GraphToWindow(grid.lGrid.WindowToGraph(event.mouseMove.x, event.mouseMove.y)));
         } else if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tab) {
             StepActiveElement(!(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ||
                                 sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)));
+        } else if(event.type == sf::Event::MouseButtonPressed) {
+            if(event.mouseButton.y < 200) { // Above the graphs
+                if(activeBox == 14)
+                    UpdateGraphs();
+                else if(activeBox == 16)
+                    UpdateEquation();
+                else
+                    elements[activeBox]->OnClick(event.mouseButton.x, event.mouseButton.y);
+            } else { // In one of the graphs
+                graphCoords = grid.lGrid.WindowToGraph(event.mouseButton.x, event.mouseButton.y);
+                locPos = std::complex<double>(graphCoords.x, graphCoords.y);
+                Iterate(!isIterating); // Stop iterating if we were iterating, or start if we weren't
+            }
+        }
+    }
+    Iterate(isIterating);
+}
+
+void Runner::Iterate(bool keepIterating) {
+    if(!isIterating && keepIterating) { // Starting a new iteration
+        points.clear();
+    }
+    isIterating = keepIterating;
+    if(keepIterating) {
+        for(int iii = 0; iii < 10; iii++) { // Iterate 10 points at once
+            int sign = 1;
+            if(rand() < RAND_MAX / 2)
+                sign = 1;
+            else
+                sign = -1;
+            locPos = std::complex<double>(sign, 0) * sqrt(locPos + std::complex<double>(0, .5));
+            graphCoords = sf::Vector2f(locPos.real(), locPos.imag());
+            sf::CircleShape newLoc = sf::CircleShape(1, 30);
+            newLoc.setPosition(grid.rGrid.GraphToWindow(graphCoords));// - sf::Vector2f(1,1));
+            newLoc.setFillColor(sf::Color::Black);
+            points.push_back(newLoc);
+            loc.setPosition(grid.rGrid.GraphToWindow(graphCoords));
         }
     }
 }
@@ -138,6 +188,7 @@ void Runner::StepActiveElement(bool increment) {
 }
 
 void Runner::UpdateGraphs() {
+    points.clear();
     grid.lGrid.SetRange(xRangeL.GetStringAsDouble(),
                         yRangeL.GetStringAsDouble());
     grid.lGrid.SetScale(xScaleL.GetStringAsDouble(),
@@ -166,12 +217,14 @@ void Runner::Draw() {
 
     window->draw(lTitle);
     window->draw(rTitle);
-
     for(int iii = 0; iii < elements.size(); iii++) {
         elements[iii]->Draw();
     }
 
     grid.Draw();
+    for(int iii = 0; iii < points.size(); iii++) {
+        window->draw(points[iii]);
+    }
     window->draw(loc);
 
     window->display();

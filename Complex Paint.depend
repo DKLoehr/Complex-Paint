@@ -355,16 +355,8 @@
 1401727324 c:\users\devon\desktop\workspace\complex paint\graph\doublegrid.h
 	"Grid.h"
 
-1401991035 source:c:\users\devon\desktop\workspace\complex paint\main.cpp
-	<SFML/Graphics.hpp>
-	<complex>
-	<random>
-	"gui/button.h"
-	"gui/text.h"
-	"gui/checkbox.h"
-	"graph/DoubleGrid.h"
+1402019699 source:c:\users\devon\desktop\workspace\complex paint\main.cpp
 	"runner.h"
-	<iostream>
 
 1401818697 source:c:\users\devon\desktop\workspace\complex paint\graph\grid.cpp
 	"Grid.h"
@@ -382,10 +374,10 @@
 1401999405 c:\users\devon\desktop\workspace\complex paint\gui\checkbox.h
 	"GUI.h"
 
-1401999506 source:c:\users\devon\desktop\workspace\complex paint\runner.cpp
+1402019699 source:c:\users\devon\desktop\workspace\complex paint\runner.cpp
 	"runner.h"
 
-1402000187 c:\users\devon\desktop\workspace\complex paint\runner.h
+1402019122 c:\users\devon\desktop\workspace\complex paint\runner.h
 	<SFML/Graphics.hpp>
 	<complex>
 	<random>
