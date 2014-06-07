@@ -10,7 +10,17 @@ Runner::Runner(sf::RenderWindow* w, sf::Font* font) :
 
 void Runner::Init() {
     isIterating = false;
+    mode = drawMode::single;
+    drawGUI = true;
+    window->clear(sf::Color::White);
+
     grid = DoubleGrid(window, *inFont, 200);
+    grid.Draw();
+
+    points = std::vector<sf::CircleShape>(0);
+
+    loc = sf::CircleShape(1, 30);
+    loc.setFillColor(sf::Color::Black);
 
     locPos = std::complex<double>(0, 0);
     graphCoords = sf::Vector2f(0, 0);
@@ -25,6 +35,8 @@ void Runner::Init() {
 
     elements = std::vector<GUI*>(0);
 
+    /** Graph-related elements **/
+    /// Left-side elements
     xRangeL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 30, 55, 15, "x Range"); // 0
     xRangeL.SetText("2");
     elements.push_back(&xRangeL);
@@ -51,7 +63,7 @@ void Runner::Init() {
     linesL = Checkbox(window, inFont, window->getSize().x * 3 / 4 + 5, 150, "Lines", false);    // 6
     elements.push_back(&linesL);
 
-    // Output-side boxes
+    /// Right-side elements
     xRangeR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 30, 55, 15, "x Range"); // 7
     xRangeR.SetText("2");
     elements.push_back(&xRangeR);
@@ -78,27 +90,57 @@ void Runner::Init() {
     linesR = Checkbox(window, inFont, window->getSize().x * 7 / 8 + 5, 150, "Lines", false); // 13
     elements.push_back(&linesR);
 
+    /// General graph-related elements
     okGraph = Button(window, inFont, window->getSize().x * 7 / 8 - 54, 175, // 14
                                 108, 15, "Save Changes");
     elements.push_back(&okGraph);
 
-    equation = InputBox(window, inFont, 2, 2, 200, 15); // 15
+    clearGraphs = Button(window, inFont, window->getSize().x / 2 - 23, 175, 46, 15, "Clear"); // 15
+    elements.push_back(&clearGraphs);
+
+
+    /** Preset-related elements **/
+    presetLin = Button(window, inFont, window->getSize().x * .35, 30, 56, 15, "Linear");  // 16 -- Az + B
+    elements.push_back(&presetLin);
+
+    presetQuad = Button(window, inFont, presetLin.GetPosition().x + presetLin.GetSize().x + window->getSize().x/50, 30,
+                        81, 15, "Quadratic");   // 17 -- z*2 + c
+    elements.push_back(&presetQuad);
+
+    presetInv = Button(window, inFont, presetQuad.GetPosition().x + presetQuad.GetSize().x + window->getSize().x/50, 30,
+                       109, 15, "Inverse Quad"); // 18 -- sqrt(z*2 - c)
+    elements.push_back(&presetInv);
+
+    presetPol = Button(window, inFont, presetInv.GetPosition().x + presetInv.GetSize().x + window->getSize().x/50, 30,
+                       46, 15, "Polar");        // 19 -- Polar equation
+    elements.push_back(&presetPol);
+
+
+    /** Drawing mode-related elements **/
+    modeSingle = Button(window, inFont, window->getSize().x / 2 - 105, 93, 45, 15, "Point");  // 20
+    elements.push_back(&modeSingle);
+
+    modeIterate = Button(window, inFont, window->getSize().x / 2 + 45, modeSingle.GetPosition().y,
+                                65, 15, "Iterate"); // 21
+    elements.push_back(&modeIterate);
+
+
+    /** Equation-related elements **/
+    equation = InputBox(window, inFont, 5, 5, 350, 15); // 22
     elements.push_back(&equation);
 
     okEquation = Button(window, inFont, equation.GetPosition().x + equation.GetSize().x + 7, equation.GetPosition().y,
-                        108, 15, "Save Changes"); // 16
+                        108, 15, "Save Changes"); // 23
     elements.push_back(&okEquation);
 
-    activeBox = 15;
+
+    /** End GUI element creation **/
+
     for(int iii = 0; iii < elements.size(); iii++) {
         elements[iii]->SetActive(false);
     }
+    activeBox = 15;
     elements[activeBox]->SetActive(true);
-
-    points = std::vector<sf::CircleShape>(0);
-
-    loc = sf::CircleShape(1, 30);
-    loc.setFillColor(sf::Color::Black);
 }
 
 void Runner::HandleEvents() {
@@ -109,19 +151,26 @@ void Runner::HandleEvents() {
         {
             window->close();
         } else if(event.type == sf::Event::TextEntered) {
+            drawGUI = true;
             elements[activeBox]->OnTextEntered(event.text.unicode);
-        } else if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Return) {
-            if(activeBox == 14)
-                UpdateGraphs();
-            else if(activeBox == 16)
-                UpdateEquation();
-            else
-                elements[activeBox]->OnEnter();
+        } else if((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Return) ||
+                  (event.type == sf::Event::MouseButtonPressed && event.mouseButton.y < 200)) {
+            ActivateButtons(event);
         } else if(event.type == sf::Event::MouseMoved) {
             if(event.mouseMove.y < 200) // Upper part of the screen
                 SetActiveElement(event.mouseMove.x, event.mouseMove.y);
-            else // In one of the graphs
-                loc.setPosition(grid.rGrid.GraphToWindow(grid.lGrid.WindowToGraph(event.mouseMove.x, event.mouseMove.y)));
+            else { // In one of the graphs
+                loc.setFillColor(sf::Color::White);
+                window->draw(loc);
+                loc.setFillColor(sf::Color::Black);
+                if(event.mouseMove.x < window->getSize().x / 2) {
+                    loc.setPosition(grid.rGrid.GraphToWindow(grid.lGrid.WindowToGraph(event.mouseMove.x,
+                                                                                      event.mouseMove.y)));
+                } else {
+                    loc.setPosition(grid.lGrid.GraphToWindow(grid.rGrid.WindowToGraph(event.mouseMove.x,
+                                                                                      event.mouseMove.y)));
+                }
+            }
         } else if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tab) {
             StepActiveElement(!(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ||
                                 sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)));
@@ -150,12 +199,16 @@ void Runner::HandleEvents() {
 }
 
 void Runner::Iterate(bool keepIterating) {
-    if(!isIterating && keepIterating) { // Starting a new iteration
-        points.clear();
-    }
     isIterating = keepIterating;
     if(keepIterating) {
-        for(int iii = 0; iii < 30; iii++) { // Iterate 20 points at once
+        int numIterations = 1;
+        if(mode == drawMode::single) {
+            numIterations = 1;
+            isIterating = false;
+        }
+        else if (mode == drawMode::iterative)
+            numIterations = 30;
+        for(int iii = 0; iii < numIterations; iii++) { // Iterate 30 points at once, or just one
             int sign = 1;
             if(rand() < RAND_MAX / 2)
                 sign = 1;
@@ -168,9 +221,9 @@ void Runner::Iterate(bool keepIterating) {
                 newLoc.setPosition(grid.rGrid.GraphToWindow(graphCoords) - sf::Vector2f(1, 1));
             else
                 newLoc.setPosition(grid.lGrid.GraphToWindow(graphCoords) - sf::Vector2f(1, 1));
-            leftToRight = !leftToRight; // Flip which grid is the inp
+            leftToRight = !leftToRight; // Flip which grid is the input and which is the output
             newLoc.setFillColor(sf::Color::Black);
-            points.push_back(newLoc);
+            window->draw(newLoc);
         }
     }
 }
@@ -197,7 +250,8 @@ void Runner::StepActiveElement(bool increment) {
 }
 
 void Runner::UpdateGraphs() {
-    points.clear();
+    window->clear(sf::Color::White);
+    drawGUI = true;
     grid.lGrid.SetRange(xRangeL.GetStringAsDouble(),
                         yRangeL.GetStringAsDouble());
     grid.lGrid.SetScale(xScaleL.GetStringAsDouble(),
@@ -215,24 +269,76 @@ void Runner::UpdateGraphs() {
         grid.rGrid.SetCenter(centerR.GetStringAsVector());
     grid.rGrid.SetNumbers(numbersR.GetText() == "x");
     grid.rGrid.SetLines(linesR.GetText() == "x");
+    grid.Draw();
 }
 
 void Runner::UpdateEquation() {
     return; // Will pass equation and variables to parser
 }
 
-void Runner::Draw() {
-    window->clear(sf::Color::White);
-
-    window->draw(lTitle);
-    window->draw(rTitle);
-    for(int iii = 0; iii < elements.size(); iii++) {
-        elements[iii]->Draw();
+void Runner::ActivateButtons(sf::Event event) {
+    switch(activeBox) {
+    case 14: // Save Changes for graphs
+        UpdateGraphs();
+        break;
+    case 15: // Clear
+        Iterate(false);
+        window->clear(sf::Color::White);
+        grid.Draw();
+        break;
+    case 16: // Linear Preset
+        equation.SetText("A*z + B");
+        UpdateEquation();
+        break;
+    case 17: // Quadratic Preset
+        equation.SetText("z^2 + C");
+        UpdateEquation();
+        break;
+    case 18: // Inverse Quadratic Preset
+        equation.SetText("sqrt(z - C)");
+        UpdateEquation();
+        break;
+    case 19: // Polar Preset
+        equation.SetText("(R*cos(2*PI*T)+R*sin(2*PI*T)*i)*z+B");
+        UpdateEquation();
+        break;
+    case 20: // Single point mode
+        mode = drawMode::single;
+        break;
+    case 21: // Iterate mode
+        mode = drawMode::iterative;
+        break;
+    case 23: // Save Changes for equation
+        UpdateEquation();
+        break;
+    default:
+        if(event.type == sf::Event::MouseButtonPressed)
+            elements[activeBox]->OnClick(event.mouseButton.x, event.mouseButton.y);
+        else
+            elements[activeBox]->OnEnter();
     }
+    drawGUI = true;
+}
 
-    grid.Draw();
-    for(int iii = 0; iii < points.size(); iii++) {
-        window->draw(points[iii]);
+void Runner::Draw() {
+    //window->clear(sf::Color::White);
+
+    if(drawGUI) {
+        drawGUI = false;
+        sf::RectangleShape titleRect(sf::Vector2f(300, 25));
+        titleRect.setPosition(lTitle.getPosition() - sf::Vector2f(5, 5));
+        titleRect.setFillColor(sf::Color::White);
+        window->draw(titleRect);
+
+        window->draw(lTitle);
+        window->draw(rTitle);
+
+        for(int iii = 0; iii < elements.size(); iii++) {
+            elements[iii]->DrawWhite();
+        }
+        for(int iii = 0; iii < elements.size(); iii++) {
+            elements[iii]->Draw();
+        }
     }
     window->draw(loc);
 

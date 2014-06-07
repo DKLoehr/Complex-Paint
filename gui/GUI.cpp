@@ -56,3 +56,12 @@ void GUI::Draw() {
     m_w->draw(m_text);
     m_w->draw(m_cap);
 }
+
+void GUI::DrawWhite() {
+    auto whiteRect = m_rectangle;
+    whiteRect.setPosition(m_position - sf::Vector2f(1, 1));
+    whiteRect.setSize(m_size + sf::Vector2f(((std::string)m_cap.getString()).length() * 10 + 2, 2));
+    whiteRect.setFillColor(sf::Color::White);
+    whiteRect.setOutlineColor(sf::Color::White);
+    m_w->draw(whiteRect);
+}

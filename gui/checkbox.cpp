@@ -27,11 +27,13 @@ void Checkbox::Toggle() {
 
 void Checkbox::SetActive(bool active) {
     isActive = active;
+    DrawWhite();
     if(isActive) {
         m_rectangle.setFillColor(sf::Color::White);
     } else {
         m_rectangle.setFillColor(sf::Color(150, 150, 150));
     }
+    Draw();
 }
 
 void Checkbox::SetPosition(sf::Vector2f newPos) {

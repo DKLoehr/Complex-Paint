@@ -43,6 +43,7 @@ public:
     std::string GetText();
 
     virtual void Draw();
+    virtual void DrawWhite();
 };
 
 #endif // GUI_H

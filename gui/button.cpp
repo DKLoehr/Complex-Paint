@@ -16,11 +16,13 @@ Button::Button(sf::RenderWindow* window, sf::Font* font, int x, int y, int width
 
 void Button::SetActive(bool active) {
     isActive = active;
+    DrawWhite();
     if(isActive) {
         m_rectangle.setFillColor(sf::Color::White);
     } else {
         m_rectangle.setFillColor(sf::Color(150, 150, 150));
     }
+    Draw();
 }
 
 void Button::SetPosition(sf::Vector2f newPos) {
