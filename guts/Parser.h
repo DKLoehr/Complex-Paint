@@ -8,6 +8,11 @@
 #include <complex>
 #include <unordered_map>
 
+//Constants to 20 decimal places
+#define PARSER_SPI "3.14159265358979323846"
+#define PARSER_SE "2.71828182845904523536"
+#define PARSER_PI 3.14159265358979323846
+#define PARSER_E 2.71828182845904523536
 using namespace std;
 
 typedef std::complex<double> cx;
@@ -36,9 +41,6 @@ cx atan(cx a, cx b = 0);
 cx sqrt(cx a, cx b = 0);
 cx abs(cx a, cx b = 0);
 
-cx pi(cx a = 0, cx b = 0);
-cx e(cx a = 0, cx b = 0);
-
 cx (* const padd)(cx, cx) = parser::add;
 cx (* const psub)(cx, cx) = parser::sub;
 cx (* const pmul)(cx, cx) = parser::mul;
@@ -56,10 +58,6 @@ cx (* const patan)(cx, cx) = parser::atan;
 cx (* const psqrt)(cx, cx) = parser::sqrt;
 cx (* const pabs)(cx, cx) = parser::abs;
 
-cx (* const pe)(cx, cx) = parser::e;
-cx (* const ppi)(cx, cx) = parser::pi;
-
-//initialize function pointers, put into map
 
 class Node { 
 	friend class Tree;
@@ -78,9 +76,10 @@ public:
 
 };
 
+enum DelimInd { ADD, SUB, MUL, DIV, POW, FT3, FT4,  FT2, VAR, CON};
 class Tree { //Hold decomposed expr
 private:
-	static string delim[9];
+	static string delim[];
 	static bool initd;
 	static std::unordered_map<std::string, Tree*> variables;	
 
@@ -100,11 +99,10 @@ public:
 	int parse();
 	cx eval();
 	bool checkParenthesis(string s);
-	void setVar(string var, cx a);
-	cx getVar(string var);
+	string getVar(string var);
+	cx evalVar(string var);
 	bool isInitd();
 	void setVar(string var, string a);
-	void printMapVal(const char* key);
 };
 
 }

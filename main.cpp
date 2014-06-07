@@ -3,11 +3,12 @@
 
 int main() {
 	using namespace parser;
-	string func = "X^2";
+	string func;
+	std::cin >> func;
 	Tree* fct = new Tree(func);
-	fct->setVar("X",5);
-	fct->setVar("A",2);
 	std::cout << "Tree:  " << fct->toString() << "\n";
+
+	fct->setVar("X","5");
 	std::cout << "ANSWER: " << fct->eval() << "\n";
 
 
