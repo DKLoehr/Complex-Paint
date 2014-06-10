@@ -95,43 +95,44 @@ void Runner::Init() {
                                 108, 15, "Save Changes");
     elements.push_back(&okGraph);
 
-    clearGraphs = Button(window, inFont, window->getSize().x / 2 - 23, 175, 46, 15, "Clear"); // 15
-    elements.push_back(&clearGraphs);
+
+    /** Equation-related elements **/
+    equation = InputBox(window, inFont, 5, 5, 350, 15); // 15
+    elements.push_back(&equation);
+
+    okEquation = Button(window, inFont, equation.GetPosition().x + equation.GetSize().x + 7, equation.GetPosition().y,
+                        108, 15, "Save Changes"); // 16
+    elements.push_back(&okEquation);
 
 
     /** Preset-related elements **/
-    presetLin = Button(window, inFont, window->getSize().x * .35, 30, 56, 15, "Linear");  // 16 -- Az + B
+    presetLin = Button(window, inFont, window->getSize().x * .35, 30, 56, 15, "Linear");  // 17 -- Az + B
     elements.push_back(&presetLin);
 
     presetQuad = Button(window, inFont, presetLin.GetPosition().x + presetLin.GetSize().x + window->getSize().x/50, 30,
-                        81, 15, "Quadratic");   // 17 -- z*2 + c
+                        81, 15, "Quadratic");   // 18 -- z*2 + c
     elements.push_back(&presetQuad);
 
     presetInv = Button(window, inFont, presetQuad.GetPosition().x + presetQuad.GetSize().x + window->getSize().x/50, 30,
-                       109, 15, "Inverse Quad"); // 18 -- sqrt(z*2 - c)
+                       109, 15, "Inverse Quad"); // 19 -- sqrt(z*2 - c)
     elements.push_back(&presetInv);
 
     presetPol = Button(window, inFont, presetInv.GetPosition().x + presetInv.GetSize().x + window->getSize().x/50, 30,
-                       46, 15, "Polar");        // 19 -- Polar equation
+                       46, 15, "Polar");        // 20 -- Polar equation
     elements.push_back(&presetPol);
 
 
     /** Drawing mode-related elements **/
-    modeSingle = Button(window, inFont, window->getSize().x / 2 - 105, 93, 45, 15, "Point");  // 20
+    modeSingle = Button(window, inFont, window->getSize().x / 2 - 105, 93, 45, 15, "Point");  // 21
     elements.push_back(&modeSingle);
 
     modeIterate = Button(window, inFont, window->getSize().x / 2 + 45, modeSingle.GetPosition().y,
-                                65, 15, "Iterate"); // 21
+                                65, 15, "Iterate"); // 22
     elements.push_back(&modeIterate);
 
-
-    /** Equation-related elements **/
-    equation = InputBox(window, inFont, 5, 5, 350, 15); // 22
-    elements.push_back(&equation);
-
-    okEquation = Button(window, inFont, equation.GetPosition().x + equation.GetSize().x + 7, equation.GetPosition().y,
-                        108, 15, "Save Changes"); // 23
-    elements.push_back(&okEquation);
+    /// Clear graph button
+    clearGraphs = Button(window, inFont, window->getSize().x / 2 - 23, 175, 46, 15, "Clear"); // 23
+    elements.push_back(&clearGraphs);
 
 
     /** End GUI element creation **/
@@ -250,8 +251,6 @@ void Runner::StepActiveElement(bool increment) {
 }
 
 void Runner::UpdateGraphs() {
-    window->clear(sf::Color::White);
-    drawGUI = true;
     grid.lGrid.SetRange(xRangeL.GetStringAsDouble(),
                         yRangeL.GetStringAsDouble());
     grid.lGrid.SetScale(xScaleL.GetStringAsDouble(),
@@ -269,6 +268,8 @@ void Runner::UpdateGraphs() {
         grid.rGrid.SetCenter(centerR.GetStringAsVector());
     grid.rGrid.SetNumbers(numbersR.GetText() == "x");
     grid.rGrid.SetLines(linesR.GetText() == "x");
+    Iterate(false);
+    window->clear(sf::Color::White);
     grid.Draw();
 }
 
@@ -281,35 +282,35 @@ void Runner::ActivateButtons(sf::Event event) {
     case 14: // Save Changes for graphs
         UpdateGraphs();
         break;
-    case 15: // Clear
-        Iterate(false);
-        window->clear(sf::Color::White);
-        grid.Draw();
+    case 15: // Save Changes for equation
+        UpdateEquation();
         break;
-    case 16: // Linear Preset
+    case 17: // Linear Preset
         equation.SetText("A*z + B");
         UpdateEquation();
         break;
-    case 17: // Quadratic Preset
+    case 18: // Quadratic Preset
         equation.SetText("z^2 + C");
         UpdateEquation();
         break;
-    case 18: // Inverse Quadratic Preset
+    case 19: // Inverse Quadratic Preset
         equation.SetText("sqrt(z - C)");
         UpdateEquation();
         break;
-    case 19: // Polar Preset
+    case 20: // Polar Preset
         equation.SetText("(R*cos(2*PI*T)+R*sin(2*PI*T)*i)*z+B");
         UpdateEquation();
         break;
-    case 20: // Single point mode
+    case 21: // Single point mode
         mode = drawMode::single;
         break;
-    case 21: // Iterate mode
+    case 22: // Iterate mode
         mode = drawMode::iterative;
         break;
-    case 23: // Save Changes for equation
-        UpdateEquation();
+    case 23: // Clear
+        Iterate(false);
+        window->clear(sf::Color::White);
+        grid.Draw();
         break;
     default:
         if(event.type == sf::Event::MouseButtonPressed)
