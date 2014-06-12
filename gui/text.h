@@ -21,6 +21,8 @@ public:
     void OnTextEntered(char n); // Adds text to string
     void EnterText(char n); // Same as OnTextEntered
 
+    void Draw();
+
     double GetStringAsDouble(); // Only call if you know the string is just a single number
     sf::Vector2f GetStringAsVector(); // Only call if you know the string is of the form "(int, int)"
 };

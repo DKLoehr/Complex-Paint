@@ -91,6 +91,8 @@ public:
 
     /// Draw everything to the window
     void Draw();
+    /// Draw everything except number labels to the window
+    void DrawTextless();
 };
 
 /// Converts (possibly double) coordinates to strings to be displayed near the axes; also rounds to precision places

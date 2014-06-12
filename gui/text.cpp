@@ -88,6 +88,19 @@ void InputBox::EnterText(char n) {
     }
 }
 
+void InputBox::Draw() {
+    m_w->draw(m_rectangle);
+    std::string str = m_text.getString();
+    std::string truncStr;
+    if(str.length() * 10 > m_size.x) {
+        truncStr = str.substr(str.length() - m_size.x / 10, std::string::npos);
+        m_text.setString(truncStr);
+    }
+    m_w->draw(m_text);
+    m_text.setString(str);
+    m_w->draw(m_cap);
+}
+
 double InputBox::GetStringAsDouble() {
     double ret = 0;
     std::string str = m_text.getString();

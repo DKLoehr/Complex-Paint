@@ -34,3 +34,10 @@ void DoubleGrid::Draw() {
     w->draw(horDivider);
     w->draw(vertDivider);
 }
+
+void DoubleGrid::DrawTextless() {
+    lGrid.DrawTextless();
+    rGrid.DrawTextless();
+    w->draw(horDivider);
+    w->draw(vertDivider);
+}

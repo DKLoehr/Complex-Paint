@@ -37,37 +37,40 @@ private:
     sf::Text rTitle;
 
     /// Elements for changing graph settings
-    InputBox xRangeL;   // 0
-    InputBox yRangeL;   // 1
-    InputBox xScaleL;   // 2
-    InputBox yScaleL;   // 3
-    InputBox centerL;   // 4
-    InputBox xRangeR;   // 5
-    InputBox yRangeR;   // 6
-    InputBox xScaleR;   // 7
-    InputBox yScaleR;   // 8
-    InputBox centerR;   // 9
-    Checkbox numbersL;  // 10
-    Checkbox linesL;    // 11
-    Checkbox numbersR;  // 12
-    Checkbox linesR;    // 13
-    Button okGraph;     // 14
+    Button mirrorL;     // 0
+    Button mirrorR;     // 1
 
-    Button clearGraphs; // 15
+    InputBox xRangeL;   // 2
+    InputBox yRangeL;   // 3
+    InputBox xScaleL;   // 4
+    InputBox yScaleL;   // 5
+    InputBox centerL;   // 6
+    InputBox xRangeR;   // 7
+    InputBox yRangeR;   // 8
+    InputBox xScaleR;   // 9
+    InputBox yScaleR;   // 10
+    InputBox centerR;   // 11
+    Checkbox numbersL;  // 12
+    Checkbox linesL;    // 13
+    Checkbox numbersR;  // 14
+    Checkbox linesR;    // 15
+    Button okGraph;     // 16
+
+    Button clearGraphs; // 17
 
     /// Buttons to represent different preset equations
-    Button presetLin;   // 16 -- Az + B
-    Button presetQuad;  // 17 -- z*2 + c
-    Button presetInv;   // 18 -- sqrt(z*2 - c)
-    Button presetPol;   // 19 -- Polar equation
+    Button presetLin;   // 18 -- Az + B
+    Button presetQuad;  // 19 -- z*2 + c
+    Button presetInv;   // 20 -- sqrt(z*2 - c)
+    Button presetPol;   // 21 -- Polar equation
 
     /// Buttons to represent different possible drawing modes
-    Button modeSingle;  // 20
-    Button modeIterate; // 21
+    Button modeSingle;  // 22
+    Button modeIterate; // 23
 
     /// Elements to do with changing equation settings
-    InputBox equation;  // 22
-    Button okEquation;  // 23
+    InputBox equation;  // 24
+    Button okEquation;  // 25
 
     std::vector<sf::CircleShape> points;
     std::complex<double> locPos;

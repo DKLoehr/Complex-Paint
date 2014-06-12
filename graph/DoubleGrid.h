@@ -31,6 +31,8 @@ public:
 
     /// Draw everything to the window
     void Draw();
+    /// Draw everything except number labels to the window
+    void DrawTextless();
 };
 
 #endif // DOUBLEGRID_H

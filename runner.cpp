@@ -36,6 +36,14 @@ void Runner::Init() {
     elements = std::vector<GUI*>(0);
 
     /** Graph-related elements **/
+    /// Button to copy changes from the right side to the left
+    mirrorL = Button(window, inFont, lTitle.getPosition().x + ((std::string)lTitle.getString()).length() * 10 + 5,
+                     lTitle.getPosition().y, 15, 15, "<");
+    elements.push_back(&mirrorL);
+
+    mirrorR = Button(window, inFont, mirrorL.GetPosition().x + 20, mirrorL.GetPosition().y, 15, 15, ">");
+    elements.push_back(&mirrorR);
+
     /// Left-side elements
     xRangeL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 30, 55, 15, "x Range"); // 0
     xRangeL.SetText("2");
@@ -142,6 +150,7 @@ void Runner::Init() {
     }
     activeBox = 15;
     elements[activeBox]->SetActive(true);
+    UpdateGraphs();
 }
 
 void Runner::HandleEvents() {
@@ -246,7 +255,6 @@ void Runner::StepActiveElement(bool increment) {
         activeBox = ++activeBox % elements.size();
     else
         activeBox = (activeBox + elements.size() - 1) % elements.size(); // Decrement by one modularly
-    std::cout << activeBox << "\n";
     elements[activeBox]->SetActive(true);
 }
 
@@ -279,35 +287,53 @@ void Runner::UpdateEquation() {
 
 void Runner::ActivateButtons(sf::Event event) {
     switch(activeBox) {
-    case 14: // Save Changes for graphs
+    case 0: // Mirror R->L
+        xRangeL.SetText(xRangeR.GetText());
+        yRangeL.SetText(yRangeR.GetText());
+        xScaleL.SetText(xScaleR.GetText());
+        yScaleL.SetText(yScaleR.GetText());
+        centerL.SetText(centerR.GetText());
+        if(numbersL.GetText() != numbersR.GetText()) numbersL.Toggle();
+        if(linesL.GetText() != linesR.GetText()) linesL.Toggle();
+        break;
+    case 1: // Mirror L->R
+        xRangeR.SetText(xRangeL.GetText());
+        yRangeR.SetText(yRangeL.GetText());
+        xScaleR.SetText(xScaleL.GetText());
+        yScaleR.SetText(yScaleL.GetText());
+        centerR.SetText(centerL.GetText());
+        if(numbersR.GetText() != numbersL.GetText()) numbersR.Toggle();
+        if(linesR.GetText() != linesL.GetText()) linesR.Toggle();
+        break;
+    case 16: // Save Changes for graphs
         UpdateGraphs();
         break;
-    case 15: // Save Changes for equation
+    case 17: // Save Changes for equation
         UpdateEquation();
         break;
-    case 17: // Linear Preset
+    case 19: // Linear Preset
         equation.SetText("A*z + B");
         UpdateEquation();
         break;
-    case 18: // Quadratic Preset
+    case 20: // Quadratic Preset
         equation.SetText("z^2 + C");
         UpdateEquation();
         break;
-    case 19: // Inverse Quadratic Preset
+    case 21: // Inverse Quadratic Preset
         equation.SetText("sqrt(z - C)");
         UpdateEquation();
         break;
-    case 20: // Polar Preset
+    case 22: // Polar Preset
         equation.SetText("(R*cos(2*PI*T)+R*sin(2*PI*T)*i)*z+B");
         UpdateEquation();
         break;
-    case 21: // Single point mode
+    case 23: // Single point mode
         mode = drawMode::single;
         break;
-    case 22: // Iterate mode
+    case 24: // Iterate mode
         mode = drawMode::iterative;
         break;
-    case 23: // Clear
+    case 25: // Clear
         Iterate(false);
         window->clear(sf::Color::White);
         grid.Draw();
@@ -341,6 +367,7 @@ void Runner::Draw() {
             elements[iii]->Draw();
         }
     }
+    grid.DrawTextless();
     window->draw(loc);
 
     window->display();
