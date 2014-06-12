@@ -101,7 +101,7 @@ public:
 	cx eval();
 	bool checkParenthesis(string s);
 	void setVar(string var, cx a);
-	cx getVar(string var);
+	string getVar(string var);
 	bool isInitd();
 	void setVar(string var, string a);
 	void printMapVal(const char* key);

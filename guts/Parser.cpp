@@ -130,8 +130,12 @@ Tree::Tree(string expr) {
 		initd = true;
 		init();
 	}
-	m_root = new Node(NULL, expr);
 	m_fct = expr;
+	for(int i = m_fct.length()-1; i >= 0; i--)
+		if(m_fct[i] == 32) //Whitespace character
+			m_fct.erase(i, 1);
+	std::cout << m_fct << "\n";
+	m_root = new Node(NULL, m_fct);
 	parse();
 }
 
@@ -267,6 +271,7 @@ int Tree::parse(Node *root) {
 	return 0;
 }
 
+//Calculate the value of a tree
 cx Tree::value(Node *root) {
 	try {
 		return parseops.at(root->m_val)( value(root->m_left), value(root->m_right));
@@ -282,18 +287,20 @@ cx Tree::value(Node *root) {
 	}
 }
 
+//Set a variable
 void Tree::setVar(string var, string a) {
 	try {
-		variables[var] = parseops.at(a)();
+		variables[var] = new Tree(a);
 	}
 	catch(const std::out_of_range& err) {
 		std::cout << "variables does not exist \n";
 	}
 }
 
-cx Tree::getVar(string var) {
+//Get the toString of a variable's tree
+string Tree::getVar(string var) {
 	try {
-		return variables[var].toString();
+		return variables[var]->toString();
 	}
 	catch(const std::out_of_range& err) {
 		std::cout << "variable undefined or does not exist \n";
