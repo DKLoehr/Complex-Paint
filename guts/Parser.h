@@ -90,6 +90,7 @@ private:
 	static std::unordered_map<std::string, cx (* const)(cx,cx)> parseops;
 	Node *m_root;
 	void init();
+	int isToken(string s);
 public:
 
 	Tree(string expr="");
@@ -98,7 +99,7 @@ public:
 	string toString();	
 	int parse();
 	cx eval();
-	bool checkParenthesis(string s);
+	int checkParenthesis(string s);
 	string getVar(string var);
 	cx evalVar(string var);
 	bool isInitd();

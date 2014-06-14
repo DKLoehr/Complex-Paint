@@ -123,7 +123,6 @@ Tree::Tree(string expr) {
 	for(int i = m_fct.length()-1; i >= 0; i--)
 		if(m_fct[i] == 32) //Whitespace character
 			m_fct.erase(i, 1);
-	std::cout << m_fct << "\n";
 	m_root = new Node(NULL, m_fct);
 	parse();
 }
@@ -154,6 +153,7 @@ void Tree::init() {
 	Tree::variables.emplace("pi", new Tree(PARSER_SPI));
 	Tree::variables.emplace("e", new Tree(PARSER_SE));
 }
+
 string Tree::toString(Node* n, string path) {
 	if(n->m_left != NULL && n->m_right != NULL)
 		return n->toString() + "; " + path + "L"+ " " + toString(n->m_left, path+"L") + "; " + path +"R" + " "+ toString(n->m_right, path+"R") + ";  ";
@@ -168,31 +168,56 @@ string Tree::toString() {
 	return toString(m_root, "O");
 }
 
-bool Tree::checkParenthesis(string s) {
-	int i = 0;
+// Check if parenthesis use is valid:
+// Return 2 if parenthesis are balanced at any point before the end and are balanced overall
+// Return 1 if parenthesis present and balanced
+// Return -1 if unbalanced
+// Return 0 if no parenthesis
+int Tree::checkParenthesis(string s) {
+	bool hitParen = false;
+	bool balancedBeforeEnd = false;
 	int count = 0;
-	while(s[i] != 0) {
-		if(s[i] == '(') count++;
+	for(int i = 0; i < s.length(); i++) {
+		if(s[i] == '(') {
+			count++;
+			hitParen = true;
+		}
 		else if(s[i] == ')') count--;
-		++i;
+		if(hitParen && count == 0 && i != s.length() - 1) balancedBeforeEnd = true;
 	}
-	return count == 0;
+	if(!hitParen) return 0;
+	else if(count != 0) return -1;
+	else if(count == 0)
+		if(balancedBeforeEnd) return 2;
+		else return 1;
 }
 
+// Parse, avoids having to pass m_root
 int Tree::parse() {
 	return parse(m_root);
 }
 
 int Tree::parse(Node *root) {
 	string& s = root->m_val;
-	if(!checkParenthesis(s)) return 1;	
 	int length = s.length();
-	if(s[0] == '(' && s[length-1] == ')') {
-		s.erase(length-1, 1);
-		s.erase(0, 1);
-		length -= 2;
-	}
 
+	switch(checkParenthesis(s)) {
+		case -1:
+			std::cout << "Invalid use of parenthesis \n";
+			return -1;
+			break;
+		case 0:
+			break;
+		case 1:
+			s.erase(length-1, 1);
+			s.erase(0, 1);
+			length -= 2;
+			break;
+		case 2:
+			break;
+	}
+			
+	
 	bool foundDelim = false;
 	//Loop through delimiters
 	for(int j = 0; j < 9 && !foundDelim; j++) {
@@ -217,7 +242,6 @@ int Tree::parse(Node *root) {
 			}
 			//Length 4 fct
 			else if(i+4 < length && j == FT4 && delim[FT4].find(s.substr(i, i+4) + ";") != -1) {
-				std::cout << "length 4 fcts \n";
 				foundDelim = true;
 				root->m_left = new Node(root, s.substr(0, i));
 				root->m_right = new Node(root, s.substr(i+4));
@@ -227,7 +251,6 @@ int Tree::parse(Node *root) {
 			}
 			//Length 3 fct
 			else if(i+3 < length && j == FT3 && delim[FT3].find(s.substr(i, i+3) + ";") != -1) {
-				std::cout << "length 3 fcts \n";
 				foundDelim = true;
 				root->m_left = new Node(root, s.substr(0, i));
 				root->m_right = new Node(root, s.substr(i+3));
@@ -237,7 +260,6 @@ int Tree::parse(Node *root) {
 			}
 			//Length 2 fct
 			else if(i+2 < length && j == FT2 && delim[FT2].find(s.substr(i, i+2) + ";") != -1) {
-				std::cout << "finding ln \n";
 				foundDelim = true;
 				root->m_left = new Node(root, s.substr(0, i));
 				root->m_right = new Node(root, s.substr(i+2));
@@ -247,7 +269,6 @@ int Tree::parse(Node *root) {
 			}
 			//Variables
 			else if(j == VAR && delim[VAR].find(s[i]) != -1) {
-				std::cout << "finding var \n";
 				foundDelim = true;
 				variables.emplace(&s[i], new Tree("0") );
 				//root->m_left = new Node(root, s.substr(0, i));
@@ -256,7 +277,6 @@ int Tree::parse(Node *root) {
 			}
 			//search for length pi	
 			else if(i+2 < length && j == 9 && delim[j].find(s.substr(i,i+2) + ";") != -1) {
-				std::cout << "finding pi \n";
 				foundDelim = true;
 				root->m_val = s.substr(i,i+2);
 				//root->m_left = new Node(root, s.substr(0, i));
@@ -285,6 +305,7 @@ cx Tree::value(Node *root) {
 //set the value of a variable
 void Tree::setVar(string var, string a) {
 	try {
+		delete variables[var];
 		variables[var] = new Tree(a);
 	}
 	catch(const std::out_of_range& err) {
@@ -292,6 +313,7 @@ void Tree::setVar(string var, string a) {
 	}
 }
 
+// Return the toString a variable's tree
 string Tree::getVar(string var) {
 	try {
 		return variables.at(var)->toString();
@@ -301,6 +323,7 @@ string Tree::getVar(string var) {
 	}
 }
 
+// Evaluate a variable's numerical value
 cx Tree::evalVar(string var) {
 	try {
 		return variables.at(var)->eval();
@@ -311,13 +334,33 @@ cx Tree::evalVar(string var) {
 }
 
 
-
+// Evalutate the tree's numerical value
 cx Tree::eval() {
 	return value(m_root);
 }
 
+//True if parseops and constants have been filled
 bool Tree::isInitd() {
 	return Tree::initd;
+}
+
+// s is operator => return 1
+// s is variable => return 2
+// s is invalid => return 0
+int Tree::isToken(string s) {
+	try {
+		parseops.at(s);
+		return 1;
+	}
+	catch (const out_of_range& e) {
+		try {
+			variables.at(s);
+			return 2;
+		}
+		catch (const out_of_range& e1) {
+			return 0;
+		}
+	}
 }
 
 
