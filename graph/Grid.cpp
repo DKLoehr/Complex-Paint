@@ -196,7 +196,6 @@ void Grid::Draw() {
     m_w->draw(m_lines);
     if(m_dispNumbers) {
         for(int iii = 0; iii < m_numberLabels.size(); iii++) {
-            //m_numberLabels[iii].setFont(m_f); // Dealing with an incredibly weird and annoying bug
             m_w->draw(m_numberLabels[iii]);
         }
     }

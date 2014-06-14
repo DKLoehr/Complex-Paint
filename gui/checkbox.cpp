@@ -57,7 +57,7 @@ bool Checkbox::OnClick(double xP, double yP) {
     int cap = (((std::string)m_cap.getString()).length() + 1) * 10;
 
     if(((m_position.x - 3) * xScale < xP) && (xP < (m_position.x + m_size.x + cap + 2) * xScale) &&
-       ((m_position.y - 3) * yScale < yP) && (yP < (m_position.y + m_size.y + 2) * yScale))
+       ((m_position.y - 3) * yScale < yP) && (yP < (m_position.y + m_size.y + 6) * yScale))
     {
         Toggle();
         return true;
