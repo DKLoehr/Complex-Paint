@@ -11,6 +11,7 @@ int main() {
 	fct->setVar("X","5");
 	fct->setVar("A","2");
 	std::cout << "Tree:  " << fct->toString() << "\n";
+
 	std::cout << "ANSWER: " << fct->eval() << "\n";
 
 

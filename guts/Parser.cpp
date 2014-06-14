@@ -39,46 +39,35 @@ cx pow(cx base, cx a) {
 	return std::pow(base, a);	
 }
 cx log(cx base, cx a) {
-	if(base == M_E)	return std::log(a);
+	if(base == PARSER_E || base ==0.0)
+		return std::log(a);
 	else return std::log(a) / std::log(base);
 }
 
 cx sin(cx a, cx b) {
-	return std::sin(a);
+	return std::sin(b);
 }
 cx cos(cx a, cx b) {
-	return std::cos(a);
+	return std::cos(b);
 }
 cx tan(cx a, cx b) {
-	return std::tan(a);
+	return std::tan(b);
 }
 cx asin(cx a, cx b) {
-	return std::asin(a);
+	return std::asin(b);
 }
 cx acos(cx a, cx b) {
-	return std::acos(a);
+	return std::acos(b);
 }
 cx atan(cx a, cx b) {
-	return std::atan(a);
+	return std::atan(b);
 }
 cx sqrt(cx a, cx b) {
-	return std::sqrt(a);
+	return std::sqrt(b);
 }
 cx abs(cx a, cx b) {
-	return std::abs(a);
+	return std::abs(b);
 }
-
-cx pi(cx a, cx b) {
-	return M_PI;
-}
-cx e(cx a, cx b) {
-	return M_E;
-}
-
-cx var(cx a, cx b) {
-	return 0;
-}
-
 
 Node::Node(Node * parent, string val) {
 	m_parent = parent;
@@ -120,7 +109,7 @@ void Node::prune(int side) {
 }
 
 //	TREE
-string Tree::delim[] = {"+", "-", "*", "/", "^", "sin;cos;tan;log;abs;", "sqrt;asin;acos;atan;", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ln;"}; 
+string Tree::delim[] = {"+", "-", "*", "/", "^", "sin;cos;tan;log;abs;", "sqrt;asin;acos;atan;",  "ln;", "ABCDEFGHIJKLMNOPQRSTUVWXYZ","pi;e"}; 
 bool Tree::initd = false;
 std::unordered_map<std::string, cx (* const)(cx,cx)> Tree::parseops = std::unordered_map<std::string, cx (* const)(cx,cx)>();
 std::unordered_map<std::string, Tree*> Tree::variables = std::unordered_map<std::string, Tree*>();
@@ -162,11 +151,9 @@ void Tree::init() {
 	Tree::parseops.emplace("sqrt",psqrt);
 	Tree::parseops.emplace("abs", parser::abs);
 
-	Tree::parseops.emplace("pi",ppi);
-	Tree::parseops.emplace("e",pe);
-	std::cout << "initializing map" << "\n";	
+	Tree::variables.emplace("pi", new Tree(PARSER_SPI));
+	Tree::variables.emplace("e", new Tree(PARSER_SE));
 }
-
 string Tree::toString(Node* n, string path) {
 	if(n->m_left != NULL && n->m_right != NULL)
 		return n->toString() + "; " + path + "L"+ " " + toString(n->m_left, path+"L") + "; " + path +"R" + " "+ toString(n->m_right, path+"R") + ";  ";
@@ -220,7 +207,7 @@ int Tree::parse(Node *root) {
 				}
 			}
 			//arithmetic
-			else if(s[i]== (delim[j])[0] && j < 5) {
+			else if(i > 0 && s[i]== (delim[j])[0] && j < 5) {
 				foundDelim = true;
 				root->m_left = new Node(root, s.substr(0, i));
 				root->m_right = new Node(root, s.substr(i+1));
@@ -228,18 +215,8 @@ int Tree::parse(Node *root) {
 				parse(root->m_left);
 				parse(root->m_right);
 			}
-			//Length 3 fct
-			else if(i+3 < length && j == 5 && delim[j].find(s.substr(i, i+3) + ";") != -1) {
-				std::cout << "length 3 fcts \n";
-				foundDelim = true;
-				root->m_left = new Node(root, s.substr(0, i));
-				root->m_right = new Node(root, s.substr(i+3));
-				root->m_val = s.substr(i, i+3);
-				parse(root->m_left);
-				parse(root->m_right);
-			}
 			//Length 4 fct
-			else if(i+4 < length && j == 6 && delim[j].find(s.substr(i, i+4) + ";") != -1) {
+			else if(i+4 < length && j == FT4 && delim[FT4].find(s.substr(i, i+4) + ";") != -1) {
 				std::cout << "length 4 fcts \n";
 				foundDelim = true;
 				root->m_left = new Node(root, s.substr(0, i));
@@ -248,8 +225,18 @@ int Tree::parse(Node *root) {
 				parse(root->m_left);
 				parse(root->m_right);
 			}
+			//Length 3 fct
+			else if(i+3 < length && j == FT3 && delim[FT3].find(s.substr(i, i+3) + ";") != -1) {
+				std::cout << "length 3 fcts \n";
+				foundDelim = true;
+				root->m_left = new Node(root, s.substr(0, i));
+				root->m_right = new Node(root, s.substr(i+3));
+				root->m_val = s.substr(i, i+3);
+				parse(root->m_left);
+				parse(root->m_right);
+			}
 			//Length 2 fct
-			else if(i+2 < length && j == 8 && delim[j].find(s.substr(i, i+2) + ";") != -1) {
+			else if(i+2 < length && j == FT2 && delim[FT2].find(s.substr(i, i+2) + ";") != -1) {
 				std::cout << "finding ln \n";
 				foundDelim = true;
 				root->m_left = new Node(root, s.substr(0, i));
@@ -258,13 +245,22 @@ int Tree::parse(Node *root) {
 				parse(root->m_left);
 				parse(root->m_right);
 			}
-			else if(j == 7 && delim[j].find(s[i]) != -1) {
+			//Variables
+			else if(j == VAR && delim[VAR].find(s[i]) != -1) {
 				std::cout << "finding var \n";
 				foundDelim = true;
 				variables.emplace(&s[i], new Tree("0") );
 				//root->m_left = new Node(root, s.substr(0, i));
 				//root->m_right = new Node(root, s.substr(i+1));
 				root->m_val = s[i];
+			}
+			//search for length pi	
+			else if(i+2 < length && j == 9 && delim[j].find(s.substr(i,i+2) + ";") != -1) {
+				std::cout << "finding pi \n";
+				foundDelim = true;
+				root->m_val = s.substr(i,i+2);
+				//root->m_left = new Node(root, s.substr(0, i));
+				//root->m_right = new Node(root, s.substr(i+2));
 			}
 		}
 	}
@@ -274,20 +270,19 @@ int Tree::parse(Node *root) {
 //Calculate the value of a tree
 cx Tree::value(Node *root) {
 	try {
-		return parseops.at(root->m_val)( value(root->m_left), value(root->m_right));
+		return parseops.at(root->m_val)(value(root->m_left), value(root->m_right));
 	}
-	catch(const out_of_range& err) {
-		if(-1 != delim[7].find(root->m_val)) {
+	catch(const out_of_range& err0) {
+		try {
 			return variables.at(root->m_val)->eval();
 		}
-		else {
-			std::cout << "WARNING: variable not found \n";
+		catch(const out_of_range& err1) {
 			return stringToCx(root->m_val);
 		}
 	}
 }
 
-//Set a variable
+//set the value of a variable
 void Tree::setVar(string var, string a) {
 	try {
 		variables[var] = new Tree(a);
@@ -297,15 +292,24 @@ void Tree::setVar(string var, string a) {
 	}
 }
 
-//Get the toString of a variable's tree
 string Tree::getVar(string var) {
 	try {
-		return variables[var]->toString();
+		return variables.at(var)->toString();
 	}
 	catch(const std::out_of_range& err) {
 		std::cout << "variable undefined or does not exist \n";
 	}
 }
+
+cx Tree::evalVar(string var) {
+	try {
+		return variables.at(var)->eval();
+	}
+	catch(const std::out_of_range& err) {
+		std::cout << "variable undefined or does not exist \n";
+	}
+}
+
 
 
 cx Tree::eval() {
