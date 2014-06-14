@@ -13,8 +13,23 @@ template<> string toString(cx c) {
 	return s.str();
 }
 
+//Converts a string WITHOUT OPERATORS into a complex number
+//Must be of form __number__i or __number__
 cx stringToCx(string s) {
-	std::istringstream is('(' + s + ",0)");
+	string permitted = "1234567890i";
+	for(char c : s)
+		if(permitted.find(c) == -1)
+			throw std::invalid_argument("Not a number within C");
+	std::istringstream is;
+	if(s.find("i") == -1)
+		is.str('(' + s + ",0)");
+	else if(s.length() > 1) {
+		s.erase(s.length() -1);
+		is.str("(0," + s + ")");
+	}
+	else
+		is.str("(0,1)");
+	std::cout << is.str() << "\n";
 	cx a;
 	is >> a;
 	return a;
@@ -152,6 +167,9 @@ void Tree::init() {
 
 	Tree::variables.emplace("pi", new Tree(PARSER_SPI));
 	Tree::variables.emplace("e", new Tree(PARSER_SE));
+	Tree::variables.emplace("i", new Tree(PARSER_SI));
+
+	Tree::initd = true;
 }
 
 string Tree::toString(Node* n, string path) {

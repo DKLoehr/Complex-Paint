@@ -13,6 +13,7 @@
 #define PARSER_SE "2.71828182845904523536"
 #define PARSER_PI 3.14159265358979323846
 #define PARSER_E 2.71828182845904523536
+#define PARSER_SI "1i"
 using namespace std;
 
 typedef std::complex<double> cx;
