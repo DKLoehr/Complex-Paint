@@ -72,7 +72,7 @@ private:
 public:
 	~Node();
 	string toString();
-	void spawn(string childVal = "", int side = -1);
+	void spawn(string childVal = " ", int side = -1);
 	void prune(int side = 0); 
 
 };

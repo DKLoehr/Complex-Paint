@@ -16,10 +16,11 @@ template<> string toString(cx c) {
 //Converts a string WITHOUT OPERATORS into a complex number
 //Must be of form __number__i or __number__
 cx stringToCx(string s) {
-	string permitted = "1234567890i";
+	string permitted = ".1234567890i-";
 	for(char c : s)
 		if(permitted.find(c) == -1)
 			throw std::invalid_argument("Not a number within C");
+
 	std::istringstream is;
 	if(s.find("i") == -1)
 		is.str('(' + s + ",0)");
@@ -27,9 +28,8 @@ cx stringToCx(string s) {
 		s.erase(s.length() -1);
 		is.str("(0," + s + ")");
 	}
-	else
+	else if(s[0] == 'i' && s.length() == 1)
 		is.str("(0,1)");
-	std::cout << is.str() << "\n";
 	cx a;
 	is >> a;
 	return a;
@@ -98,29 +98,6 @@ Node::~Node() {
 
 string Node::toString() {
 	return m_val;
-}
-
-//side == -1 => new left node
-//side == 1 => new right node
-void Node::spawn(string childVal, int side) {
-	if(side == -1)
-		m_left = new Node(this, childVal);
-	else if(side == 1) 
-		m_right = new Node(this, childVal);
-}
-
-//side == -1 => delete left node
-//side == 1 => delete right node
-//side == 0 => delete all children
-void Node::prune(int side) {
-	if(side ==  -1)
-		delete m_left;
-	else if(side ==  1)
-		delete m_right;
-	else if(side == 0) {
-		delete m_right;
-		delete m_left;
-	}
 }
 
 //	TREE
@@ -201,7 +178,9 @@ int Tree::checkParenthesis(string s) {
 			hitParen = true;
 		}
 		else if(s[i] == ')') count--;
-		if(hitParen && count == 0 && i != s.length() - 1) balancedBeforeEnd = true;
+		if(hitParen && count == 0 && i < s.length()-1) {
+			balancedBeforeEnd = true;
+		}
 	}
 	if(!hitParen) return 0;
 	else if(count != 0) return -1;
@@ -227,9 +206,11 @@ int Tree::parse(Node *root) {
 		case 0:
 			break;
 		case 1:
-			s.erase(length-1, 1);
-			s.erase(0, 1);
-			length -= 2;
+			if(s[0] == '(') {
+				s.erase(length-1, 1);
+				s.erase(0, 1);
+				length -= 2;
+			}
 			break;
 		case 2:
 			break;
@@ -243,10 +224,14 @@ int Tree::parse(Node *root) {
 			//skip paren
 			if(s[i] == '(') { 
 				int parenthCount = 1;
-				while(parenthCount!= 0) {
-					++i;
-					if(s[i] == '(') ++parenthCount;
-					else if(s[i] == ')') --parenthCount;
+				while(parenthCount != 0) {
+					i++;
+					if(s[i] == '(') {
+						parenthCount++;
+					}
+					else if(s[i] == ')') {
+						parenthCount--;
+					}
 				}
 			}
 			//arithmetic
@@ -289,16 +274,12 @@ int Tree::parse(Node *root) {
 			else if(j == VAR && delim[VAR].find(s[i]) != -1) {
 				foundDelim = true;
 				variables.emplace(&s[i], new Tree("0") );
-				//root->m_left = new Node(root, s.substr(0, i));
-				//root->m_right = new Node(root, s.substr(i+1));
 				root->m_val = s[i];
 			}
 			//search for length pi	
 			else if(i+2 < length && j == 9 && delim[j].find(s.substr(i,i+2) + ";") != -1) {
 				foundDelim = true;
 				root->m_val = s.substr(i,i+2);
-				//root->m_left = new Node(root, s.substr(0, i));
-				//root->m_right = new Node(root, s.substr(i+2));
 			}
 		}
 	}
