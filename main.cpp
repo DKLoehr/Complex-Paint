@@ -1,18 +1,17 @@
-#include "guts/Parser.h"
-#include <iostream>
+#include "runner.h"
 
 int main() {
-	using namespace parser;
-	string func;
-	//std::cout << "Input function: \n";
-	//std::cin >> func;
-	//func = "(X + 1-1) ^ (2 *2 -2)";
-	func  = "(i+1)^X";
-	Tree* fct = new Tree(func);
-	fct->setVar("X","2");
-	std::cout << "Tree:  " << fct->toString() << "\n";
+    sf::Font inFont;
+    if(!inFont.loadFromFile("VeraMono.ttf")){/*error handling*/}
 
-	std::cout << "ANSWER: " << fct->eval() << "\n";
+    sf::RenderWindow window(sf::VideoMode(1265, 725), "Complex Paint Revamped");
+    window.setPosition(sf::Vector2i(0, 0));
 
-	return 0;
+    Runner run = Runner(&window, &inFont);
+
+    while(window.isOpen()) {
+        run.HandleEvents();
+        run.Draw();
+    }
+    return 0;
 }

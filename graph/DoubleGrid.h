@@ -15,6 +15,8 @@ private:
     sf::RenderWindow* w;
 
 public:
+    /// Note: without a window, this constructor won't give you anything useful
+    DoubleGrid();
     /// Constructs the rectangle only, at heightOffset pixels from the top of the screen. Construct the grids separately.
     DoubleGrid(sf::RenderWindow* w, sf::Font f, int heightOffset);
 
@@ -29,6 +31,8 @@ public:
 
     /// Draw everything to the window
     void Draw();
+    /// Draw everything except number labels to the window
+    void DrawTextless();
 };
 
 #endif // DOUBLEGRID_H

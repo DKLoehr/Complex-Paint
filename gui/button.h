@@ -1,34 +1,22 @@
 #ifndef BUTTON_H
 #define BUTTON_H
 
-#include <SFML/Graphics.hpp>
-#include <string>
-#include "text.h"
+#include "GUI.h"
 
-class Button
+class Button : public GUI
 {
-protected:
-    int m_x;
-    int m_y;
-    int m_width;
-    int m_height;
-
-    sf::Text m_text;
-    sf::Font m_f;
-    sf::RenderWindow* m_w;
-    sf::RectangleShape m_rectangle;
-
 public:
-    Button(sf::RenderWindow* window, sf::Font font, int x, int y, int width, int height, std::string str);
+    Button(); // Note: this doesn't take a window, and so won't create a useful object
+    Button(sf::RenderWindow* window, sf::Font* font, int x, int y, int width, int height, std::string str);
 
-    bool IsPressed(int xP,int yP); //only activates if the button was actually at the x and y location
+    void SetActive(bool active);
 
-    double GetHeight();
+    void SetPosition(sf::Vector2f newPos);
+    void SetPosition(double x, double y);
 
-    void Draw();
-
-    void SetText(std::string str);
-    std::string GetText();
+    bool OnEnter(); // Always returns true
+    bool OnClick(double xP, double yP); // Returns true if the button was clicked
+    void OnTextEntered(char n);
 };
 
 #endif //BUTTON_H

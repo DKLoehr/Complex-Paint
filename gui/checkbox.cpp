@@ -1,15 +1,16 @@
 #include "checkbox.h"
 
-Checkbox::Checkbox(sf::RenderWindow* window, sf::Font font, int x, int y, std::string cap, bool isToggled)
-    : Button(window, font, x, y, 11, 11, "")
+Checkbox::Checkbox() {
+
+}
+
+Checkbox::Checkbox(sf::RenderWindow* window, sf::Font* font, int x, int y, std::string cap, bool isToggled)
+    : GUI(window, font, x, y, 11, 11)
 {
     m_isToggled = !isToggled;
     Toggle(); // Toggle so we update our string
 
     m_cap.setString(cap);
-    m_cap.setFont(m_f);
-    m_cap.setCharacterSize(15);
-    m_cap.setColor(sf::Color::Black);
 
     m_rectangle.setPosition(x + cap.length() * 10, y + 5);
     m_text.setPosition(x + cap.length() * 10 + 1, y);
@@ -24,20 +25,47 @@ void Checkbox::Toggle() {
         m_text.setString("");
 }
 
-bool Checkbox::IsToggled() {
-    return m_isToggled;
+void Checkbox::SetActive(bool active) {
+    isActive = active;
+    DrawWhite();
+    if(isActive) {
+        m_rectangle.setFillColor(sf::Color::White);
+    } else {
+        m_rectangle.setFillColor(sf::Color(150, 150, 150));
+    }
+    Draw();
 }
 
-bool Checkbox::IsPressed(int xP, int yP) {
-    if(m_rectangle.getPosition().x - 3 < xP && xP < m_width + m_rectangle.getPosition().x &&
-       m_y + 2 < yP && yP < m_y + m_height + 6)
+void Checkbox::SetPosition(sf::Vector2f newPos) {
+    SetPosition(newPos.x, newPos.y);
+}
+
+void Checkbox::SetPosition(double x, double y) {
+    std::string str = m_cap.getString();
+    m_rectangle.setPosition(x + str.length() * 10, y + 5);
+    m_text.setPosition(x + str.length() * 10 + 1, y);
+    m_cap.setPosition(x, y);
+}
+
+bool Checkbox::OnEnter() {
+    Toggle();
+    return true;
+}
+
+bool Checkbox::OnClick(double xP, double yP) {
+    double xScale = m_w->getSize().x / m_wSize.x, yScale = m_w->getSize().y / m_wSize.y;
+    int cap = (((std::string)m_cap.getString()).length() + 1) * 10;
+
+    if(((m_position.x - 3) * xScale < xP) && (xP < (m_position.x + m_size.x + cap + 2) * xScale) &&
+       ((m_position.y - 3) * yScale < yP) && (yP < (m_position.y + m_size.y + 6) * yScale))
+    {
+        Toggle();
         return true;
-    else
-        return false;
+    }
+
+    return false;
 }
 
-void Checkbox::Draw() {
-    m_w->draw(m_rectangle);
-    m_w->draw(m_text);
-    m_w->draw(m_cap);
+void Checkbox::OnTextEntered(char n) {
+    return;
 }

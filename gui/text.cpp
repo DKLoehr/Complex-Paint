@@ -7,58 +7,103 @@ InputBox::InputBox() {
 
 }
 
-InputBox::InputBox(sf::RenderWindow* window, sf::Font font, int x, int y, int charWidth, int charHeight,
+InputBox::InputBox(sf::RenderWindow* window, sf::Font* font, int x, int y, int width, int height,
                    std::string cap):
-    m_stored(),
-    m_rectangle(sf::Vector2f(charWidth, charHeight))
+    GUI(window, font, x, y, width, height)
 {
-    m_w = window;
-    m_f = font;
-    m_x = x;
-    m_y = y;
-    m_width = charWidth;
-    m_height = charHeight;
-    m_isFocused = false;
-
-    m_stored.setString("");
-    m_stored.setFont(m_f);
-    m_stored.setCharacterSize(15);
-    m_stored.setColor(sf::Color::Black);
-
     m_cap.setString(cap);
-    m_cap.setFont(m_f);
-    m_cap.setCharacterSize(15);
-    m_cap.setColor(sf::Color::Black);
 
-    m_rectangle.setOutlineThickness(2);
     m_rectangle.setOutlineColor(sf::Color(100,100,100));
 
-    m_cap.setPosition(m_x, m_y - 2);
-    m_rectangle.setPosition(m_x + cap.length() * 10, m_y);
-    m_stored.setPosition(m_x + cap.length() * 10, m_y - 2);
+    m_cap.setPosition(x, y - 2);
+    m_rectangle.setPosition(x + cap.length() * 10, y);
+    m_text.setPosition(x + cap.length() * 10, y - 2);
 };
 
-void InputBox::EnterText(char n) {
-    if(true/*n == '0' || n == '1' || n == '2' || n == '3' || n == '4' || n == '5' ||
-       n == '6' || n == '7' || n == '8' || n == '9' || n == ',' || n == '/' ||
-       n == '(' || n == ')' ||n == 8*/) { // n is a digit, comma, slash, or backspace
-        std::string temp = m_stored.getString();
+
+bool InputBox::IsValid(char n) {
+    if(n == 8 || n == 32 || n == 33 || (n >= 40 && n <= 57) || (n >= 65 && n <= 90) || n == 94 ||
+       (n >= 97 && n <= 122) || n == 127)
+        return true;
+    else
+        return false;
+}
+
+void InputBox::SetActive(bool active) {
+    isActive = active;
+    DrawWhite();
+    if(isActive) {
+        m_rectangle.setFillColor(sf::Color::White);
+    } else {
+        m_rectangle.setFillColor(sf::Color(150, 150, 150));
+    }
+    Draw();
+}
+
+void InputBox::SetPosition(sf::Vector2f newPos) {
+    SetPosition(newPos.x, newPos.y);
+}
+
+void InputBox::SetPosition(double x, double y) {
+    std::string cap = m_cap.getString();
+    m_cap.setPosition(x, y - 2);
+    m_rectangle.setPosition(x + cap.length() * 10, y);
+    m_text.setPosition(x + cap.length() * 10, y - 2);
+}
+
+bool InputBox::OnEnter() {
+    return false;
+}
+
+bool InputBox::OnClick(double xP, double yP) {
+    double xScale = m_w->getSize().x / m_wSize.x, yScale = m_w->getSize().y / m_wSize.y;
+    int cap = (((std::string)m_cap.getString()).length() + 1) * 10;
+
+    if((m_position.x - 3) * xScale < xP && xP < (m_position.x + m_size.x + cap + 5) * xScale &&
+       (m_position.y - 3) * yScale < yP && yP < (m_position.y + m_size.y + 2) * yScale)
+        return true;
+    else
+        return false;
+}
+
+void InputBox::OnTextEntered(char n) {
+    if(IsValid(n)) { // n is a valid character
+        std::string temp = m_text.getString();
         if(n != 8) { // Some character
-            if(m_stored.getString().getSize() * 10 < m_width)
-                m_stored.setString(temp.substr(0, temp.length()) + n);
+            m_text.setString(temp.substr(0, temp.length()) + n);
         } else if(n == 8) { // Backspace
-            m_stored.setString(temp.substr(0, temp.length() - 1));
+            m_text.setString(temp.substr(0, temp.length() - 1));
         }
     }
 }
 
-std::string InputBox::GetStoredString() {
-    return m_stored.getString();
+void InputBox::EnterText(char n) {
+    if(IsValid(n)) { // n is a valid character
+        std::string temp = m_text.getString();
+        if(n != 8) { // Some character
+            m_text.setString(temp.substr(0, temp.length()) + n);
+        } else if(n == 8) { // Backspace
+            m_text.setString(temp.substr(0, temp.length() - 1));
+        }
+    }
 }
 
-int InputBox::GetStringAsInt() {
-    int ret = 0;
-    std::string str = m_stored.getString();
+void InputBox::Draw() {
+    m_w->draw(m_rectangle);
+    std::string str = m_text.getString();
+    std::string truncStr;
+    if(str.length() * 10 > m_size.x) {
+        truncStr = str.substr(str.length() - m_size.x / 10, std::string::npos);
+        m_text.setString(truncStr);
+    }
+    m_w->draw(m_text);
+    m_text.setString(str);
+    m_w->draw(m_cap);
+}
+
+double InputBox::GetStringAsDouble() {
+    double ret = 0;
+    std::string str = m_text.getString();
     for(int i = str.length() - 1; i >= 0; i--) {
         ret += pow(10, str.length() - 1 - i) * (str[i] - '0');
     }
@@ -67,10 +112,13 @@ int InputBox::GetStringAsInt() {
 }
 
 sf::Vector2f InputBox::GetStringAsVector() {
-    std::string str = m_stored.getString();
-    std::string xStr = str.substr(1, str.find(',') - 1);
-    std::string yStr = str.substr(str.find(',') +  1, str.length() - 4);
-    std::cout << yStr << "\n";
+    std::string str = m_text.getString();
+    if(str.find('(') != std::string::npos)
+        str = str.substr(1, std::string::npos);
+    if(str.find(')') != std::string::npos)
+        str = str.substr(0, str.length() - 1);
+    std::string xStr = str.substr(0, str.find(','));
+    std::string yStr = str.substr(str.find(',') +  1, str.length());
     int x = 0, y = 0;
     for(int i = xStr.length() - 1; i >= 0; i--) {
         x += pow(10, xStr.length() - 1 - i) * (xStr[i] - '0');
@@ -79,14 +127,4 @@ sf::Vector2f InputBox::GetStringAsVector() {
         y += pow(10, yStr.length() - 1 - i) * (yStr[i] - '0');
     }
     return sf::Vector2f(x, y);
-}
-
-void InputBox::SetBoxColor(sf::Color c) {
-    m_rectangle.setFillColor(c);
-}
-
-void InputBox::Draw() {
-    m_w->draw(m_rectangle);
-    m_w->draw(m_stored);
-    m_w->draw(m_cap);
 }

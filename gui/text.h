@@ -1,47 +1,29 @@
 #ifndef INPUT_BOX_H
 #define INPUT_BOX_H
 
-#include <SFML/Graphics.hpp>
-#include <string>
+#include "GUI.h"
 
-/*
-class TextSettings {
-public:
-    int charSize;
-    sf::Font f_regular;
-    sf::Font f_bold;
-    sf::Font f_italic;
-    sf::Font f_special;
-
-    TextSettings(int cSize, sf::Font f_r, sf::Font f_b, sf::Font f_i, sf::Font f_s) : f_regular(f_r), f_bold(f_b), f_italic(f_i), f_special(f_s){
-        charSize=cSize;
-    };
-};
-*/
-class InputBox {
+class InputBox : public GUI
+{
 private:
-    sf::Font m_f;
-    bool m_isFocused;
-    int m_x;
-    int m_y;
-    int m_width;
-    int m_height;
-
-    sf::Text m_stored;
-    sf::Text m_cap;
-    sf::RenderWindow* m_w;
-    sf::RectangleShape m_rectangle;
+    bool IsValid(char n);
 public:
     InputBox(); // Warning -- since this doesn't take a window, this is useless!
-    InputBox(sf::RenderWindow* window, sf::Font font, int x, int y, int charWidth, int charHeight, std::string cap = "");
+    InputBox(sf::RenderWindow* window, sf::Font* font, int x, int y, int charWidth, int charHeight, std::string cap = "");
 
-    void EnterText(char n);
-    void SetBoxColor(sf::Color c);
+    void SetActive(bool active);
+
+    void SetPosition(sf::Vector2f newPos);
+    void SetPosition(double x, double y);
+
+    bool OnEnter(); // Does nothing
+    bool OnClick(double xP, double yP); // Does nothing
+    void OnTextEntered(char n); // Adds text to string
+    void EnterText(char n); // Same as OnTextEntered
 
     void Draw();
 
-    std::string GetStoredString();
-    int GetStringAsInt(); // Only call if you know the string is just a single integer
+    double GetStringAsDouble(); // Only call if you know the string is just a single number
     sf::Vector2f GetStringAsVector(); // Only call if you know the string is of the form "(int, int)"
 };
 

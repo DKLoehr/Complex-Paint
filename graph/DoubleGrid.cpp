@@ -1,10 +1,14 @@
 #include "DoubleGrid.h"
 
+DoubleGrid::DoubleGrid() {
+    return;
+}
+
 DoubleGrid::DoubleGrid(sf::RenderWindow* window, sf::Font f, int heightOffset) :
     lGrid(Grid(window, f, 0, heightOffset, window->getSize().x / 2, window->getSize().y - heightOffset,
-               10, 10, 2, 2)),
+               2, 2, 1, 1)),
     rGrid(Grid(window, f, window->getSize().x / 2, heightOffset, window->getSize().x / 2,
-                 window->getSize().y - heightOffset, 10, 10, 2, 2)),
+                 window->getSize().y - heightOffset, 2, 2, 1, 1)),
     horDivider(sf::RectangleShape(sf::Vector2f(window->getSize().x, 2))),
     vertDivider(sf::RectangleShape(sf::Vector2f(6, window->getSize().y - heightOffset)))
 {
@@ -27,6 +31,13 @@ void DoubleGrid::SetYPosition(int yPos) {
 void DoubleGrid::Draw() {
     lGrid.Draw();
     rGrid.Draw();
+    w->draw(horDivider);
+    w->draw(vertDivider);
+}
+
+void DoubleGrid::DrawTextless() {
+    lGrid.DrawTextless();
+    rGrid.DrawTextless();
     w->draw(horDivider);
     w->draw(vertDivider);
 }

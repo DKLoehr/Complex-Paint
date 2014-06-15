@@ -1,10 +1,11 @@
-CFLAGS=-std=c++11 -g -I/usr/include/SFML -L /usr/lib -lsfml-graphics -lsfml-network -lsfml-system -lsfml-window
+CFLAGS=-std=gnu++11 -g -I/usr/include/SFML -L /usr/lib -lsfml-graphics -lsfml-network -lsfml-system -lsfml-window
 CC=g++
-OBJ = button.o text.o DoubleGrid.o main.o Grid.o Parser.o checkbox.o
+OBJ = button.o text.o DoubleGrid.o main.o Grid.o Parser.o checkbox.o runner.o GUI.o
 GUI = ./gui/*.cpp ./gui/*.h
 GRAPH = ./graph/*.cpp ./graph/*.h
 GRID = ./graph/Grid.cpp ./graph/Grid.h
 PARSER=./guts/Parser.cpp ./guts/Parser.h
+RUNNER=runner.cpp runner.h
 
 
 all: go
@@ -12,7 +13,7 @@ all: go
 go: $(OBJ)
 	$(CC) $(OBJ) $(CFLAGS) -o go
 
-main.o: main.cpp $(GUI)
+main.o: main.cpp $(RUNNER)
 	$(CC) -c main.cpp $(CFLAGS)
 
 button.o: $(GUI) 
@@ -32,6 +33,12 @@ Grid.o: $(GRID)
 
 Parser.o: $(PARSER)
 	$(CC) -c ./guts/Parser.cpp $(CFLAGS)
+
+runner.o: $(RUNNER) $(GUI) $(PARSER) $(GRAPH) $(GRID)
+	$(CC) -c runner.cpp $(CFLAGS)
+
+GUI.o: gui/GUI.cpp gui/GUI.h
+	$(CC) -c ./gui/GUI.cpp $(CFLAGS)
 
 clean:
 	rm -r *.o go
