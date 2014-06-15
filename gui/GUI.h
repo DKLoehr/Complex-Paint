@@ -41,6 +41,7 @@ public:
 
     void SetText(std::string str);
     std::string GetText();
+    std::string GetCap();
 
     virtual void Draw();
     virtual void DrawWhite();

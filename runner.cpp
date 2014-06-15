@@ -12,7 +12,8 @@ void Runner::Init() {
     isIterating = false;
     mode = single;
     drawGUI = true;
-    window->clear(sf::Color::White);
+
+    fct = new parser::Tree("Z");
 
     grid = DoubleGrid(window, *inFont, 200);
     grid.Draw();
@@ -142,7 +143,6 @@ void Runner::Init() {
     clearGraphs = Button(window, inFont, window->getSize().x / 2 - 23, 175, 46, 15, "Clear"); // 25
     elements.push_back(&clearGraphs);
 
-
     /** End GUI element creation **/
 
     for(int iii = 0; iii < elements.size(); iii++) {
@@ -200,7 +200,7 @@ void Runner::HandleEvents() {
                     leftToRight = false;
                     graphCoords = grid.rGrid.WindowToGraph(event.mouseButton.x, event.mouseButton.y);
                 }
-                locPos = std::complex<double>(graphCoords.x, graphCoords.y);
+                locPos = cx(graphCoords.x, graphCoords.y);
                 Iterate(!isIterating); // Stop iterating if we were iterating, or start if we weren't
             }
         }
@@ -213,7 +213,6 @@ void Runner::Iterate(bool keepIterating) {
     if(keepIterating) {
         int numIterations = 1;
         if(mode == single) {
-            numIterations = 1;
             isIterating = false;
         }
         else if (mode == iterative)
@@ -224,7 +223,10 @@ void Runner::Iterate(bool keepIterating) {
                 sign = 1;
             else
                 sign = -1;
-            locPos = std::complex<double>(sign, 0) * sqrt(locPos - std::complex<double>(-1, 0));
+            if(fabs(locPos.real()) < .001) locPos.real(0);
+            if(fabs(locPos.imag()) < .001) locPos.imag(0);
+            fct->setVar("Z", locPos);
+            locPos = cx(sign, 0) * fct->eval();
             graphCoords = sf::Vector2f(locPos.real(), locPos.imag());
             sf::CircleShape newLoc = sf::CircleShape(1, 30);
             if(leftToRight)
@@ -282,7 +284,30 @@ void Runner::UpdateGraphs() {
 }
 
 void Runner::UpdateEquation() {
-    return; // Will pass equation and variables to parser
+    delete fct;
+    std::string func = equation.GetText();
+    for(int iii = 0; iii < func.length(); iii ++) {
+        if(func[iii] == 'z')
+            func.replace(iii, 1, "Z");
+    }
+    std::cout << func << "\n";
+    fct = new parser::Tree(func);
+    while(elements.size() > elementsSize) {
+        fct->setVar(elements[elements.size() - 1]->GetCap().substr(0, 1), elements[elements.size() - 1]->GetText());
+        //delete elements[elements.size() - 1];
+        elements.pop_back();
+    }
+    for(int iii = 'A'; iii < 'Z' && elements.size() < elementsSize + 8; iii++) { // Max 8 vars for now
+        if(func.find(iii) != std::string::npos) {
+            elements.push_back(new InputBox(window, inFont, 3, (elements.size() - elementsSize + 1.25) * 20,
+                                        150, 15, std::string(1, (char)iii) + " "));
+            elements[elements.size() - 1]->SetActive(false);
+            elements[elements.size() - 1]->SetText(parser::toStringRounded(fct->evalVar(std::string(1, (char)iii))));
+        }
+    }
+    window->draw(sf::RectangleShape(sf::Vector2f(window->getSize().x, 200)));
+    drawGUI = true;
+    Draw();
 }
 
 void Runner::ActivateButtons(sf::Event event) {
@@ -308,7 +333,7 @@ void Runner::ActivateButtons(sf::Event event) {
     case 16: // Save Changes for graphs
         UpdateGraphs();
         break;
-    case 17: // Save Changes for equation
+    case 18: // Save Changes for equation
         UpdateEquation();
         break;
     case 19: // Linear Preset
@@ -324,7 +349,7 @@ void Runner::ActivateButtons(sf::Event event) {
         UpdateEquation();
         break;
     case 22: // Polar Preset
-        equation.SetText("(R*cos(2*PI*T)+R*sin(2*PI*T)*i)*z+B");
+        equation.SetText("(R*cos(2*pi*T)+R*sin(2*pi*T)*i)*z+B");
         UpdateEquation();
         break;
     case 23: // Single point mode
@@ -348,8 +373,6 @@ void Runner::ActivateButtons(sf::Event event) {
 }
 
 void Runner::Draw() {
-    //window->clear(sf::Color::White);
-
     if(drawGUI) {
         drawGUI = false;
         sf::RectangleShape titleRect(sf::Vector2f(300, 25));

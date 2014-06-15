@@ -61,6 +61,8 @@
 		<Unit filename="gui/checkbox.h" />
 		<Unit filename="gui/text.cpp" />
 		<Unit filename="gui/text.h" />
+		<Unit filename="guts/Parser.cpp" />
+		<Unit filename="guts/Parser.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="runner.cpp" />
 		<Unit filename="runner.h" />

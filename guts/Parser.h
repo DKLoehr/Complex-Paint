@@ -21,6 +21,7 @@ typedef std::complex<double> cx;
 namespace parser {
 template <typename T> std::string toString(T t); //To convert numeric types to strings
 template <> std::string toString(cx c); //Specialized version for cx
+std::string toStringRounded(cx c); //Specialized version for cx, which rounds to 2 decimal places
 cx stringToCx(string s);
 
 void init();
@@ -60,7 +61,7 @@ cx (* const psqrt)(cx, cx) = parser::sqrt;
 cx (* const pabs)(cx, cx) = parser::abs;
 
 
-class Node { 
+class Node {
 	friend class Tree;
 private:
 
@@ -79,7 +80,7 @@ class Tree { //Hold decomposed expr
 private:
 	static string delim[];
 	static bool initd;
-	static std::unordered_map<std::string, Tree*> variables;	
+	static std::unordered_map<std::string, Tree*> variables;
 
 	string toString(Node *n, string path);
 	string m_fct;
@@ -94,7 +95,7 @@ public:
 	Tree(string expr="");
 	~Tree();
 
-	string toString();	
+	string toString();
 	bool isInitd();
 	int parse();
 	cx eval();

@@ -13,13 +13,28 @@ template<> string toString(cx c) {
 	return s.str();
 }
 
+string toStringRounded(cx c) {
+	stringstream s;
+	double real = c.real(), imag = c.imag();
+	if(real > 0)
+        real = (int)(c.real() * 100 + .5) / 100.0;
+	else
+        real = (int)(c.real() * 100 - .5) / 100.0;
+    if(imag > 0)
+        imag = (int)(c.imag() * 100 + .5) / 100.0;
+	else
+        imag = (int)(c.imag() * 100 - .5) / 100.0;
+    s << real  << "+" << imag << "i";
+	return s.str();
+}
+
 //Converts a string WITHOUT OPERATORS into a complex number
 //Must be of form __number__i or __number__
 cx stringToCx(string s) {
 	string permitted = ".1234567890i-";
 	for(char c : s)
 		if(permitted.find(c) == -1)
-			throw std::invalid_argument("Not a number within C");
+			throw std::invalid_argument("Not a number within C " + s);
 
 	std::istringstream is;
 	if(s.find("i") == -1)
@@ -51,7 +66,7 @@ cx div(cx a, cx b) {
 }
 
 cx pow(cx base, cx a) {
-	return std::pow(base, a);	
+	return std::pow(base, a);
 }
 cx log(cx base, cx a) {
 	if(base == PARSER_E || base ==0.0)
@@ -101,7 +116,7 @@ string Node::toString() {
 }
 
 //	TREE
-string Tree::delim[] = {"+", "-", "*", "/", "^", "sin;cos;tan;log;abs;", "sqrt;asin;acos;atan;",  "ln;", "ABCDEFGHIJKLMNOPQRSTUVWXYZ","pi;e"}; 
+string Tree::delim[] = {"+", "-", "*", "/", "^", "sin;cos;tan;log;abs;", "sqrt;asin;acos;atan;",  "ln;", "ABCDEFGHIJKLMNOPQRSTUVWXYZ","pi;e"};
 bool Tree::initd = false;
 std::unordered_map<std::string, cx (* const)(cx,cx)> Tree::parseops = std::unordered_map<std::string, cx (* const)(cx,cx)>();
 std::unordered_map<std::string, Tree*> Tree::variables = std::unordered_map<std::string, Tree*>();
@@ -125,7 +140,7 @@ Tree::~Tree() {
 }
 
 void Tree::init() {
-	Tree::parseops.emplace("+", padd);	
+	Tree::parseops.emplace("+", padd);
 	Tree::parseops.emplace("-", psub);
 	Tree::parseops.emplace("*",pmul);
 	Tree::parseops.emplace("/",pdiv);
@@ -215,14 +230,14 @@ int Tree::parse(Node *root) {
 		case 2:
 			break;
 	}
-			
-	
+
+
 	bool foundDelim = false;
 	//Loop through delimiters
 	for(int j = 0; j < 9 && !foundDelim; j++) {
 		for(int i = 0; i < length && !foundDelim; i++) {
 			//skip paren
-			if(s[i] == '(') { 
+			if(s[i] == '(') {
 				int parenthCount = 1;
 				while(parenthCount != 0) {
 					i++;
@@ -276,7 +291,7 @@ int Tree::parse(Node *root) {
 				variables.emplace(&s[i], new Tree("0") );
 				root->m_val = s[i];
 			}
-			//search for length pi	
+			//search for length pi
 			else if(i+2 < length && j == 9 && delim[j].find(s.substr(i,i+2) + ";") != -1) {
 				foundDelim = true;
 				root->m_val = s.substr(i,i+2);

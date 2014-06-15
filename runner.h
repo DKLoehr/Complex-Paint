@@ -2,8 +2,8 @@
 #define RUNNER_H
 
 #include <SFML/Graphics.hpp>
-#include <complex>
 #include <random>
+#include "guts/parser.h"
 #include "gui/button.h"
 #include "gui/text.h"
 #include "gui/checkbox.h"
@@ -28,7 +28,10 @@ private:
     sf::RenderWindow* window;
     sf::Font* inFont;
 
+    parser::Tree* fct;
+
     std::vector<GUI*> elements; // An alternate way of accessing each gui element
+    const int elementsSize = 26; // Initial size of elements (without any variables)
 
     DoubleGrid grid;
     sf::CircleShape loc;
@@ -73,7 +76,7 @@ private:
     Button okEquation;  // 25
 
     std::vector<sf::CircleShape> points;
-    std::complex<double> locPos;
+    cx locPos;
     sf::Vector2f graphCoords;
 
     void Init();

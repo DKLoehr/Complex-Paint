@@ -51,6 +51,10 @@ std::string GUI::GetText() {
     return m_text.getString();
 }
 
+std::string GUI::GetCap() {
+    return m_cap.getString();
+}
+
 void GUI::Draw() {
     m_w->draw(m_rectangle);
     m_w->draw(m_text);
