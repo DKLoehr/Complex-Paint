@@ -72,9 +72,6 @@ private:
 public:
 	~Node();
 	string toString();
-	void spawn(string childVal = " ", int side = -1);
-	void prune(int side = 0); 
-
 };
 
 enum DelimInd { ADD, SUB, MUL, DIV, POW, FT3, FT4,  FT2, VAR, CON};
@@ -92,19 +89,20 @@ private:
 	Node *m_root;
 	void init();
 	int isToken(string s);
+	int checkParenthesis(string s);
 public:
-
 	Tree(string expr="");
 	~Tree();
 
 	string toString();	
+	bool isInitd();
 	int parse();
 	cx eval();
-	int checkParenthesis(string s);
+
 	string getVar(string var);
-	cx evalVar(string var);
-	bool isInitd();
 	void setVar(string var, string a);
+	void setVar(string var, cx a);
+	cx evalVar(string var);
 };
 
 }

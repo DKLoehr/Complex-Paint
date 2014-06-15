@@ -312,6 +312,16 @@ void Tree::setVar(string var, string a) {
 	}
 }
 
+void Tree::setVar(string var, cx a) {
+	try {
+		delete variables[var];
+		variables[var] = new Tree(parser::toString(a));
+	}
+	catch(const std::out_of_range& err) {
+		std::cout << "variables does not exist \n";
+	}
+}
+
 // Return the toString a variable's tree
 string Tree::getVar(string var) {
 	try {
