@@ -382,27 +382,26 @@
 1402868102 source:c:\users\devon\desktop\workspace\complex paint\main.cpp
 	"runner.h"
 
-1403073130 c:\users\devon\desktop\workspace\complex paint\runner.h
+1403074462 c:\users\devon\desktop\workspace\complex paint\runner.h
 	<SFML/Graphics.hpp>
-	<random>
 	"guts/Parser.h"
 	"gui/button.h"
 	"gui/text.h"
 	"gui/checkbox.h"
 	"graph/DoubleGrid.h"
-	<iostream>
 
-1402868102 c:\users\devon\desktop\workspace\complex paint\guts\parser.h
-	<iostream>
+1403074333 c:\users\devon\desktop\workspace\complex paint\guts\parser.h
 	<cmath>
 	<vector>
 	<map>
 	<complex>
 	<unordered_map>
+	<random>
+	<iostream>
 
-1403072180 source:c:\users\devon\desktop\workspace\complex paint\guts\parser.cpp
+1403074462 source:c:\users\devon\desktop\workspace\complex paint\guts\parser.cpp
 	"Parser.h"
 
-1403073130 source:c:\users\devon\desktop\workspace\complex paint\runner.cpp
+1403074796 source:c:\users\devon\desktop\workspace\complex paint\runner.cpp
 	"runner.h"
 

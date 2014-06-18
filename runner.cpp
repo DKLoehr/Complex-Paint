@@ -174,11 +174,15 @@ void Runner::HandleEvents() {
                 window->draw(loc);
                 loc.setFillColor(sf::Color::Black);
                 if(event.mouseMove.x < window->getSize().x / 2) {
-                    loc.setPosition(grid.rGrid.GraphToWindow(grid.lGrid.WindowToGraph(event.mouseMove.x,
-                                                                                      event.mouseMove.y)));
+                    sf::Vector2f graphLoc(grid.lGrid.WindowToGraph(event.mouseMove.x, event.mouseMove.y));
+                    fct->setVar("Z", cx(graphLoc.x, graphLoc.y));
+                    cx newLoc(fct->eval());
+                    loc.setPosition(grid.rGrid.GraphToWindow(newLoc.real(), newLoc.imag()));
                 } else {
-                    loc.setPosition(grid.lGrid.GraphToWindow(grid.rGrid.WindowToGraph(event.mouseMove.x,
-                                                                                      event.mouseMove.y)));
+                    sf::Vector2f graphLoc(grid.rGrid.WindowToGraph(event.mouseMove.x, event.mouseMove.y));
+                    fct->setVar("Z", cx(graphLoc.x, graphLoc.y));
+                    cx newLoc(fct->eval());
+                    loc.setPosition(grid.lGrid.GraphToWindow(newLoc.real(), newLoc.imag()));
                 }
             }
         } else if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tab) {
@@ -216,17 +220,15 @@ void Runner::Iterate(bool keepIterating) {
         else if (mode == iterative)
             numIterations = 30;
         for(int iii = 0; iii < numIterations; iii++) { // Iterate 30 points at once, or just one
-            int sign = 1;
-            if(equation.GetText()[0] == 's' && rand() < RAND_MAX / 2)
-                sign = -1;
             fct->setVar("Z", locPos);
             try {
-                locPos = cx(sign, 0) * fct->eval();
+                locPos = fct->eval();
             }
             catch (std::invalid_argument) { // Should mean we've reached infinity, so we can stop
                 isIterating = false;
                 return;
             }
+
             graphCoords = sf::Vector2f(locPos.real(), locPos.imag());
             sf::CircleShape newLoc = sf::CircleShape(1, 30);
             newLoc.setFillColor(sf::Color::Black);
@@ -344,7 +346,7 @@ void Runner::ActivateButtons(sf::Event event) {
         UpdateEquation();
         break;
     case 21: // Inverse Quadratic Preset
-        equation.SetText("sqrt(z - C)");
+        equation.SetText("ssqrt(z - C)");
         UpdateEquation();
         break;
     case 22: // Polar Preset

@@ -102,7 +102,7 @@ cx abs(cx a, cx b) {
 }
 cx ssqrt(cx a, cx b) {
 	if(std::rand() % 2 > 0)
-		return -1.0*std::sqrt(b);
+		return cx(-1.0,0)*std::sqrt(b);
 	else return std::sqrt(b);
 }
 

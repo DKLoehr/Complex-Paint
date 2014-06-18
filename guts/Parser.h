@@ -1,12 +1,13 @@
 #ifndef _PARSER_H_
 #define _PARSER_H_
 
-#include <iostream>
 #include <cmath>
 #include <vector>
 #include <map>
 #include <complex>
 #include <unordered_map>
+#include <random>
+#include <iostream>
 
 //Constants to 20 decimal places
 #define PARSER_SPI "3.14159265358979323846"

@@ -2,13 +2,11 @@
 #define RUNNER_H
 
 #include <SFML/Graphics.hpp>
-#include <random>
 #include "guts/Parser.h"
 #include "gui/button.h"
 #include "gui/text.h"
 #include "gui/checkbox.h"
 #include "graph/DoubleGrid.h"
-#include <iostream>
 
 enum drawMode {
     single,
