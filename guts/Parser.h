@@ -41,7 +41,9 @@ cx asin(cx a, cx b = 0);
 cx acos(cx a, cx b = 0);
 cx atan(cx a, cx b = 0);
 cx sqrt(cx a, cx b = 0);
+cx ssqrt(cx a, cx b = 0);
 cx abs(cx a, cx b = 0);
+
 
 cx (* const padd)(cx, cx) = parser::add;
 cx (* const psub)(cx, cx) = parser::sub;
@@ -59,6 +61,8 @@ cx (* const pacos)(cx, cx) = parser::acos;
 cx (* const patan)(cx, cx) = parser::atan;
 cx (* const psqrt)(cx, cx) = parser::sqrt;
 cx (* const pabs)(cx, cx) = parser::abs;
+cx (* const pssqrt)(cx, cx) = parser::ssqrt;
+
 
 
 class Node {
@@ -75,7 +79,7 @@ public:
 	string toString();
 };
 
-enum DelimInd { ADD, SUB, MUL, DIV, POW, FT3, FT4,  FT2, VAR, CON};
+enum DelimInd { ADD, SUB, MUL, DIV, POW, FT3, FT4,  FT2, VAR, CON, FT5};
 class Tree { //Hold decomposed expr
 private:
 	static string delim[];
