@@ -3,12 +3,14 @@ namespace parser{
 
 template <typename T> string toString(T t) {
 	stringstream s;
+	s.setf(std::ios::fixed, std::ios::floatfield);
 	s << t;
 	return s.str();
 }
 
 template<> string toString(cx c) {
 	stringstream s;
+	s.setf(std::ios::fixed, std::ios::floatfield);
 	s << c.real() << "+" << c.imag() << "i";
 	return s.str();
 }
@@ -17,14 +19,14 @@ string toStringRounded(cx c) {
 	stringstream s;
 	double real = c.real(), imag = c.imag();
 	if(real > 0)
-        real = (int)(c.real() * 100 + .5) / 100.0;
+		real = (int)(c.real() * 100 + .5) / 100.0;
 	else
-        real = (int)(c.real() * 100 - .5) / 100.0;
-    if(imag > 0)
-        imag = (int)(c.imag() * 100 + .5) / 100.0;
+		real = (int)(c.real() * 100 - .5) / 100.0;
+	if(imag > 0)
+		imag = (int)(c.imag() * 100 + .5) / 100.0;
 	else
-        imag = (int)(c.imag() * 100 - .5) / 100.0;
-    s << real  << "+" << imag << "i";
+		imag = (int)(c.imag() * 100 - .5) / 100.0;
+	s << real  << "+" << imag << "i";
 	return s.str();
 }
 
@@ -32,11 +34,12 @@ string toStringRounded(cx c) {
 //Must be of form __number__i or __number__
 cx stringToCx(string s) {
 	string permitted = ".1234567890i-";
+	std::istringstream is;
 	for(char c : s)
 		if(permitted.find(c) == -1)
-			throw std::invalid_argument("Not a number within C " + s);
+			throw std::invalid_argument("Not a number:  " + s);
 
-	std::istringstream is;
+	is.setf(std::ios::fixed, std::ios::floatfield);
 	if(s.find("i") == -1)
 		is.str('(' + s + ",0)");
 	else if(s.length() > 1) {
@@ -49,7 +52,6 @@ cx stringToCx(string s) {
 	is >> a;
 	return a;
 }
-
 
 
 cx add(cx a, cx b) {

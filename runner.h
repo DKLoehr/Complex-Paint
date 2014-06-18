@@ -3,7 +3,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <random>
-#include "guts/parser.h"
+#include "guts/Parser.h"
 #include "gui/button.h"
 #include "gui/text.h"
 #include "gui/checkbox.h"
