@@ -95,15 +95,15 @@ cx atan(cx a, cx b) {
 	return std::atan(b);
 }
 cx sqrt(cx a, cx b) {
-	return std::sqrt(b);
+	if(std::rand() % 2 > 0)
+		return -1.0*std::sqrt(b);
+	else return std::sqrt(b);;
 }
 cx abs(cx a, cx b) {
 	return std::abs(b);
 }
 cx ssqrt(cx a, cx b) {
-	if(std::rand() % 2 > 0)
-		return cx(-1.0,0)*std::sqrt(b);
-	else return std::sqrt(b);
+	return std::sqrt(b);
 }
 
 Node::Node(Node * parent, string val) {
@@ -162,8 +162,8 @@ void Tree::init() {
 	Tree::parseops.emplace("acos",pacos);
 	Tree::parseops.emplace("atan",patan);
 	Tree::parseops.emplace("sqrt",psqrt);
-	Tree::parseops.emplace("abs", parser::abs);
-	Tree::parseops.emplace("ssqrt", pssqrt);
+	Tree::parseops.emplace("abs",parser::abs);
+	Tree::parseops.emplace("ssqrt",pssqrt);
 
 	Tree::variables.emplace("pi", new Tree(PARSER_SPI));
 	Tree::variables.emplace("e", new Tree(PARSER_SE));

@@ -42,8 +42,8 @@ cx asin(cx a, cx b = 0);
 cx acos(cx a, cx b = 0);
 cx atan(cx a, cx b = 0);
 cx sqrt(cx a, cx b = 0);
-cx ssqrt(cx a, cx b = 0);
 cx abs(cx a, cx b = 0);
+cx ssqrt(cx a, cx b = 0);
 
 
 cx (* const padd)(cx, cx) = parser::add;

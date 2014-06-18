@@ -213,12 +213,15 @@ void Runner::HandleEvents() {
 void Runner::Iterate(bool keepIterating) {
     isIterating = keepIterating;
     if(keepIterating) {
+        double circRad = 1;
         int numIterations = 1;
         if(mode == single) {
             isIterating = false;
+            circRad = 1.5;
         }
-        else if (mode == iterative)
+        else if (mode == iterative) {
             numIterations = 30;
+        }
         for(int iii = 0; iii < numIterations; iii++) { // Iterate 30 points at once, or just one
             fct->setVar("Z", locPos);
             try {
@@ -230,7 +233,7 @@ void Runner::Iterate(bool keepIterating) {
             }
 
             graphCoords = sf::Vector2f(locPos.real(), locPos.imag());
-            sf::CircleShape newLoc = sf::CircleShape(1, 30);
+            sf::CircleShape newLoc = sf::CircleShape(circRad, 30);
             newLoc.setFillColor(sf::Color::Black);
             newLoc.setPosition(grid.rGrid.GraphToWindow(graphCoords) - sf::Vector2f(1, 1));
             window->draw(newLoc);
@@ -346,7 +349,7 @@ void Runner::ActivateButtons(sf::Event event) {
         UpdateEquation();
         break;
     case 21: // Inverse Quadratic Preset
-        equation.SetText("ssqrt(z - C)");
+        equation.SetText("sqrt(z - C)");
         UpdateEquation();
         break;
     case 22: // Polar Preset
