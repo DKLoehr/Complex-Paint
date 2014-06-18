@@ -20,7 +20,6 @@ class Runner
 private:
     int activeBox;
     bool isIterating;
-    bool leftToRight;
     bool drawGUI;
 
     drawMode mode;

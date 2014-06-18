@@ -194,10 +194,8 @@ void Runner::HandleEvents() {
                     elements[activeBox]->OnClick(event.mouseButton.x, event.mouseButton.y);
             } else { // In one of the graphs
                 if(event.mouseButton.x < window->getSize().x / 2) {
-                    leftToRight = true;
                     graphCoords = grid.lGrid.WindowToGraph(event.mouseButton.x, event.mouseButton.y);
                 } else {
-                    leftToRight = false;
                     graphCoords = grid.rGrid.WindowToGraph(event.mouseButton.x, event.mouseButton.y);
                 }
                 locPos = cx(graphCoords.x, graphCoords.y);
@@ -219,22 +217,22 @@ void Runner::Iterate(bool keepIterating) {
             numIterations = 30;
         for(int iii = 0; iii < numIterations; iii++) { // Iterate 30 points at once, or just one
             int sign = 1;
-            if(rand() < RAND_MAX / 2)
-                sign = 1;
-            else
+            if(equation.GetText()[0] == 's' && rand() < RAND_MAX / 2)
                 sign = -1;
-            if(fabs(locPos.real()) < .001) locPos.real(0);
-            if(fabs(locPos.imag()) < .001) locPos.imag(0);
             fct->setVar("Z", locPos);
-            locPos = cx(sign, 0) * fct->eval();
+            try {
+                locPos = cx(sign, 0) * fct->eval();
+            }
+            catch (std::invalid_argument) { // Should mean we've reached infinity, so we can stop
+                isIterating = false;
+                return;
+            }
             graphCoords = sf::Vector2f(locPos.real(), locPos.imag());
             sf::CircleShape newLoc = sf::CircleShape(1, 30);
-            if(leftToRight)
-                newLoc.setPosition(grid.rGrid.GraphToWindow(graphCoords) - sf::Vector2f(1, 1));
-            else
-                newLoc.setPosition(grid.lGrid.GraphToWindow(graphCoords) - sf::Vector2f(1, 1));
-            leftToRight = !leftToRight; // Flip which grid is the input and which is the output
             newLoc.setFillColor(sf::Color::Black);
+            newLoc.setPosition(grid.rGrid.GraphToWindow(graphCoords) - sf::Vector2f(1, 1));
+            window->draw(newLoc);
+            newLoc.setPosition(grid.lGrid.GraphToWindow(graphCoords) - sf::Vector2f(1, 1));
             window->draw(newLoc);
         }
     }
@@ -284,6 +282,7 @@ void Runner::UpdateGraphs() {
 }
 
 void Runner::UpdateEquation() {
+    Iterate(false);
     delete fct;
     std::string func = equation.GetText();
     for(int iii = 0; iii < func.length(); iii ++) {
