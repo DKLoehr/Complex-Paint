@@ -370,11 +370,12 @@
 	"GUI.h"
 	<iostream>
 
-1402868102 source:c:\users\devon\desktop\workspace\complex paint\gui\text.cpp
+1403199154 source:c:\users\devon\desktop\workspace\complex paint\gui\text.cpp
 	<SFML/Graphics.hpp>
 	<string>
 	"text.h"
 	<iostream>
+	<stdlib.h>
 
 1402868102 c:\users\devon\desktop\workspace\complex paint\gui\text.h
 	"GUI.h"

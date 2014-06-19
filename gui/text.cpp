@@ -2,6 +2,7 @@
 #include <string>
 #include "text.h"
 #include <iostream>
+#include <stdlib.h>
 
 InputBox::InputBox() {
 
@@ -102,12 +103,7 @@ void InputBox::Draw() {
 }
 
 double InputBox::GetStringAsDouble() {
-    double ret = 0;
-    std::string str = m_text.getString();
-    for(int i = str.length() - 1; i >= 0; i--) {
-        ret += pow(10, str.length() - 1 - i) * (str[i] - '0');
-    }
-    return ret;
+    return atof(((std::string)m_text.getString()).c_str());
 
 }
 
@@ -119,12 +115,5 @@ sf::Vector2f InputBox::GetStringAsVector() {
         str = str.substr(0, str.length() - 1);
     std::string xStr = str.substr(0, str.find(','));
     std::string yStr = str.substr(str.find(',') +  1, str.length());
-    int x = 0, y = 0;
-    for(int i = xStr.length() - 1; i >= 0; i--) {
-        x += pow(10, xStr.length() - 1 - i) * (xStr[i] - '0');
-    }
-    for(int i = yStr.length() - 1; i >= 0; i--) {
-        y += pow(10, yStr.length() - 1 - i) * (yStr[i] - '0');
-    }
-    return sf::Vector2f(x, y);
+    return sf::Vector2f(atof(xStr.c_str()), atof(yStr.c_str()));
 }
