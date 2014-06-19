@@ -19,13 +19,13 @@ string toStringRounded(cx c) {
 	stringstream s;
 	double real = c.real(), imag = c.imag();
 	if(real > 0)
-		real = (int)(c.real() * 100 + .5) / 100.0;
+		real = (int)(c.real() * 10000 + .5) / 10000.0;
 	else
-		real = (int)(c.real() * 100 - .5) / 100.0;
+		real = (int)(c.real() * 10000 - .5) / 10000.0;
 	if(imag > 0)
-		imag = (int)(c.imag() * 100 + .5) / 100.0;
+		imag = (int)(c.imag() * 10000 + .5) / 10000.0;
 	else
-		imag = (int)(c.imag() * 100 - .5) / 100.0;
+		imag = (int)(c.imag() * 10000 - .5) / 10000.0;
 	s << real  << "+" << imag << "i";
 	return s.str();
 }
@@ -123,7 +123,7 @@ string Node::toString() {
 }
 
 //	TREE
-string Tree::delim[] = {"+", "-", "*", "/", "^", "sin;cos;tan;log;abs;", "sqrt;asin;acos;atan;",  "ln;", "ABCDEFGHIJKLMNOPQRSTUVWXYZ","pi;e", "ssqrt"};
+string Tree::delim[] = {"+", "-", "*", "/", "^", "sin;cos;tan;log;abs;", "sqrt;asin;acos;atan;",  "ln;", "ABCDEFGHIJKLMNOPQRSTUVWXYZ","pi;e;phi", "ssqrt"};
 bool Tree::initd = false;
 std::unordered_map<std::string, cx (* const)(cx,cx)> Tree::parseops = std::unordered_map<std::string, cx (* const)(cx,cx)>();
 std::unordered_map<std::string, Tree*> Tree::variables = std::unordered_map<std::string, Tree*>();
@@ -166,6 +166,7 @@ void Tree::init() {
 	Tree::parseops.emplace("ssqrt",pssqrt);
 
 	Tree::variables.emplace("pi", new Tree(PARSER_SPI));
+	Tree::variables.emplace("phi", new Tree(PARSER_SPHI));
 	Tree::variables.emplace("e", new Tree(PARSER_SE));
 	Tree::variables.emplace("i", new Tree(PARSER_SI));
 
@@ -312,6 +313,9 @@ int Tree::parse(Node *root) {
 			else if(i+2 < length && j == 9 && delim[j].find(s.substr(i,i+2) + ";") != -1) {
 				foundDelim = true;
 				root->m_val = s.substr(i,i+2);
+			} else if(i+3 < length && j == 11 && delim[j].find(s.substr(i,i+3) + ";") != -1) {
+                foundDelim = true;
+				root->m_val = s.substr(i,i+3);
 			}
 		}
 	}

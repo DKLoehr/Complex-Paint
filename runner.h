@@ -27,50 +27,54 @@ private:
 
     parser::Tree* fct;
 
-    std::vector<GUI*> elements; // An alternate way of accessing each gui element
-    const int elementsSize = 26; // Initial size of elements (without any variables)
-
     DoubleGrid grid;
     sf::CircleShape loc;
 
     sf::Text lTitle;
     sf::Text rTitle;
 
-    /// Elements for changing graph settings
-    Button mirrorL;     // 0
-    Button mirrorR;     // 1
 
-    InputBox xRangeL;   // 2
-    InputBox yRangeL;   // 3
-    InputBox xScaleL;   // 4
-    InputBox yScaleL;   // 5
-    InputBox centerL;   // 6
-    InputBox xRangeR;   // 7
-    InputBox yRangeR;   // 8
-    InputBox xScaleR;   // 9
-    InputBox yScaleR;   // 10
-    InputBox centerR;   // 11
-    Checkbox numbersL;  // 12
-    Checkbox linesL;    // 13
-    Checkbox numbersR;  // 14
-    Checkbox linesR;    // 15
-    Button okGraph;     // 16
+    std::vector<GUI*> elements; // An alternate way of accessing each gui element
+    const int elementsSize = 26; // Initial size of elements (without any variables)
 
-    Button clearGraphs; // 17
+    Button okEquation;  // 0
 
     /// Buttons to represent different preset equations
-    Button presetLin;   // 18 -- Az + B
-    Button presetQuad;  // 19 -- z*2 + c
-    Button presetInv;   // 20 -- sqrt(z*2 - c)
-    Button presetPol;   // 21 -- Polar equation
+    Button presetLin;   // 1 -- Az + B
+    Button presetPol;   // 2 -- Polar equation
+    Button presetQuad;  // 3 -- z*2 + c
+    Button presetInv;   // 4 -- sqrt(z*2 - c)
 
     /// Buttons to represent different possible drawing modes
-    Button modeSingle;  // 22
-    Button modeIterate; // 23
+    Button modeSingle;  // 5
+    Button modeIterate; // 6
+
+    /// Button to clear both graphs
+    Button clearGraphs; // 7
+
+
+    /// Elements for changing graph settings
+    Button mirrorL;     // 8
+    Button mirrorR;     // 9
+
+    InputBox xRangeL;   // 10
+    InputBox yRangeL;   // 11
+    InputBox xScaleL;   // 12
+    InputBox yScaleL;   // 13
+    InputBox centerL;   // 14
+    InputBox xRangeR;   // 15
+    InputBox yRangeR;   // 16
+    InputBox xScaleR;   // 17
+    InputBox yScaleR;   // 18
+    InputBox centerR;   // 19
+    Checkbox numbersL;  // 20
+    Checkbox linesL;    // 21
+    Checkbox numbersR;  // 22
+    Checkbox linesR;    // 23
+    Button okGraph;     // 24
 
     /// Elements to do with changing equation settings
-    InputBox equation;  // 24
-    Button okEquation;  // 25
+    InputBox equation;  // 25
 
     std::vector<sf::CircleShape> points;
     cx locPos;

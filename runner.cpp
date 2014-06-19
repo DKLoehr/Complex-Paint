@@ -36,112 +36,114 @@ void Runner::Init() {
 
     elements = std::vector<GUI*>(0);
 
-    /** Graph-related elements **/
-    /// Button to copy changes from the right side to the left
-    mirrorL = Button(window, inFont, lTitle.getPosition().x + ((std::string)lTitle.getString()).length() * 10 + 5,
-                     lTitle.getPosition().y, 15, 15, "<"); // 0
-    elements.push_back(&mirrorL);
-
-    mirrorR = Button(window, inFont, mirrorL.GetPosition().x + 20, mirrorL.GetPosition().y, 15, 15, ">"); // 1
-    elements.push_back(&mirrorR);
-
-    /// Left-side elements
-    xRangeL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 30, 55, 15, "x Range"); // 2
-    xRangeL.SetText("2");
-    elements.push_back(&xRangeL);
-
-    yRangeL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 50, 55, 15, "y Range"); // 3
-    yRangeL.SetText("2");
-    elements.push_back(&yRangeL);
-
-    xScaleL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 70, 55, 15, "x Scale"); // 4
-    xScaleL.SetText("1");
-    elements.push_back(&xScaleL);
-
-    yScaleL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 90, 55, 15, "y Scale"); // 5
-    yScaleL.SetText("1");
-    elements.push_back(&yScaleL);
-
-    centerL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 110, 55, 15, "Center "); // 6
-    centerL.SetText("(0,0)");
-    elements.push_back(&centerL);
-
-    numbersL = Checkbox(window, inFont, window->getSize().x * 3 / 4 + 5, 130, "Numbers", true); // 7
-    elements.push_back(&numbersL);
-
-    linesL = Checkbox(window, inFont, window->getSize().x * 3 / 4 + 5, 150, "Lines", false);    // 8
-    elements.push_back(&linesL);
-
-    /// Right-side elements
-    xRangeR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 30, 55, 15, "x Range"); // 9
-    xRangeR.SetText("2");
-    elements.push_back(&xRangeR);
-
-    yRangeR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 50, 55, 15, "y Range"); // 10
-    yRangeR.SetText("2");
-    elements.push_back(&yRangeR);
-
-    xScaleR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 70, 55, 15, "x Scale"); // 11
-    xScaleR.SetText("1");
-    elements.push_back(&xScaleR);
-
-    yScaleR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 90, 55, 15, "y Scale"); // 12
-    yScaleR.SetText("1");
-    elements.push_back(&yScaleR);
-
-    centerR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 110, 55, 15, "Center "); // 13
-    centerR.SetText("(0,0)");
-    elements.push_back(&centerR);
-
-    numbersR = Checkbox(window, inFont, window->getSize().x * 7 / 8 + 5, 130, "Numbers", true); // 14
-    elements.push_back(&numbersR);
-
-    linesR = Checkbox(window, inFont, window->getSize().x * 7 / 8 + 5, 150, "Lines", false); // 15
-    elements.push_back(&linesR);
-
-    /// General graph-related elements
-    okGraph = Button(window, inFont, window->getSize().x * 7 / 8 - 54, 175, // 16
-                                108, 15, "Save Changes");
-    elements.push_back(&okGraph);
-
-
     /** Equation-related elements **/
-    equation = InputBox(window, inFont, 5, 5, 350, 15); // 17
-    elements.push_back(&equation);
+    equation = InputBox(window, inFont, 5, 5, 350, 15); // 25
+    // Equation must be at the end of the vector so it precedes variable boxes, so we'll push it back later
 
     okEquation = Button(window, inFont, equation.GetPosition().x + equation.GetSize().x + 7, equation.GetPosition().y,
-                        108, 15, "Save Changes"); // 18
+                        108, 15, "Save Changes"); // 0
     elements.push_back(&okEquation);
 
 
     /** Preset-related elements **/
-    presetLin = Button(window, inFont, window->getSize().x * .35, 30, 56, 15, "Linear");  // 19 -- Az + B
+    presetLin = Button(window, inFont, window->getSize().x * .35, 30, 56, 15, "Linear");  // 1 -- Az + B
     elements.push_back(&presetLin);
 
-    presetQuad = Button(window, inFont, presetLin.GetPosition().x + presetLin.GetSize().x + window->getSize().x/50, 30,
-                        81, 15, "Quadratic");   // 20 -- z*2 + c
+    presetPol = Button(window, inFont, presetLin.GetPosition().x + presetLin.GetSize().x + window->getSize().x/50, 30,
+                       46, 15, "Polar");        // 2 -- Polar equation
+    elements.push_back(&presetPol);
+
+    presetQuad = Button(window, inFont, presetPol.GetPosition().x + presetPol.GetSize().x + window->getSize().x/50, 30,
+                        81, 15, "Quadratic");   // 3 -- z*2 + c
     elements.push_back(&presetQuad);
 
     presetInv = Button(window, inFont, presetQuad.GetPosition().x + presetQuad.GetSize().x + window->getSize().x/50, 30,
-                       109, 15, "Inverse Quad"); // 21 -- sqrt(z*2 - c)
+                       109, 15, "Inverse Quad"); // 4 -- sqrt(z*2 - c)
     elements.push_back(&presetInv);
-
-    presetPol = Button(window, inFont, presetInv.GetPosition().x + presetInv.GetSize().x + window->getSize().x/50, 30,
-                       46, 15, "Polar");        // 22 -- Polar equation
-    elements.push_back(&presetPol);
 
 
     /** Drawing mode-related elements **/
-    modeSingle = Button(window, inFont, window->getSize().x / 2 - 105, 93, 45, 15, "Point");  // 23
+    modeSingle = Button(window, inFont, window->getSize().x / 2 - 105, 93, 45, 15, "Point");  // 5
     elements.push_back(&modeSingle);
 
     modeIterate = Button(window, inFont, window->getSize().x / 2 + 45, modeSingle.GetPosition().y,
-                                65, 15, "Iterate"); // 24
+                                65, 15, "Iterate"); // 6
     elements.push_back(&modeIterate);
 
     /// Clear graph button
-    clearGraphs = Button(window, inFont, window->getSize().x / 2 - 23, 175, 46, 15, "Clear"); // 25
+    clearGraphs = Button(window, inFont, window->getSize().x / 2 - 23, 175, 46, 15, "Clear"); // 7
     elements.push_back(&clearGraphs);
+
+    /** Graph-related elements **/
+    /// Button to copy changes from the right side to the left
+    mirrorL = Button(window, inFont, lTitle.getPosition().x + ((std::string)lTitle.getString()).length() * 10 + 5,
+                     lTitle.getPosition().y, 15, 15, "<"); // 8
+    elements.push_back(&mirrorL);
+
+    mirrorR = Button(window, inFont, mirrorL.GetPosition().x + 20, mirrorL.GetPosition().y, 15, 15, ">"); // 9
+    elements.push_back(&mirrorR);
+
+    /// Left-side elements
+    xRangeL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 30, 55, 15, "x Range"); // 10
+    xRangeL.SetText("2");
+    elements.push_back(&xRangeL);
+
+    yRangeL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 50, 55, 15, "y Range"); // 11
+    yRangeL.SetText("2");
+    elements.push_back(&yRangeL);
+
+    xScaleL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 70, 55, 15, "x Scale"); // 12
+    xScaleL.SetText("1");
+    elements.push_back(&xScaleL);
+
+    yScaleL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 90, 55, 15, "y Scale"); // 13
+    yScaleL.SetText("1");
+    elements.push_back(&yScaleL);
+
+    centerL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 110, 55, 15, "Center "); // 14
+    centerL.SetText("(0,0)");
+    elements.push_back(&centerL);
+
+    numbersL = Checkbox(window, inFont, window->getSize().x * 3 / 4 + 5, 130, "Numbers", true); // 15
+    elements.push_back(&numbersL);
+
+    linesL = Checkbox(window, inFont, window->getSize().x * 3 / 4 + 5, 150, "Lines", false);    // 16
+    elements.push_back(&linesL);
+
+    /// Right-side elements
+    xRangeR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 30, 55, 15, "x Range"); // 17
+    xRangeR.SetText("2");
+    elements.push_back(&xRangeR);
+
+    yRangeR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 50, 55, 15, "y Range"); // 18
+    yRangeR.SetText("2");
+    elements.push_back(&yRangeR);
+
+    xScaleR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 70, 55, 15, "x Scale"); // 19
+    xScaleR.SetText("1");
+    elements.push_back(&xScaleR);
+
+    yScaleR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 90, 55, 15, "y Scale"); // 20
+    yScaleR.SetText("1");
+    elements.push_back(&yScaleR);
+
+    centerR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 110, 55, 15, "Center "); // 21
+    centerR.SetText("(0,0)");
+    elements.push_back(&centerR);
+
+    numbersR = Checkbox(window, inFont, window->getSize().x * 7 / 8 + 5, 130, "Numbers", true); // 22
+    elements.push_back(&numbersR);
+
+    linesR = Checkbox(window, inFont, window->getSize().x * 7 / 8 + 5, 150, "Lines", false); // 23
+    elements.push_back(&linesR);
+
+    /// General graph-related elements
+    okGraph = Button(window, inFont, window->getSize().x * 7 / 8 - 54, 175, // 24
+                                108, 15, "Save Changes");
+    elements.push_back(&okGraph);
+
+    elements.push_back(&equation); // Finally push back equation so that it's at the end of the vector
+
 
     /** End GUI element creation **/
 
@@ -316,7 +318,38 @@ void Runner::UpdateEquation() {
 
 void Runner::ActivateButtons(sf::Event event) {
     switch(activeBox) {
-    case 0: // Mirror R->L
+    case 0: // Save Changes for equation
+        UpdateEquation();
+        break;
+    case 1: // Linear Preset
+        equation.SetText("A*z + B");
+        UpdateEquation();
+        break;
+    case 2: // Polar Preset
+        equation.SetText("(R*cos(2*pi*T)+R*sin(2*pi*T)*i)*z+B");
+        UpdateEquation();
+        break;
+    case 3: // Quadratic Preset
+        equation.SetText("z^2 + C");
+        UpdateEquation();
+        break;
+    case 4: // Inverse Quadratic Preset
+        equation.SetText("sqrt(z - C)");
+        UpdateEquation();
+        break;
+    case 5: // Single point mode
+        mode = single;
+        break;
+    case 6: // Iterate mode
+        mode = iterative;
+        break;
+    case 7: // Clear
+        Iterate(false);
+        window->clear(sf::Color::White);
+        grid.Draw();
+        break;
+
+    case 8: // Mirror R->L
         xRangeL.SetText(xRangeR.GetText());
         yRangeL.SetText(yRangeR.GetText());
         xScaleL.SetText(xScaleR.GetText());
@@ -325,7 +358,7 @@ void Runner::ActivateButtons(sf::Event event) {
         if(numbersL.GetText() != numbersR.GetText()) numbersL.Toggle();
         if(linesL.GetText() != linesR.GetText()) linesL.Toggle();
         break;
-    case 1: // Mirror L->R
+    case 9: // Mirror L->R
         xRangeR.SetText(xRangeL.GetText());
         yRangeR.SetText(yRangeL.GetText());
         xScaleR.SetText(xScaleL.GetText());
@@ -334,38 +367,8 @@ void Runner::ActivateButtons(sf::Event event) {
         if(numbersR.GetText() != numbersL.GetText()) numbersR.Toggle();
         if(linesR.GetText() != linesL.GetText()) linesR.Toggle();
         break;
-    case 16: // Save Changes for graphs
+    case 24: // Save Changes for graphs
         UpdateGraphs();
-        break;
-    case 18: // Save Changes for equation
-        UpdateEquation();
-        break;
-    case 19: // Linear Preset
-        equation.SetText("A*z + B");
-        UpdateEquation();
-        break;
-    case 20: // Quadratic Preset
-        equation.SetText("z^2 + C");
-        UpdateEquation();
-        break;
-    case 21: // Inverse Quadratic Preset
-        equation.SetText("sqrt(z - C)");
-        UpdateEquation();
-        break;
-    case 22: // Polar Preset
-        equation.SetText("(R*cos(2*pi*T)+R*sin(2*pi*T)*i)*z+B");
-        UpdateEquation();
-        break;
-    case 23: // Single point mode
-        mode = single;
-        break;
-    case 24: // Iterate mode
-        mode = iterative;
-        break;
-    case 25: // Clear
-        Iterate(false);
-        window->clear(sf::Color::White);
-        grid.Draw();
         break;
     default:
         if(event.type == sf::Event::MouseButtonPressed)
