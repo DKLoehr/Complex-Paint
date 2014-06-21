@@ -15,6 +15,14 @@ template<> string toString(cx c) {
 	return s.str();
 }
 
+string Tree::getFct() {
+    return m_fct;
+}
+
+string Tree::getVarFct(string var) {
+    return variables[var]->getFct();
+}
+
 string toStringRounded(cx c) {
 	stringstream s;
 	double real = c.real(), imag = c.imag();

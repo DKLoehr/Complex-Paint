@@ -106,6 +106,8 @@ public:
 	bool isInitd();
 	int parse();
 	cx eval();
+	string getFct();
+	string getVarFct(string var);
 
 	string getVar(string var);
 	void setVar(string var, string a);

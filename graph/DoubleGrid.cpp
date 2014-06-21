@@ -5,10 +5,10 @@ DoubleGrid::DoubleGrid() {
 }
 
 DoubleGrid::DoubleGrid(sf::RenderWindow* window, sf::Font f, int heightOffset) :
-    lGrid(Grid(window, f, 0, heightOffset, window->getSize().x / 2, window->getSize().y - heightOffset,
-               2, 2, 1, 1)),
-    rGrid(Grid(window, f, window->getSize().x / 2, heightOffset, window->getSize().x / 2,
-                 window->getSize().y - heightOffset, 2, 2, 1, 1)),
+    lGrid(Grid(window, f, window->getSize().x / 4 - (window->getSize().y - heightOffset) / 2, heightOffset,
+               window->getSize().y - heightOffset, window->getSize().y - heightOffset, 2, 2, 1, 1)),
+    rGrid(Grid(window, f, window->getSize().x * 3 / 4 - (window->getSize().y - heightOffset) / 2, heightOffset,
+               window->getSize().y - heightOffset, window->getSize().y - heightOffset, 2, 2, 1, 1)),
     horDivider(sf::RectangleShape(sf::Vector2f(window->getSize().x, 2))),
     vertDivider(sf::RectangleShape(sf::Vector2f(6, window->getSize().y - heightOffset)))
 {

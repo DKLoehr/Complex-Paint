@@ -85,10 +85,7 @@ void Grid::MakeGrid() {
         num.setString(DoubleToString(iii * m_xScale + m_center.x, 1));
         num.setPosition(m_position.x + m_size.x / 2 + 2 + iii * delta, m_position.y + m_size.y / 2);
         num.setColor(sf::Color::Black);
-        if(num.getPosition().x < m_size.x + m_position.x) // Don't display numbers outside of our boundary
-            m_numberLabels.push_back(num);
-
-        m_w->draw(num);
+        m_numberLabels.push_back(num);
 
         m_lines.append(sf::Vertex(m_lines[initialIndex].position + sf::Vector2f(iii * -delta, m_size.y / 2 - length)));
         m_lines.append(sf::Vertex(m_lines[initialIndex + 1].position + sf::Vector2f(iii * -delta, -m_size.y / 2 + length)));

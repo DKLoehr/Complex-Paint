@@ -35,6 +35,10 @@ void GUI::SetBoxColor(sf::Color c) {
     m_rectangle.setFillColor(c);
 }
 
+void GUI::SetOutlineColor(sf::Color c) {
+    m_rectangle.setOutlineColor(c);
+}
+
 sf::Vector2f GUI::GetPosition() {
     return m_position;
 }

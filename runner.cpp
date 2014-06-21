@@ -50,7 +50,7 @@ void Runner::Init() {
     elements.push_back(&presetLin);
 
     presetPol = Button(window, inFont, presetLin.GetPosition().x + presetLin.GetSize().x + window->getSize().x/50, 30,
-                       46, 15, "Polar");        // 2 -- Polar equation
+                       110, 15, "Polar Linear");        // 2 -- Polar equation
     elements.push_back(&presetPol);
 
     presetQuad = Button(window, inFont, presetPol.GetPosition().x + presetPol.GetSize().x + window->getSize().x/50, 30,
@@ -64,6 +64,7 @@ void Runner::Init() {
 
     /** Drawing mode-related elements **/
     modeSingle = Button(window, inFont, window->getSize().x / 2 - 105, 93, 45, 15, "Point");  // 5
+    modeSingle.SetOutlineColor(sf::Color::Green);
     elements.push_back(&modeSingle);
 
     modeIterate = Button(window, inFont, window->getSize().x / 2 + 45, modeSingle.GetPosition().y,
@@ -162,9 +163,20 @@ void Runner::HandleEvents() {
            (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape))
         {
             window->close();
+        } else if (event.type == sf::Event::Resized) {
+            drawGUI = true;
+            Iterate(false);
+            window->clear(sf::Color::White);
+            grid.Draw();
         } else if(event.type == sf::Event::TextEntered) {
             drawGUI = true;
             elements[activeBox]->OnTextEntered(event.text.unicode);
+            if(activeBox >= 10 && activeBox != 24) { // One of the inputBoxes
+                if(activeBox >= 25) // Equation or variables
+                    okEquation.SetOutlineColor(sf::Color::Red);
+                else // Graph box changed
+                    okGraph.SetOutlineColor(sf::Color::Red);
+            }
         } else if((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Return) ||
                   (event.type == sf::Event::MouseButtonPressed && event.mouseButton.y < 200)) {
             ActivateButtons(event);
@@ -174,7 +186,7 @@ void Runner::HandleEvents() {
             else { // In one of the graphs
                 loc.setFillColor(sf::Color::White);
                 window->draw(loc);
-                loc.setFillColor(sf::Color::Black);
+                loc.setFillColor(sf::Color::Blue);
                 if(event.mouseMove.x < window->getSize().x / 2) {
                     sf::Vector2f graphLoc(grid.lGrid.WindowToGraph(event.mouseMove.x, event.mouseMove.y));
                     fct->setVar("Z", cx(graphLoc.x, graphLoc.y));
@@ -186,6 +198,7 @@ void Runner::HandleEvents() {
                     cx newLoc(fct->eval());
                     loc.setPosition(grid.lGrid.GraphToWindow(newLoc.real(), newLoc.imag()));
                 }
+                window->draw(loc);
             }
         } else if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tab) {
             StepActiveElement(!(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ||
@@ -222,7 +235,8 @@ void Runner::Iterate(bool keepIterating) {
             circRad = 1.5;
         }
         else if (mode == iterative) {
-            numIterations = 30;
+            numIterations = 90;
+            circRad = .7;
         }
         for(int iii = 0; iii < numIterations; iii++) { // Iterate 30 points at once, or just one
             fct->setVar("Z", locPos);
@@ -237,9 +251,9 @@ void Runner::Iterate(bool keepIterating) {
             graphCoords = sf::Vector2f(locPos.real(), locPos.imag());
             sf::CircleShape newLoc = sf::CircleShape(circRad, 30);
             newLoc.setFillColor(sf::Color::Black);
-            newLoc.setPosition(grid.rGrid.GraphToWindow(graphCoords) - sf::Vector2f(1, 1));
+            newLoc.setPosition(grid.rGrid.GraphToWindow(graphCoords) - sf::Vector2f(circRad, circRad));
             window->draw(newLoc);
-            newLoc.setPosition(grid.lGrid.GraphToWindow(graphCoords) - sf::Vector2f(1, 1));
+            newLoc.setPosition(grid.lGrid.GraphToWindow(graphCoords) - sf::Vector2f(circRad, circRad));
             window->draw(newLoc);
         }
     }
@@ -283,6 +297,7 @@ void Runner::UpdateGraphs() {
         grid.rGrid.SetCenter(centerR.GetStringAsVector());
     grid.rGrid.SetNumbers(numbersR.GetText() == "x");
     grid.rGrid.SetLines(linesR.GetText() == "x");
+    okGraph.SetOutlineColor(sf::Color::Black);
     Iterate(false);
     window->clear(sf::Color::White);
     grid.Draw();
@@ -308,9 +323,10 @@ void Runner::UpdateEquation() {
             elements.push_back(new InputBox(window, inFont, 3, (elements.size() - elementsSize + 1.25) * 20,
                                         150, 15, std::string(1, (char)iii) + " "));
             elements[elements.size() - 1]->SetActive(false);
-            elements[elements.size() - 1]->SetText(parser::toStringRounded(fct->evalVar(std::string(1, (char)iii))));
+            elements[elements.size() - 1]->SetText(fct->getVarFct(std::string(1, (char)iii)));
         }
     }
+    okEquation.SetOutlineColor(sf::Color::Black);
     window->draw(sf::RectangleShape(sf::Vector2f(window->getSize().x, 200)));
     drawGUI = true;
     Draw();
@@ -339,17 +355,21 @@ void Runner::ActivateButtons(sf::Event event) {
         break;
     case 5: // Single point mode
         mode = single;
+        modeSingle.SetOutlineColor(sf::Color::Green);
+        modeIterate.SetOutlineColor(sf::Color::Black);
         break;
     case 6: // Iterate mode
         mode = iterative;
+        modeIterate.SetOutlineColor(sf::Color::Green);
+        modeSingle.SetOutlineColor(sf::Color::Black);
         break;
     case 7: // Clear
         Iterate(false);
         window->clear(sf::Color::White);
         grid.Draw();
         break;
-
     case 8: // Mirror R->L
+        okGraph.SetOutlineColor(sf::Color::Red);
         xRangeL.SetText(xRangeR.GetText());
         yRangeL.SetText(yRangeR.GetText());
         xScaleL.SetText(xScaleR.GetText());
@@ -359,6 +379,7 @@ void Runner::ActivateButtons(sf::Event event) {
         if(linesL.GetText() != linesR.GetText()) linesL.Toggle();
         break;
     case 9: // Mirror L->R
+        okGraph.SetOutlineColor(sf::Color::Red);
         xRangeR.SetText(xRangeL.GetText());
         yRangeR.SetText(yRangeL.GetText());
         xScaleR.SetText(xScaleL.GetText());
@@ -398,7 +419,7 @@ void Runner::Draw() {
         }
     }
     grid.DrawTextless();
-    window->draw(loc);
+    //window->draw(loc);
 
     window->display();
 }

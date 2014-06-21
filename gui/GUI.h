@@ -26,6 +26,7 @@ public:
     GUI(sf::RenderWindow* window, sf::Font* font, double x, double y, double width, double height);
 
     void SetBoxColor(sf::Color c);
+    void SetOutlineColor(sf::Color c);
 
     virtual void SetActive(bool active) = 0;
 
