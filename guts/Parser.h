@@ -17,6 +17,12 @@
 #define PARSER_E 2.71828182845904523536
 #define PARSER_PHI 1.61803398874989484820
 #define PARSER_SI "1i"
+#define MAX_FCT_LEN 4
+#define MIN_FCT_LEN 2
+#define NUM_ARITH_OPS 5
+#define NUM_FCT_LEN 3
+#define FCT_LEN_OFFSET (-3)
+#define MAX_CONST_LEN 3
 using namespace std;
 
 typedef std::complex<double> cx;
@@ -82,7 +88,7 @@ public:
 	string toString();
 };
 
-enum DelimInd { ADD, SUB, MUL, DIV, POW, FT3, FT4,  FT2, VAR, CON, FT5};
+enum DelimInd { ADD, SUB, MUL, DIV, POW, FT2, FT3, FT4, VAR, CON};
 class Tree { //Hold decomposed expr
 private:
 	static string delim[];

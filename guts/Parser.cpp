@@ -131,7 +131,7 @@ string Node::toString() {
 }
 
 //	TREE
-string Tree::delim[] = {"+", "-", "*", "/", "^", "sin;cos;tan;log;abs;", "sqrt;asin;acos;atan;",  "ln;", "ABCDEFGHIJKLMNOPQRSTUVWXYZ","pi;e;phi", "ssqrt"};
+string Tree::delim[] = {"+", "-", "*", "/", "^", "ln;", "sin;cos;tan;log;abs;", "sqrt;asin;acos;atan;", "ABCDEFGHIJKLMNOPQRSTUVWXYZ","pi;e;phi;"};
 bool Tree::initd = false;
 std::unordered_map<std::string, cx (* const)(cx,cx)> Tree::parseops = std::unordered_map<std::string, cx (* const)(cx,cx)>();
 std::unordered_map<std::string, Tree*> Tree::variables = std::unordered_map<std::string, Tree*>();
@@ -248,12 +248,10 @@ int Tree::parse(Node *root) {
 			break;
 	}
 
-
 	bool foundDelim = false;
-	//Loop through delimiters
-	for(int j = 0; j < 9 && !foundDelim; j++) {
+	for(int delimind = 0; delimind < 9 && !foundDelim; delimind++) {
 		for(int i = 0; i < length && !foundDelim; i++) {
-			//skip paren
+			// Skip parenthesis
 			if(s[i] == '(') {
 				int parenthCount = 1;
 				while(parenthCount != 0) {
@@ -266,64 +264,44 @@ int Tree::parse(Node *root) {
 					}
 				}
 			}
-			//arithmetic
-			else if(i > 0 && s[i]== (delim[j])[0] && j < 5) {
-				foundDelim = true;
-				root->m_left = new Node(root, s.substr(0, i));
-				root->m_right = new Node(root, s.substr(i+1));
-				root->m_val = s[i];
-				parse(root->m_left);
-				parse(root->m_right);
+		
+			if(delimind < NUM_ARITH_OPS + NUM_FCT_LEN) {
+				// Arithmetic
+				if(delimind < NUM_ARITH_OPS  && i > 0 && s[i] == (delim[delimind])[0]) {
+					foundDelim = true;
+					root->m_left = new Node(root, s.substr(0, i));
+					root->m_right = new Node(root, s.substr(i+1));
+					root->m_val = s[i];
+				}
+				// Functions
+				else if(delimind >= NUM_ARITH_OPS) {
+					int fLen = delimind + FCT_LEN_OFFSET;
+					if(delim[delimind].find( s.substr(i, i + fLen) + ";" ) != -1) {
+						foundDelim = true;
+						root->m_left = new Node(root, s.substr(0, i));
+						root->m_right = new Node(root, s.substr(i + fLen));
+						root->m_val = s.substr(i, i + fLen);
+					}
+				}
+				if(foundDelim) {
+					parse(root->m_left);
+					parse(root->m_right);
+				}
 			}
-			//Length 4 fct
-			else if(i+4 < length && j == FT4 && delim[FT4].find(s.substr(i, i+4) + ";") != -1) {
-				foundDelim = true;
-				root->m_left = new Node(root, s.substr(0, i));
-				root->m_right = new Node(root, s.substr(i+4));
-				root->m_val = s.substr(i, i+4);
-				parse(root->m_left);
-				parse(root->m_right);
-			}
-			//Length 3 fct
-			else if(i+3 < length && j == FT3 && delim[FT3].find(s.substr(i, i+3) + ";") != -1) {
-				foundDelim = true;
-				root->m_left = new Node(root, s.substr(0, i));
-				root->m_right = new Node(root, s.substr(i+3));
-				root->m_val = s.substr(i, i+3);
-				parse(root->m_left);
-				parse(root->m_right);
-			}
-			//Length 2 fct
-			else if(i+2 < length && j == FT2 && delim[FT2].find(s.substr(i, i+2) + ";") != -1) {
-				foundDelim = true;
-				root->m_left = new Node(root, s.substr(0, i));
-				root->m_right = new Node(root, s.substr(i+2));
-				root->m_val = s.substr(i, i+2);
-				parse(root->m_left);
-				parse(root->m_right);
-			}
-			//Length 5 fct
-			else if(i+5 < length && j == FT5 && delim[FT5].find(s.substr(i, i+5) + ";") != -1) {
-				foundDelim = true;
-				root->m_left = new Node(root, s.substr(0, i));
-				root->m_right = new Node(root, s.substr(i+5));
-				root->m_val = s.substr(i, i+5);
-				parse(root->m_left);
-				parse(root->m_right);
-			}
-			//Variables
-			else if(j == VAR && delim[VAR].find(s[i]) != -1) {
+			// Variables
+			else if(delimind == VAR && delim[VAR].find(s[i]) != -1) {
 				foundDelim = true;
 				variables.emplace(&s[i], new Tree("0") );
 				root->m_val = s[i];
 			}
-			//search for length pi
-			else if(i+2 < length && j == 9 && delim[j].find(s.substr(i,i+2) + ";") != -1) {
-				foundDelim = true;
-				root->m_val = s.substr(i,i+2);
-			} else if(i+3 < length && j == 11 && delim[j].find(s.substr(i,i+3) + ";") != -1) {
-                foundDelim = true;
-				root->m_val = s.substr(i,i+3);
+			// Constants
+			else if(delimind == CON) {
+				for(int cLen = 1; i + cLen < length && cLen <= MAX_CONST_LEN; cLen++) {
+					if(delim[CON].find( s.substr(i, i + cLen) + ";") != -1) {
+						foundDelim = true;
+						root->m_val = s.substr(i, i+cLen);
+					}
+				}
 			}
 		}
 	}
