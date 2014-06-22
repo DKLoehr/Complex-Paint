@@ -151,7 +151,7 @@ void Runner::Init() {
     for(int iii = 0; iii < elements.size(); iii++) {
         elements[iii]->SetActive(false);
     }
-    activeBox = 17; // Start out highlighting the equation entering box
+    activeBox = 25; // Start out highlighting the equation entering box
     elements[activeBox]->SetActive(true);
     UpdateGraphs();
 }
@@ -171,7 +171,7 @@ void Runner::HandleEvents() {
         } else if(event.type == sf::Event::TextEntered) {
             drawGUI = true;
             elements[activeBox]->OnTextEntered(event.text.unicode);
-            if(activeBox >= 10 && activeBox != 24) { // One of the inputBoxes
+            if(event.text.unicode != 9 && activeBox >= 10 && activeBox != 24) { // One of the inputBoxes, wasn't tab
                 if(activeBox >= 25) // Equation or variables
                     okEquation.SetOutlineColor(sf::Color::Red);
                 else // Graph box changed
@@ -217,15 +217,14 @@ void Runner::HandleEvents() {
                 } else {
                     graphCoords = grid.rGrid.WindowToGraph(event.mouseButton.x, event.mouseButton.y);
                 }
-                locPos = cx(graphCoords.x, graphCoords.y);
-                Iterate(!isIterating); // Stop iterating if we were iterating, or start if we weren't
+                Iterate(!isIterating, new cx(graphCoords.x, graphCoords.y)); // Stop iterating if we were iterating, or start if we weren't
             }
         }
     }
     Iterate(isIterating);
 }
 
-void Runner::Iterate(bool keepIterating) {
+void Runner::Iterate(bool keepIterating, cx* newPos) {
     isIterating = keepIterating;
     if(keepIterating) {
         double circRad = 1;
@@ -238,10 +237,11 @@ void Runner::Iterate(bool keepIterating) {
             numIterations = 90;
             circRad = .7;
         }
-        for(int iii = 0; iii < numIterations; iii++) { // Iterate 30 points at once, or just one
+        for(int iii = 0; iii < numIterations + 1; iii++) { // Iterate 30 points at once, or just one
             fct->setVar("Z", locPos);
             try {
-                locPos = fct->eval();
+                if(iii != 0)
+                    locPos = fct->eval(); // Don't change position, so we can make it black first
             }
             catch (std::invalid_argument) { // Should mean we've reached infinity, so we can stop
                 isIterating = false;
@@ -250,11 +250,17 @@ void Runner::Iterate(bool keepIterating) {
 
             graphCoords = sf::Vector2f(locPos.real(), locPos.imag());
             sf::CircleShape newLoc = sf::CircleShape(circRad, 30);
-            newLoc.setFillColor(sf::Color::Black);
+            if(iii == numIterations)
+                newLoc.setFillColor(sf::Color::Red);
+            else
+                newLoc.setFillColor(sf::Color::Black);
             newLoc.setPosition(grid.rGrid.GraphToWindow(graphCoords) - sf::Vector2f(circRad, circRad));
             window->draw(newLoc);
             newLoc.setPosition(grid.lGrid.GraphToWindow(graphCoords) - sf::Vector2f(circRad, circRad));
             window->draw(newLoc);
+
+            if(iii == 0 && newPos != NULL)
+                locPos = *newPos;
         }
     }
 }
@@ -350,7 +356,7 @@ void Runner::ActivateButtons(sf::Event event) {
         UpdateEquation();
         break;
     case 4: // Inverse Quadratic Preset
-        equation.SetText("sqrt(z - C)");
+        equation.SetText("rpm() * sqrt(z - C)");
         UpdateEquation();
         break;
     case 5: // Single point mode

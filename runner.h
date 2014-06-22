@@ -85,7 +85,7 @@ public:
     Runner(sf::RenderWindow* w, sf::Font* font);
 
     void HandleEvents();
-    void Iterate(bool keepIterating);
+    void Iterate(bool keepIterating, cx* newPos = NULL);
 
     void SetActiveElement(double x, double y); // Determines what activeBox should be based on the mouse coordinates
     void StepActiveElement(bool increment); // Increased activeBox by 1 if true, decreases if false, keeping it in valid bounds

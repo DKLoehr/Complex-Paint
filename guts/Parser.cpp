@@ -103,9 +103,7 @@ cx atan(cx a, cx b) {
 	return std::atan(b);
 }
 cx sqrt(cx a, cx b) {
-	if(std::rand() % 2 > 0)
-		return -1.0*std::sqrt(b);
-	else return std::sqrt(b);;
+	return std::sqrt(b);
 }
 cx abs(cx a, cx b) {
 	return std::abs(b);
@@ -264,7 +262,7 @@ int Tree::parse(Node *root) {
 					}
 				}
 			}
-		
+
 			if(delimind < NUM_ARITH_OPS + NUM_FCT_LEN) {
 				// Arithmetic
 				if(delimind < NUM_ARITH_OPS  && i > 0 && s[i] == (delim[delimind])[0]) {
