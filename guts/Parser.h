@@ -51,7 +51,7 @@ cx acos(cx a, cx b = 0);
 cx atan(cx a, cx b = 0);
 cx sqrt(cx a, cx b = 0);
 cx abs(cx a, cx b = 0);
-cx ssqrt(cx a, cx b = 0);
+cx rpm(cx a = 0, cx b = 0);
 
 
 cx (* const padd)(cx, cx) = parser::add;
@@ -70,7 +70,7 @@ cx (* const pacos)(cx, cx) = parser::acos;
 cx (* const patan)(cx, cx) = parser::atan;
 cx (* const psqrt)(cx, cx) = parser::sqrt;
 cx (* const pabs)(cx, cx) = parser::abs;
-cx (* const pssqrt)(cx, cx) = parser::ssqrt;
+cx (* const prpm)(cx, cx) = parser::rpm;
 
 
 

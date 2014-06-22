@@ -110,8 +110,8 @@ cx sqrt(cx a, cx b) {
 cx abs(cx a, cx b) {
 	return std::abs(b);
 }
-cx ssqrt(cx a, cx b) {
-	return std::sqrt(b);
+cx rpm(cx a, cx b) { //random + or -
+	return (std::rand() % 2 == 0) ? 1 : -1;
 }
 
 Node::Node(Node * parent, string val) {
@@ -131,7 +131,7 @@ string Node::toString() {
 }
 
 //	TREE
-string Tree::delim[] = {"+", "-", "*", "/", "^", "ln;", "sin;cos;tan;log;abs;", "sqrt;asin;acos;atan;", "ABCDEFGHIJKLMNOPQRSTUVWXYZ","pi;e;phi;"};
+string Tree::delim[] = {"+", "-", "*", "/", "^", "ln;", "rpm;sin;cos;tan;log;abs;", "sqrt;asin;acos;atan;", "ABCDEFGHIJKLMNOPQRSTUVWXYZ","pi;e;phi;"};
 bool Tree::initd = false;
 std::unordered_map<std::string, cx (* const)(cx,cx)> Tree::parseops = std::unordered_map<std::string, cx (* const)(cx,cx)>();
 std::unordered_map<std::string, Tree*> Tree::variables = std::unordered_map<std::string, Tree*>();
@@ -170,8 +170,8 @@ void Tree::init() {
 	Tree::parseops.emplace("acos",pacos);
 	Tree::parseops.emplace("atan",patan);
 	Tree::parseops.emplace("sqrt",psqrt);
-	Tree::parseops.emplace("abs",parser::abs);
-	Tree::parseops.emplace("ssqrt",pssqrt);
+	Tree::parseops.emplace("abs", pabs);
+	Tree::parseops.emplace("rpm", prpm);
 
 	Tree::variables.emplace("pi", new Tree(PARSER_SPI));
 	Tree::variables.emplace("phi", new Tree(PARSER_SPHI));
