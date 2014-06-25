@@ -41,24 +41,19 @@ string toStringRounded(cx c) {
 //Converts a string WITHOUT OPERATORS into a complex number
 //Must be of form __number__i or __number__
 cx stringToCx(string s) {
-	string permitted = ".1234567890i-";
-	std::istringstream is;
+	static string permitted = ".i-";
+	int len = 0;
 	for(char c : s)
-		if(permitted.find(c) == -1)
+		if((c > '9' || c < '0') && permitted.find(c) == -1)
 			throw std::invalid_argument("Not a number:  " + s);
+		else len++;
 
-	is.setf(std::ios::fixed, std::ios::floatfield);
 	if(s.find("i") == -1)
-		is.str('(' + s + ",0)");
-	else if(s.length() > 1) {
-		s.erase(s.length() -1);
-		is.str("(0," + s + ")");
-	}
-	else if(s[0] == 'i' && s.length() == 1)
-		is.str("(0,1)");
-	cx a;
-	is >> a;
-	return a;
+		return cx(strtod(s.c_str(), NULL), 0.0);
+	else if(len > 1)
+		return cx(0.0, strtod(s.c_str(), NULL));
+	else if (s[0] == 'i' && len == 1)
+		return cx(0.0, 1.0);
 }
 
 
