@@ -1,6 +1,8 @@
 #ifndef RUNNER_H
 #define RUNNER_H
 
+#define HEIGHT_OFFSET 200
+
 #include <SFML/Graphics.hpp>
 #include "guts/Parser.h"
 #include "gui/button.h"
@@ -18,12 +20,12 @@ class Runner
 private:
     int activeBox;
     bool isIterating;
-    bool drawGUI;
-
     drawMode mode;
 
     sf::RenderWindow* window;
     sf::Font* inFont;
+    sf::RenderTexture* pic;
+    sf::Sprite graphs;
 
     parser::Tree* fct;
 
@@ -62,13 +64,13 @@ private:
     InputBox xScaleL;   // 12
     InputBox yScaleL;   // 13
     InputBox centerL;   // 14
-    InputBox xRangeR;   // 15
-    InputBox yRangeR;   // 16
-    InputBox xScaleR;   // 17
-    InputBox yScaleR;   // 18
-    InputBox centerR;   // 19
-    Checkbox numbersL;  // 20
-    Checkbox linesL;    // 21
+    Checkbox numbersL;  // 15
+    Checkbox linesL;    // 16
+    InputBox xRangeR;   // 17
+    InputBox yRangeR;   // 18
+    InputBox xScaleR;   // 19
+    InputBox yScaleR;   // 20
+    InputBox centerR;   // 21
     Checkbox numbersR;  // 22
     Checkbox linesR;    // 23
     Button okGraph;     // 24
@@ -82,7 +84,7 @@ private:
 
     void Init();
 public:
-    Runner(sf::RenderWindow* w, sf::Font* font);
+    Runner(sf::RenderWindow* w, sf::Font* font, sf::RenderTexture* p);
 
     void HandleEvents();
     void Iterate(bool keepIterating, cx* newPos = NULL);
@@ -92,6 +94,8 @@ public:
     void UpdateGraphs(); // Apply changes from the graph input elements to the two graphs
     void UpdateEquation();
     void ActivateButtons(sf::Event event);
+
+    void clearPic();
 
     void Draw();
 };

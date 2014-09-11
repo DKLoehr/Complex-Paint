@@ -88,6 +88,9 @@ public:
     /// Given the location on the graph, returns the coordinates of the pixel on the window
     sf::Vector2f GraphToWindow(sf::Vector2f gLoc);
     sf::Vector2f GraphToWindow(double xPos, double yPos);
+    /// Given the location on the graph, returns the coordinates of the pixel on the canvas
+    sf::Vector2f GraphToPic(sf::Vector2f gLoc);
+    sf::Vector2f GraphToPic(double xPos, double yPos);
 
     /// Draw everything to the window
     void Draw();

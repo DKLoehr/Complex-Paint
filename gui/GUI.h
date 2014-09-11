@@ -27,6 +27,8 @@ public:
 
     void SetBoxColor(sf::Color c);
     void SetOutlineColor(sf::Color c);
+    sf::Color GetBoxColor();
+    sf::Color GetOutlineColor();
 
     virtual void SetActive(bool active) = 0;
 

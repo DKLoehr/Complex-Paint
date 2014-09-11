@@ -1,8 +1,9 @@
 #include "runner.h"
 
-Runner::Runner(sf::RenderWindow* w, sf::Font* font) :
+Runner::Runner(sf::RenderWindow* w, sf::Font* font, sf::RenderTexture* p) :
     window(w),
-    inFont(font)
+    inFont(font),
+    pic(p)
 {
     Init();
 }
@@ -11,11 +12,13 @@ Runner::Runner(sf::RenderWindow* w, sf::Font* font) :
 void Runner::Init() {
     isIterating = false;
     mode = single;
-    drawGUI = true;
+
+    pic->clear(sf::Color::White);
+    graphs.setPosition(0, HEIGHT_OFFSET);
 
     fct = new parser::Tree("Z");
 
-    grid = DoubleGrid(window, *inFont, 200);
+    grid = DoubleGrid(window, *inFont, HEIGHT_OFFSET);
     grid.Draw();
 
     points = std::vector<sf::CircleShape>(0);
@@ -163,13 +166,7 @@ void Runner::HandleEvents() {
            (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape))
         {
             window->close();
-        } else if (event.type == sf::Event::Resized) {
-            drawGUI = true;
-            Iterate(false);
-            window->clear(sf::Color::White);
-            grid.Draw();
         } else if(event.type == sf::Event::TextEntered) {
-            drawGUI = true;
             elements[activeBox]->OnTextEntered(event.text.unicode);
             if(event.text.unicode != 9 && activeBox >= 10 && activeBox != 24) { // One of the inputBoxes, wasn't tab
                 if(activeBox >= 25) // Equation or variables
@@ -184,21 +181,18 @@ void Runner::HandleEvents() {
             if(event.mouseMove.y < 200) // Upper part of the screen
                 SetActiveElement(event.mouseMove.x, event.mouseMove.y);
             else { // In one of the graphs
-                loc.setFillColor(sf::Color::White);
-                window->draw(loc);
-                loc.setFillColor(sf::Color::Blue);
-                if(event.mouseMove.x < window->getSize().x / 2) {
+                loc.setFillColor(sf::Color::Black);
+                if(event.mouseMove.x < window->getSize().x / 2) { // Left Graph
                     sf::Vector2f graphLoc(grid.lGrid.WindowToGraph(event.mouseMove.x, event.mouseMove.y));
                     fct->setVar("Z", cx(graphLoc.x, graphLoc.y));
                     cx newLoc(fct->eval());
                     loc.setPosition(grid.rGrid.GraphToWindow(newLoc.real(), newLoc.imag()));
-                } else {
+                } else { // Right Graph
                     sf::Vector2f graphLoc(grid.rGrid.WindowToGraph(event.mouseMove.x, event.mouseMove.y));
                     fct->setVar("Z", cx(graphLoc.x, graphLoc.y));
                     cx newLoc(fct->eval());
                     loc.setPosition(grid.lGrid.GraphToWindow(newLoc.real(), newLoc.imag()));
                 }
-                window->draw(loc);
             }
         } else if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tab) {
             StepActiveElement(!(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ||
@@ -243,7 +237,7 @@ void Runner::Iterate(bool keepIterating, cx* newPos) {
                 if(iii != 0)
                     locPos = fct->eval(); // Don't change position, so we can make it black first
             }
-            catch (std::invalid_argument) { // Should mean we've reached infinity, so we can stop
+            catch (std::invalid_argument) { // Should mean we've "reached infinity", so we can stop
                 isIterating = false;
                 return;
             }
@@ -254,10 +248,10 @@ void Runner::Iterate(bool keepIterating, cx* newPos) {
                 newLoc.setFillColor(sf::Color::Red);
             else
                 newLoc.setFillColor(sf::Color::Black);
-            newLoc.setPosition(grid.rGrid.GraphToWindow(graphCoords) - sf::Vector2f(circRad, circRad));
-            window->draw(newLoc);
-            newLoc.setPosition(grid.lGrid.GraphToWindow(graphCoords) - sf::Vector2f(circRad, circRad));
-            window->draw(newLoc);
+            newLoc.setPosition(grid.rGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
+            pic->draw(newLoc);
+            newLoc.setPosition(grid.lGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
+            pic->draw(newLoc);
 
             if(iii == 0 && newPos != NULL)
                 locPos = *newPos;
@@ -303,10 +297,10 @@ void Runner::UpdateGraphs() {
         grid.rGrid.SetCenter(centerR.GetStringAsVector());
     grid.rGrid.SetNumbers(numbersR.GetText() == "x");
     grid.rGrid.SetLines(linesR.GetText() == "x");
-    okGraph.SetOutlineColor(sf::Color::Black);
-    Iterate(false);
-    window->clear(sf::Color::White);
-    grid.Draw();
+    if(okGraph.GetOutlineColor() != sf::Color::Black) {
+        okGraph.SetOutlineColor(sf::Color::Black);
+        clearPic();
+    }
 }
 
 void Runner::UpdateEquation() {
@@ -333,9 +327,7 @@ void Runner::UpdateEquation() {
         }
     }
     okEquation.SetOutlineColor(sf::Color::Black);
-    window->draw(sf::RectangleShape(sf::Vector2f(window->getSize().x, 200)));
-    drawGUI = true;
-    Draw();
+    Iterate(false);
 }
 
 void Runner::ActivateButtons(sf::Event event) {
@@ -370,9 +362,7 @@ void Runner::ActivateButtons(sf::Event event) {
         modeSingle.SetOutlineColor(sf::Color::Black);
         break;
     case 7: // Clear
-        Iterate(false);
-        window->clear(sf::Color::White);
-        grid.Draw();
+        clearPic();
         break;
     case 8: // Mirror R->L
         okGraph.SetOutlineColor(sf::Color::Red);
@@ -394,6 +384,16 @@ void Runner::ActivateButtons(sf::Event event) {
         if(numbersR.GetText() != numbersL.GetText()) numbersR.Toggle();
         if(linesR.GetText() != linesL.GetText()) linesR.Toggle();
         break;
+    case 15: // One of the checkboxes
+    case 16:
+    case 22:
+    case 23:
+        okGraph.SetOutlineColor(sf::Color::Red);
+        if(event.type == sf::Event::MouseButtonPressed)
+            elements[activeBox]->OnClick(event.mouseButton.x, event.mouseButton.y);
+        else
+            elements[activeBox]->OnEnter();
+        break;
     case 24: // Save Changes for graphs
         UpdateGraphs();
         break;
@@ -403,29 +403,32 @@ void Runner::ActivateButtons(sf::Event event) {
         else
             elements[activeBox]->OnEnter();
     }
-    drawGUI = true;
+}
+
+void Runner::clearPic() {
+    Iterate(false);
+    pic->clear(sf::Color::White);
 }
 
 void Runner::Draw() {
-    if(drawGUI) {
-        drawGUI = false;
-        sf::RectangleShape titleRect(sf::Vector2f(300, 25));
-        titleRect.setPosition(lTitle.getPosition() - sf::Vector2f(5, 5));
-        titleRect.setFillColor(sf::Color::White);
-        window->draw(titleRect);
+    window->clear(sf::Color::White); // Clear in preparation for drawing new stuff
 
-        window->draw(lTitle);
-        window->draw(rTitle);
+    /// Draw GUI elements
+    window->draw(lTitle); // Draw the titles for the columns of graph settings
+    window->draw(rTitle);
 
-        for(int iii = 0; iii < elements.size(); iii++) {
-            elements[iii]->DrawWhite();
-        }
-        for(int iii = 0; iii < elements.size(); iii++) {
-            elements[iii]->Draw();
-        }
+    for(int iii = 0; iii < elements.size(); iii++) { // Draw each GUI element (textboxes, buttons, checkboxes)
+        elements[iii]->Draw();
     }
-    grid.DrawTextless();
-    //window->draw(loc);
 
-    window->display();
+    /// Draw graph elements
+
+    graphs.setTexture(pic->getTexture()); // Update our graph with the newest points
+    window->draw(graphs); // Draw the updated graph to the screen
+
+    grid.Draw(); // Draw the axes over the graph
+
+    window->draw(loc); // Draw the cursor's position after one application of the current equation
+
+    window->display(); // Display everything we've drawn on the screen
 }

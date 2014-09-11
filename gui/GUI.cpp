@@ -39,6 +39,14 @@ void GUI::SetOutlineColor(sf::Color c) {
     m_rectangle.setOutlineColor(c);
 }
 
+sf::Color GUI::GetBoxColor() {
+    return m_rectangle.getFillColor();
+}
+
+sf::Color GUI::GetOutlineColor() {
+    return m_rectangle.getOutlineColor();
+}
+
 sf::Vector2f GUI::GetPosition() {
     return m_position;
 }

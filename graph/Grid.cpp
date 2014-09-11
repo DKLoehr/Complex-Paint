@@ -189,6 +189,14 @@ sf::Vector2f Grid::GraphToWindow(double xPos, double yPos) {
     return GraphToWindow(sf::Vector2f(xPos, yPos));
 }
 
+sf::Vector2f Grid::GraphToPic(sf::Vector2f gLoc) {
+    return GraphToWindow(gLoc) - sf::Vector2f(0, m_position.y);
+}
+
+sf::Vector2f Grid::GraphToPic(double xPos, double yPos) {
+    return GraphToPic(sf::Vector2f(xPos, yPos));
+}
+
 void Grid::Draw() {
     m_w->draw(m_lines);
     if(m_dispNumbers) {
