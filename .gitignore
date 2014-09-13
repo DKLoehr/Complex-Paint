@@ -19,3 +19,11 @@
 *.exe
 *.out
 *.app
+
+# Everything in bin
+bin/*
+
+# Code::Blocks-specific files
+*.depend
+*.layout
+*.cbp
