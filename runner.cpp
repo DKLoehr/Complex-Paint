@@ -15,6 +15,7 @@ void Runner::Init() {
 
     pic->clear(sf::Color::White);
     graphs.setPosition(0, HEIGHT_OFFSET);
+    graphs.setTexture(pic->getTexture());
 
     fct = new parser::Tree("Z");
 
@@ -428,7 +429,7 @@ void Runner::Draw() {
     }
 
     /// Draw graph elements
-    graphs.setTexture(pic->getTexture()); // Update our graph with the newest points
+    pic->display(); // Update our graph with the newest points
     window->draw(graphs); // Draw the updated graph to the screen
     grid.Draw(); // Draw the axes over the graph
 
