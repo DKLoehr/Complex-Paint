@@ -229,7 +229,7 @@ void Runner::Iterate(bool keepIterating, cx* newPos) {
         }
         else if (mode == iterative) {
             numIterations = 90;
-            circRad = .7;
+            circRad = .75;
         }
         for(int iii = 0; iii < numIterations + 1; iii++) { // Iterate 30 points at once, or just one
             fct->setVar("Z", locPos); // Feed our current location into parser as the variable Z
@@ -315,7 +315,6 @@ void Runner::UpdateEquation() {
         if(func[iii] == 'z')
             func.replace(iii, 1, "Z");
     }
-    std::cout << func << "\n";
     fct = new parser::Tree(func);
     while(elements.size() > elementsSize) {
         fct->setVar(elements[elements.size() - 1]->GetCap().substr(0, 1), elements[elements.size() - 1]->GetText());
@@ -356,11 +355,13 @@ void Runner::ActivateButtons(sf::Event event) {
         UpdateEquation();
         break;
     case 5: // Single point mode
+        Iterate(false);
         mode = single;
         modeSingle.SetOutlineColor(sf::Color::Green);
         modeIterate.SetOutlineColor(sf::Color::Black);
         break;
     case 6: // Iterate mode
+        Iterate(false);
         mode = iterative;
         modeIterate.SetOutlineColor(sf::Color::Green);
         modeSingle.SetOutlineColor(sf::Color::Black);
@@ -412,6 +413,7 @@ void Runner::ActivateButtons(sf::Event event) {
 void Runner::clearPic() {
     Iterate(false);                 // Stop iterating
     pic->clear(sf::Color::White);   // Clear the canvas (pic) to be fully white
+    locPos = cx(0, 0);              // Move our last drawn point to the origin
 }
 
 void Runner::Draw() {
