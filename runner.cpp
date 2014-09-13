@@ -22,12 +22,10 @@ void Runner::Init() {
     grid = DoubleGrid(window, *inFont, HEIGHT_OFFSET);
     grid.Draw();
 
-    points = std::vector<sf::CircleShape>(0);
-
     loc = sf::CircleShape(1, 30);
     loc.setFillColor(sf::Color::Black);
 
-    locPos = std::complex<double>(0, 0);
+    lastPoint = std::complex<double>(0, 0);
     graphCoords = sf::Vector2f(0, 0);
 
     lTitle = sf::Text("Left Graph", *inFont, 15);
@@ -233,17 +231,17 @@ void Runner::Iterate(bool keepIterating, cx* newPos) {
             circRad = .75;
         }
         for(int iii = 0; iii < numIterations + 1; iii++) { // Iterate 30 points at once, or just one
-            fct->setVar("Z", locPos); // Feed our current location into parser as the variable Z
+            fct->setVar("Z", lastPoint); // Feed our current location into parser as the variable Z
             try {
                 if(iii != 0)
-                    locPos = fct->eval(); // Don't change position, so we can make it black first
+                    lastPoint = fct->eval(); // Don't change position, so we can make it black first
             }
             catch (std::invalid_argument) { // Should mean we've "reached infinity", so we can stop
                 isIterating = false;
                 return;
             }
 
-            graphCoords = sf::Vector2f(locPos.real(), locPos.imag());
+            graphCoords = sf::Vector2f(lastPoint.real(), lastPoint.imag());
             sf::CircleShape newLoc = sf::CircleShape(circRad, 30);
             if(iii == numIterations)
                 newLoc.setFillColor(sf::Color::Red);
@@ -255,7 +253,7 @@ void Runner::Iterate(bool keepIterating, cx* newPos) {
             pic->draw(newLoc);
 
             if(iii == 0 && newPos != NULL)
-                locPos = *newPos;
+                lastPoint = *newPos;
         }
     }
 }
@@ -285,16 +283,16 @@ void Runner::StepActiveElement(bool increment) {
 }
 
 void Runner::UpdateGraphs() {
-    grid.lGrid.SetRange(xRangeL.GetStringAsDouble(),
+    grid.lGrid.SetRange(xRangeL.GetStringAsDouble(),        // Set the left grid's range to be that specified in the left range boxes
                         yRangeL.GetStringAsDouble());
-    grid.lGrid.SetScale(xScaleL.GetStringAsDouble(),
+    grid.lGrid.SetScale(xScaleL.GetStringAsDouble(),        // Set the left grid's scale to be that specified in the left scale boxes
                         yScaleL.GetStringAsDouble());
-    if(centerL.GetText() != "")
-        grid.lGrid.SetCenter(centerL.GetStringAsVector());
-    grid.lGrid.SetNumbers(numbersL.GetText() == "x");
-    grid.lGrid.SetLines(linesL.GetText() == "x");
+    if(centerL.GetText() != "")                             // If there's no entry, leave the center as it is
+        grid.lGrid.SetCenter(centerL.GetStringAsVector());  // Set the left grid's center to be that specified in the left center box
+    grid.lGrid.SetNumbers(numbersL.GetText() == "x");       // Set numbers on the axes to be on or off as specified by the left "numbers" checkbox
+    grid.lGrid.SetLines(linesL.GetText() == "x");           // Set tick marks or whole grid lines to be on or off as specified by the left "lines" checkbox
 
-    grid.rGrid.SetRange(xRangeR.GetStringAsDouble(),
+    grid.rGrid.SetRange(xRangeR.GetStringAsDouble(),        // Repeat for the right grid
                         yRangeR.GetStringAsDouble());
     grid.rGrid.SetScale(xScaleR.GetStringAsDouble(),
                         yScaleR.GetStringAsDouble());
@@ -302,9 +300,9 @@ void Runner::UpdateGraphs() {
         grid.rGrid.SetCenter(centerR.GetStringAsVector());
     grid.rGrid.SetNumbers(numbersR.GetText() == "x");
     grid.rGrid.SetLines(linesR.GetText() == "x");
-    if(okGraph.GetOutlineColor() != sf::Color::Black) {
-        okGraph.SetOutlineColor(sf::Color::Black);
-        clearPic();
+    if(okGraph.GetOutlineColor() != sf::Color::Black) {     // If anything (besides numbers or lines) was changed
+        okGraph.SetOutlineColor(sf::Color::Black);          // Mark "Save changes" button as up-to-date
+        clearPic();                                         // Get rid of old point which are no longer accurate
     }
 }
 
@@ -414,7 +412,7 @@ void Runner::ActivateButtons(sf::Event event) {
 void Runner::clearPic() {
     Iterate(false);                 // Stop iterating
     pic->clear(sf::Color::White);   // Clear the canvas (pic) to be fully white
-    locPos = cx(0, 0);              // Move our last drawn point to the origin
+    lastPoint = cx(0, 0);              // Move our last drawn point to the origin
 }
 
 void Runner::Draw() {

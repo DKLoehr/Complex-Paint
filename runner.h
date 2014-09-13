@@ -18,25 +18,25 @@ enum drawMode {
 class Runner
 {
 private:
-    int activeBox;
+    int activeBox;              //
     bool isIterating;
     drawMode mode;
 
-    sf::RenderWindow* window;
-    sf::Font* inFont;
-    sf::RenderTexture* pic;
-    sf::Sprite graphs;
+    sf::RenderWindow* window;   // The window to which we draw
+    sf::Font* inFont;           // The font to use for all text (VeraMono)
+    sf::RenderTexture* pic;     // The canvas to which we draw graphed points
+    sf::Sprite graphs;          // The sprite which we use to draw pic to the screen
 
-    parser::Tree* fct;
+    parser::Tree* fct;          // The tree we use to evaluate our expression
 
-    DoubleGrid grid;
-    sf::CircleShape loc;
+    DoubleGrid grid;            // The two sets of axes which appear on the bottom of the screen
+    sf::CircleShape loc;        // The point which appears opposite the cursor
 
-    sf::Text lTitle;
-    sf::Text rTitle;
+    sf::Text lTitle;            // The title of the left column of graph settings: "Left Graph"
+    sf::Text rTitle;            // The title of the right column of graph settings: "Right Graph"
 
 
-    std::vector<GUI*> elements; // An alternate way of accessing each gui element
+    std::vector<GUI*> elements;  // An alternate way of accessing each gui element
     const int elementsSize = 26; // Initial size of elements (without any variables)
 
     Button okEquation;  // 0
@@ -78,28 +78,28 @@ private:
     /// Elements to do with changing equation settings
     InputBox equation;  // 25
 
-    std::vector<sf::CircleShape> points;
-    cx locPos;
-    sf::Vector2f graphCoords;
+    cx lastPoint;               // The position of the most recently-drawn point
+    sf::Vector2f graphCoords;   // The position of the point on the graph in sf::Vector form
 
-    void Init();
+    void Init(); // Initialize the class
 
-    void Iterate(bool keepIterating, cx* newPos = NULL);
+    void Iterate(bool keepIterating, cx* newPos = NULL); // Iterates our function if true, stops iterating if false;
+                                                         // If newPos != NULL, will begin iterating at newPos's coordinates; else uses previous coords.
 
-    void SetActiveElement(double x, double y); // Determines what activeBox should be based on the mouse coordinates; x and y are window coords to test
-    void StepActiveElement(bool increment); // Increased activeBox by 1 if true, decreases if false, keeping it in valid bounds
-    void UpdateGraphs(); // Apply changes from the graph input elements to the two graphs
-    void UpdateEquation(); // Apply changes from the equation inputbox and the parameter inputboxes
-    void ActivateButtons(sf::Event event);
+    void SetActiveElement(double x, double y);  // Determines what activeBox should be based on the mouse coordinates; x and y are window coords to test
+    void StepActiveElement(bool increment);     // Increases activeBox by 1 if true, decreases if false, keeping it in valid bounds
+    void UpdateGraphs();                        // Apply changes from the graph input elements to the two graphs
+    void UpdateEquation();                      // Apply changes from the equation inputbox and the parameter inputboxes
+    void ActivateButtons(sf::Event event);      // Activate buttons depending on activeBox and/or the event; event is the event that activated a button
 
-    void clearPic();
+    void clearPic(); // Clear all points drawn to pic
 
 public:
-    Runner(sf::RenderWindow* w, sf::Font* font, sf::RenderTexture* p);
+    Runner(sf::RenderWindow* w, sf::Font* font, sf::RenderTexture* p); // Constructor
 
-    void HandleEvents();
+    void HandleEvents();    // Perform all the tasks necessary to run
 
-    void Draw();
+    void Draw();            // Draw everything to the screen
 };
 
 #endif // RUNNER_H
