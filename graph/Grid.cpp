@@ -14,6 +14,8 @@ Grid::Grid(sf::RenderWindow* w, sf::Font font, double xLoc, double yLoc, double 
            m_w(w),
            m_f(font)
 {
+    m_origWin = m_w->getSize();
+
     m_position = sf::Vector2i(xLoc, yLoc);
     m_size = sf::Vector2i(width, height);
 
@@ -190,7 +192,10 @@ sf::Vector2f Grid::GraphToWindow(double xPos, double yPos) {
 }
 
 sf::Vector2f Grid::GraphToPic(sf::Vector2f gLoc) {
-    return GraphToWindow(gLoc) - sf::Vector2f(0, m_position.y);
+    sf::Vector2f coords = GraphToWindow(gLoc);
+    coords -= sf::Vector2f(0, m_origWin.y); // subtract original window size
+    coords.y *= -1;
+    return coords;
 }
 
 sf::Vector2f Grid::GraphToPic(double xPos, double yPos) {

@@ -83,19 +83,21 @@ private:
     sf::Vector2f graphCoords;
 
     void Init();
+
+    void Iterate(bool keepIterating, cx* newPos = NULL);
+
+    void SetActiveElement(double x, double y); // Determines what activeBox should be based on the mouse coordinates; x and y are window coords to test
+    void StepActiveElement(bool increment); // Increased activeBox by 1 if true, decreases if false, keeping it in valid bounds
+    void UpdateGraphs(); // Apply changes from the graph input elements to the two graphs
+    void UpdateEquation(); // Apply changes from the equation inputbox and the parameter inputboxes
+    void ActivateButtons(sf::Event event);
+
+    void clearPic();
+
 public:
     Runner(sf::RenderWindow* w, sf::Font* font, sf::RenderTexture* p);
 
     void HandleEvents();
-    void Iterate(bool keepIterating, cx* newPos = NULL);
-
-    void SetActiveElement(double x, double y); // Determines what activeBox should be based on the mouse coordinates
-    void StepActiveElement(bool increment); // Increased activeBox by 1 if true, decreases if false, keeping it in valid bounds
-    void UpdateGraphs(); // Apply changes from the graph input elements to the two graphs
-    void UpdateEquation();
-    void ActivateButtons(sf::Event event);
-
-    void clearPic();
 
     void Draw();
 };

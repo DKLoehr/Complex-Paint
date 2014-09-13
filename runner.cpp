@@ -232,7 +232,7 @@ void Runner::Iterate(bool keepIterating, cx* newPos) {
             circRad = .7;
         }
         for(int iii = 0; iii < numIterations + 1; iii++) { // Iterate 30 points at once, or just one
-            fct->setVar("Z", locPos);
+            fct->setVar("Z", locPos); // Feed our current location into parser as the variable Z
             try {
                 if(iii != 0)
                     locPos = fct->eval(); // Don't change position, so we can make it black first
@@ -260,23 +260,27 @@ void Runner::Iterate(bool keepIterating, cx* newPos) {
 }
 
 void Runner::SetActiveElement(double x, double y) {
-    elements[activeBox]->SetActive(false);
     for(int iii = 0; iii < elements.size(); iii++) {
-        elements[iii]->OnClick(x, y);
-        if(elements[iii]->OnClick(x, y)) {
-            activeBox = iii;
+        if(elements[iii]->OnClick(x, y)) {              // True iff x and y are in that element's box; will toggle checkboxes, so must toggle back later
+            if(activeBox != iii) {                      // If the active box has changed
+                elements[activeBox]->SetActive(false);  // Deactivate the previously-active box
+                activeBox = iii;                        // Update which box is active
+                elements[activeBox]->SetActive(true);   // Activate the newly-active box
+                elements[iii]->OnClick(x, y);           // For checkboxes; toggle them back
+            }
+            break;                                      // Figured out which box is active, so we can stop looking now
         }
+        elements[iii]->OnClick(x, y);                   // For checkboxes; toggle them back
     }
-    elements[activeBox]->SetActive(true);
 }
 
 void Runner::StepActiveElement(bool increment) {
-    elements[activeBox]->SetActive(false);
-    if(increment)
-        activeBox = ++activeBox % elements.size();
+    elements[activeBox]->SetActive(false);          // Deactivate previously-active box
+    if(increment)                                   // If we're going forward (down or to the right)
+        activeBox = ++activeBox % elements.size();  // Increment by one modularly
     else
         activeBox = (activeBox + elements.size() - 1) % elements.size(); // Decrement by one modularly
-    elements[activeBox]->SetActive(true);
+    elements[activeBox]->SetActive(true);           // Activate the newly-active box
 }
 
 void Runner::UpdateGraphs() {
@@ -406,8 +410,8 @@ void Runner::ActivateButtons(sf::Event event) {
 }
 
 void Runner::clearPic() {
-    Iterate(false);
-    pic->clear(sf::Color::White);
+    Iterate(false);                 // Stop iterating
+    pic->clear(sf::Color::White);   // Clear the canvas (pic) to be fully white
 }
 
 void Runner::Draw() {
@@ -422,10 +426,8 @@ void Runner::Draw() {
     }
 
     /// Draw graph elements
-
     graphs.setTexture(pic->getTexture()); // Update our graph with the newest points
     window->draw(graphs); // Draw the updated graph to the screen
-
     grid.Draw(); // Draw the axes over the graph
 
     window->draw(loc); // Draw the cursor's position after one application of the current equation

@@ -17,6 +17,9 @@ private:
     /// The font we use for the axis labels
     sf::Font m_f;
 
+    /// The original size of the window
+    sf::Vector2u m_origWin;
+
 
     /** The following are all relative to the WINDOW, not the graph **/
     /// The coordinates of the top-left corner of the grid on the window
