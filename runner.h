@@ -12,14 +12,16 @@
 
 enum drawMode {
     single,
-    iterative
+    iterative,
+    grid
 };
 
 class Runner
 {
 private:
-    int activeBox;              //
+    int activeBox;
     bool isIterating;
+    bool isDrawing; // True if we're in the middle of drawing a grid/circle/etc. shape, false otherwise
     drawMode mode;
 
     sf::RenderWindow* window;   // The window to which we draw
@@ -31,6 +33,7 @@ private:
 
     DoubleGrid grid;            // The two sets of axes which appear on the bottom of the screen
     sf::CircleShape loc;        // The point which appears opposite the cursor
+    sf::VertexArray shape;      // A special shape that we're drawing (grid, etc.)
 
     sf::Text lTitle;            // The title of the left column of graph settings: "Left Graph"
     sf::Text rTitle;            // The title of the right column of graph settings: "Right Graph"
@@ -92,7 +95,9 @@ private:
     void UpdateEquation();                      // Apply changes from the equation inputbox and the parameter inputboxes
     void ActivateButtons(sf::Event event);      // Activate buttons depending on activeBox and/or the event; event is the event that activated a button
 
-    void clearPic(); // Clear all points drawn to pic
+    void DrawShape(bool toggleDrawing = false); // Draws a shape based on mode; toggles whether or not it's drawing anything if passed true
+
+    void ClearPic(); // Clear all points drawn to pic
 
 public:
     Runner(sf::RenderWindow* w, sf::Font* font, sf::RenderTexture* p); // Constructor

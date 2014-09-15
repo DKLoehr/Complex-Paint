@@ -11,6 +11,7 @@ Runner::Runner(sf::RenderWindow* w, sf::Font* font, sf::RenderTexture* p) :
 
 void Runner::Init() {
     isIterating = false;
+    isDrawing = false;
     mode = single;
 
     pic->clear(sf::Color::White);
@@ -70,7 +71,7 @@ void Runner::Init() {
     elements.push_back(&modeSingle);
 
     modeIterate = Button(window, inFont, window->getSize().x / 2 + 45, modeSingle.GetPosition().y,
-                                65, 15, "Iterate"); // 6
+                                65, 15, "Grid"); // 6
     elements.push_back(&modeIterate);
 
     /// Clear graph button
@@ -205,15 +206,21 @@ void Runner::HandleEvents() {
                 else
                     elements[activeBox]->OnClick(event.mouseButton.x, event.mouseButton.y);
             } else { // In one of the graphs
-                if(event.mouseButton.x < window->getSize().x / 2) {
-                    graphCoords = grid.lGrid.WindowToGraph(event.mouseButton.x, event.mouseButton.y);
-                } else {
-                    graphCoords = grid.rGrid.WindowToGraph(event.mouseButton.x, event.mouseButton.y);
+                if((int)mode <= 1 ) {// Single or Iterate
+                    if(event.mouseButton.x < window->getSize().x / 2) {
+                        graphCoords = grid.lGrid.WindowToGraph(event.mouseButton.x, event.mouseButton.y);
+                    } else {
+                        graphCoords = grid.rGrid.WindowToGraph(event.mouseButton.x, event.mouseButton.y);
+                    }
+                    Iterate(!isIterating, new cx(graphCoords.x, graphCoords.y)); // Stop iterating if we were iterating, or start if we weren't
                 }
-                Iterate(!isIterating, new cx(graphCoords.x, graphCoords.y)); // Stop iterating if we were iterating, or start if we weren't
+                else { // Grid mode
+                    DrawShape(true);
+                }
             }
         }
     }
+    DrawShape(false);
     Iterate(isIterating);
 }
 
@@ -222,7 +229,7 @@ void Runner::Iterate(bool keepIterating, cx* newPos) {
     if(keepIterating) {
         double circRad = 1;
         int numIterations = 1;
-        if(mode == single) {
+        if(mode == single || mode == (drawMode)2) { // Single or grid mode
             isIterating = false;
             circRad = 1.5;
         }
@@ -252,8 +259,10 @@ void Runner::Iterate(bool keepIterating, cx* newPos) {
             newLoc.setPosition(grid.lGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
             pic->draw(newLoc);
 
-            if(iii == 0 && newPos != NULL)
+            if(iii == 0 && newPos != NULL) {
                 lastPoint = *newPos;
+                delete newPos;
+            }
         }
     }
 }
@@ -302,7 +311,7 @@ void Runner::UpdateGraphs() {
     grid.rGrid.SetLines(linesR.GetText() == "x");
     if(okGraph.GetOutlineColor() != sf::Color::Black) {     // If anything (besides numbers or lines) was changed
         okGraph.SetOutlineColor(sf::Color::Black);          // Mark "Save changes" button as up-to-date
-        clearPic();                                         // Get rid of old point which are no longer accurate
+        ClearPic();                                         // Get rid of old point which are no longer accurate
     }
 }
 
@@ -371,12 +380,12 @@ void Runner::ActivateButtons(sf::Event event) {
         break;
     case 6: // Iterate mode
         Iterate(false);
-        mode = iterative;
+        mode = (drawMode)2; // Grid mode
         modeIterate.SetOutlineColor(sf::Color::Green);
         modeSingle.SetOutlineColor(sf::Color::Black);
         break;
     case 7: // Clear
-        clearPic();
+        ClearPic();
         break;
     case 8: // Mirror R->L
         okGraph.SetOutlineColor(sf::Color::Red);
@@ -419,7 +428,57 @@ void Runner::ActivateButtons(sf::Event event) {
     }
 }
 
-void Runner::clearPic() {
+void Runner::DrawShape(bool toggleDrawing) {
+    static sf::Vector2i position; // Starting position of our shape
+    sf::Vector2i shapeSize;
+    shape = sf::VertexArray(sf::Lines, 0); // VertexArray to hold rectangular-type shapes
+
+    if(!isDrawing && toggleDrawing)
+        position = sf::Mouse::getPosition(*window); // Get our initial position from where the mouse cursor was when it was clicked
+
+    shapeSize = sf::Mouse::getPosition(*window) - position;
+
+    if(mode == (drawMode) 2) {  // Grid mode
+        // Add our horizontal lines from top to bottom
+        double delta = shapeSize.y / 10.0; // Distance between lines in pixels
+        for(int iii = 0; iii <= 10; iii++) {
+            shape.append(sf::Vertex(sf::Vector2f(position.x, position.y + iii * delta)));
+            shape.append(sf::Vertex(sf::Vector2f(position.x + shapeSize.x, position.y + iii * delta)));
+        }
+
+        delta = shapeSize.x / 10.0; // Distance between lines in pixels
+        for(int iii = 0; iii <= 10; iii++) {
+            shape.append(sf::Vertex(sf::Vector2f(position.x + iii * delta, position.y)));
+            shape.append(sf::Vertex(sf::Vector2f(position.x + iii * delta, position.y + shapeSize.y)));
+        }
+
+        for(int iii = 0; iii < shape.getVertexCount(); iii++) { // Make every vertex black for drawing
+            shape[iii].color = sf::Color::Black;
+        }
+
+        if(isDrawing && toggleDrawing) { // We were actively drawing, but are about to stop
+            if(position.x < window->getSize().x / 2) {    // In the left grid
+                for(int iii = 0; iii < shape.getVertexCount(); iii++) {
+                    shape[iii].position = grid.lGrid.WindowToGraph(shape[iii].position);
+                    shape[iii].position = grid.lGrid.GraphToPic(shape[iii].position);
+                }
+            }
+            else {  // In the right grid
+                for(int iii = 0; iii < shape.getVertexCount(); iii++) {
+                    shape[iii].position = grid.rGrid.GraphToPic((grid.rGrid.WindowToGraph(shape[iii].position)));
+                }
+            }
+
+            pic->draw(shape);
+        }
+    }
+
+    if(toggleDrawing)           // Toggle whether or not we're actively creating our shape
+        isDrawing = !isDrawing;
+
+}
+
+void Runner::ClearPic() {
     Iterate(false);                 // Stop iterating
     pic->clear(sf::Color::White);   // Clear the canvas (pic) to be fully white
     lastPoint = cx(0, 0);              // Move our last drawn point to the origin
@@ -440,6 +499,10 @@ void Runner::Draw() {
     pic->display(); // Update our graph with the newest points
     window->draw(graphs); // Draw the updated graph to the screen
     grid.Draw(); // Draw the axes over the graph
+
+    if (isDrawing) { // If we're actively drawing a shape
+        window->draw(shape); // Draw that shape
+    }
 
     window->draw(loc); // Draw the cursor's position after one application of the current equation
 
