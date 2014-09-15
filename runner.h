@@ -1,7 +1,9 @@
 #ifndef RUNNER_H
 #define RUNNER_H
 
-#define HEIGHT_OFFSET 200
+#define HEIGHT_OFFSET 200   // The number of pixels between the top of the window and the top of the graphs
+#define GRID_LINES 10       // The number of lines in each direction on a grid drawn in grid mode
+#define GRID_DELTA 10      // The number of points between each grid line that we iterate
 
 #include <SFML/Graphics.hpp>
 #include "guts/Parser.h"
