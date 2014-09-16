@@ -41,7 +41,7 @@ void Runner::Init() {
     elements = std::vector<GUI*>(0);
 
     /** Equation-related elements **/
-    equation = InputBox(window, inFont, 5, 5, 350, 15); // 25
+    equation = InputBox(window, inFont, 5, 5, 350, 15); // 26
     // Equation must be at the end of the vector so it precedes variable boxes, so we'll push it back later
 
     okEquation = Button(window, inFont, equation.GetPosition().x + equation.GetSize().x + 7, equation.GetPosition().y,
@@ -67,83 +67,87 @@ void Runner::Init() {
 
 
     /** Drawing mode-related elements **/
-    modeSingle = Button(window, inFont, window->getSize().x / 2 - 105, 93, 45, 15, "Point");  // 5
+    modeSingle = Button(window, inFont, window->getSize().x / 2 - 135, 93, 45, 15, "Point");  // 5
     modeSingle.SetOutlineColor(sf::Color::Green);
     elements.push_back(&modeSingle);
 
-    modeIterate = Button(window, inFont, window->getSize().x / 2 + 45, modeSingle.GetPosition().y,
-                                65, 15, "Grid"); // 6
+    modeIterate = Button(window, inFont, window->getSize().x / 2 - 5, modeSingle.GetPosition().y,
+                                65, 15, "Iterate"); // 6
     elements.push_back(&modeIterate);
 
+    modeGrid = Button(window, inFont, window->getSize().x / 2 + 135, modeSingle.GetPosition().y,
+                                40, 15, "Grid"); // 7
+    elements.push_back(&modeGrid);
+
     /// Clear graph button
-    clearGraphs = Button(window, inFont, window->getSize().x / 2 - 23, 175, 46, 15, "Clear"); // 7
+    clearGraphs = Button(window, inFont, window->getSize().x / 2 - 23, 175, 46, 15, "Clear"); // 8
     elements.push_back(&clearGraphs);
 
     /** Graph-related elements **/
     /// Button to copy changes from the right side to the left
     mirrorL = Button(window, inFont, lTitle.getPosition().x + ((std::string)lTitle.getString()).length() * 10 + 5,
-                     lTitle.getPosition().y, 15, 15, "<"); // 8
+                     lTitle.getPosition().y, 15, 15, "<"); // 9
     elements.push_back(&mirrorL);
 
-    mirrorR = Button(window, inFont, mirrorL.GetPosition().x + 20, mirrorL.GetPosition().y, 15, 15, ">"); // 9
+    mirrorR = Button(window, inFont, mirrorL.GetPosition().x + 20, mirrorL.GetPosition().y, 15, 15, ">"); // 10
     elements.push_back(&mirrorR);
 
     /// Left-side elements
-    xRangeL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 30, 55, 15, "x Range"); // 10
+    xRangeL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 30, 55, 15, "x Range"); // 11
     xRangeL.SetText("2");
     elements.push_back(&xRangeL);
 
-    yRangeL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 50, 55, 15, "y Range"); // 11
+    yRangeL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 50, 55, 15, "y Range"); // 12
     yRangeL.SetText("2");
     elements.push_back(&yRangeL);
 
-    xScaleL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 70, 55, 15, "x Scale"); // 12
+    xScaleL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 70, 55, 15, "x Scale"); // 13
     xScaleL.SetText("1");
     elements.push_back(&xScaleL);
 
-    yScaleL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 90, 55, 15, "y Scale"); // 13
+    yScaleL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 90, 55, 15, "y Scale"); // 14
     yScaleL.SetText("1");
     elements.push_back(&yScaleL);
 
-    centerL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 110, 55, 15, "Center "); // 14
+    centerL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 110, 55, 15, "Center "); // 15
     centerL.SetText("(0,0)");
     elements.push_back(&centerL);
 
-    numbersL = Checkbox(window, inFont, window->getSize().x * 3 / 4 + 5, 130, "Numbers", true); // 15
+    numbersL = Checkbox(window, inFont, window->getSize().x * 3 / 4 + 5, 130, "Numbers", true); // 16
     elements.push_back(&numbersL);
 
-    linesL = Checkbox(window, inFont, window->getSize().x * 3 / 4 + 5, 150, "Lines", false);    // 16
+    linesL = Checkbox(window, inFont, window->getSize().x * 3 / 4 + 5, 150, "Lines", false);    // 17
     elements.push_back(&linesL);
 
     /// Right-side elements
-    xRangeR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 30, 55, 15, "x Range"); // 17
+    xRangeR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 30, 55, 15, "x Range"); // 18
     xRangeR.SetText("2");
     elements.push_back(&xRangeR);
 
-    yRangeR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 50, 55, 15, "y Range"); // 18
+    yRangeR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 50, 55, 15, "y Range"); // 19
     yRangeR.SetText("2");
     elements.push_back(&yRangeR);
 
-    xScaleR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 70, 55, 15, "x Scale"); // 19
+    xScaleR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 70, 55, 15, "x Scale"); // 20
     xScaleR.SetText("1");
     elements.push_back(&xScaleR);
 
-    yScaleR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 90, 55, 15, "y Scale"); // 20
+    yScaleR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 90, 55, 15, "y Scale"); // 21
     yScaleR.SetText("1");
     elements.push_back(&yScaleR);
 
-    centerR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 110, 55, 15, "Center "); // 21
+    centerR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 110, 55, 15, "Center "); // 22
     centerR.SetText("(0,0)");
     elements.push_back(&centerR);
 
-    numbersR = Checkbox(window, inFont, window->getSize().x * 7 / 8 + 5, 130, "Numbers", true); // 22
+    numbersR = Checkbox(window, inFont, window->getSize().x * 7 / 8 + 5, 130, "Numbers", true); // 23
     elements.push_back(&numbersR);
 
-    linesR = Checkbox(window, inFont, window->getSize().x * 7 / 8 + 5, 150, "Lines", false); // 23
+    linesR = Checkbox(window, inFont, window->getSize().x * 7 / 8 + 5, 150, "Lines", false); // 24
     elements.push_back(&linesR);
 
     /// General graph-related elements
-    okGraph = Button(window, inFont, window->getSize().x * 7 / 8 - 54, 175, // 24
+    okGraph = Button(window, inFont, window->getSize().x * 7 / 8 - 54, 175, // 25
                                 108, 15, "Save Changes");
     elements.push_back(&okGraph);
 
@@ -155,7 +159,7 @@ void Runner::Init() {
     for(int iii = 0; iii < elements.size(); iii++) {
         elements[iii]->SetActive(false);
     }
-    activeBox = 25; // Start out highlighting the equation entering box
+    activeBox = 26; // Start out highlighting the equation entering box
     elements[activeBox]->SetActive(true);
     UpdateGraphs();
 }
@@ -169,8 +173,8 @@ void Runner::HandleEvents() {
             window->close();
         } else if(event.type == sf::Event::TextEntered) {
             elements[activeBox]->OnTextEntered(event.text.unicode);
-            if(event.text.unicode != 9 && activeBox >= 10 && activeBox != 24) { // One of the inputBoxes, wasn't tab
-                if(activeBox >= 25) // Equation or variables
+            if(event.text.unicode != 9 && activeBox >= 11 && activeBox != 25) { // One of the inputBoxes, wasn't tab
+                if(activeBox >= 26) // Equation or variables
                     okEquation.SetOutlineColor(sf::Color::Red);
                 else // Graph box changed
                     okGraph.SetOutlineColor(sf::Color::Red);
@@ -200,9 +204,9 @@ void Runner::HandleEvents() {
                                 sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)));
         } else if(event.type == sf::Event::MouseButtonPressed) {
             if(event.mouseButton.y < 200) { // Above the graphs
-                if(activeBox == 14)
+                if(activeBox == 15)
                     UpdateGraphs();
-                else if(activeBox == 16)
+                else if(activeBox == 17)
                     UpdateEquation();
                 else
                     elements[activeBox]->OnClick(event.mouseButton.x, event.mouseButton.y);
@@ -400,17 +404,26 @@ void Runner::ActivateButtons(sf::Event event) {
         mode = single;
         modeSingle.SetOutlineColor(sf::Color::Green);
         modeIterate.SetOutlineColor(sf::Color::Black);
+        modeGrid.SetOutlineColor(sf::Color::Black);
         break;
     case 6: // Iterate mode
         Iterate(false);
-        mode = (drawMode)2; // Grid mode
+        mode = iterative;
         modeIterate.SetOutlineColor(sf::Color::Green);
         modeSingle.SetOutlineColor(sf::Color::Black);
+        modeGrid.SetOutlineColor(sf::Color::Black);
         break;
-    case 7: // Clear
+    case 7: // Grid mode
+        Iterate(false);
+        mode = (drawMode)2; // Grid mode
+        modeGrid.SetOutlineColor(sf::Color::Green);
+        modeSingle.SetOutlineColor(sf::Color::Black);
+        modeIterate.SetOutlineColor(sf::Color::Black);
+        break;
+    case 8: // Clear
         ClearPic();
         break;
-    case 8: // Mirror R->L
+    case 9: // Mirror R->L
         okGraph.SetOutlineColor(sf::Color::Red);
         xRangeL.SetText(xRangeR.GetText());
         yRangeL.SetText(yRangeR.GetText());
@@ -420,7 +433,7 @@ void Runner::ActivateButtons(sf::Event event) {
         if(numbersL.GetText() != numbersR.GetText()) numbersL.Toggle();
         if(linesL.GetText() != linesR.GetText()) linesL.Toggle();
         break;
-    case 9: // Mirror L->R
+    case 10: // Mirror L->R
         okGraph.SetOutlineColor(sf::Color::Red);
         xRangeR.SetText(xRangeL.GetText());
         yRangeR.SetText(yRangeL.GetText());
@@ -430,17 +443,17 @@ void Runner::ActivateButtons(sf::Event event) {
         if(numbersR.GetText() != numbersL.GetText()) numbersR.Toggle();
         if(linesR.GetText() != linesL.GetText()) linesR.Toggle();
         break;
-    case 15: // One of the checkboxes
-    case 16:
-    case 22:
+    case 14: // One of the checkboxes
+    case 17:
     case 23:
+    case 24:
         okGraph.SetOutlineColor(sf::Color::Red);
         if(event.type == sf::Event::MouseButtonPressed)
             elements[activeBox]->OnClick(event.mouseButton.x, event.mouseButton.y);
         else
             elements[activeBox]->OnEnter();
         break;
-    case 24: // Save Changes for graphs
+    case 25: // Save Changes for graphs
         UpdateGraphs();
         break;
     default:

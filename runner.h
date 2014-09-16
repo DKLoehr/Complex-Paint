@@ -43,7 +43,7 @@ private:
 
 
     std::vector<GUI*> elements;  // An alternate way of accessing each gui element
-    const int elementsSize = 26; // Initial size of elements (without any variables)
+    const int elementsSize = 27; // Initial size of elements (without any variables)
 
     Button okEquation;  // 0
 
@@ -56,33 +56,34 @@ private:
     /// Buttons to represent different possible drawing modes
     Button modeSingle;  // 5
     Button modeIterate; // 6
+    Button modeGrid;    // 7
 
     /// Button to clear both graphs
-    Button clearGraphs; // 7
+    Button clearGraphs; // 8
 
 
     /// Elements for changing graph settings
-    Button mirrorL;     // 8
-    Button mirrorR;     // 9
+    Button mirrorL;     // 9
+    Button mirrorR;     // 10
 
-    InputBox xRangeL;   // 10
-    InputBox yRangeL;   // 11
-    InputBox xScaleL;   // 12
-    InputBox yScaleL;   // 13
-    InputBox centerL;   // 14
-    Checkbox numbersL;  // 15
-    Checkbox linesL;    // 16
-    InputBox xRangeR;   // 17
-    InputBox yRangeR;   // 18
-    InputBox xScaleR;   // 19
-    InputBox yScaleR;   // 20
-    InputBox centerR;   // 21
-    Checkbox numbersR;  // 22
-    Checkbox linesR;    // 23
-    Button okGraph;     // 24
+    InputBox xRangeL;   // 11
+    InputBox yRangeL;   // 12
+    InputBox xScaleL;   // 13
+    InputBox yScaleL;   // 14
+    InputBox centerL;   // 15
+    Checkbox numbersL;  // 16
+    Checkbox linesL;    // 17
+    InputBox xRangeR;   // 18
+    InputBox yRangeR;   // 19
+    InputBox xScaleR;   // 20
+    InputBox yScaleR;   // 21
+    InputBox centerR;   // 22
+    Checkbox numbersR;  // 23
+    Checkbox linesR;    // 24
+    Button okGraph;     // 25
 
     /// Elements to do with changing equation settings
-    InputBox equation;  // 25
+    InputBox equation;  // 26
 
     cx lastPoint;               // The position of the most recently-drawn point
     bool lastGraph;             // Which graph lastPoint was drawn on; true = left, false = right
