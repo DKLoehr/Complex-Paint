@@ -12,6 +12,7 @@ Runner::Runner(sf::RenderWindow* w, sf::Font* font, sf::RenderTexture* p) :
 void Runner::Init() {
     isIterating = false;
     isDrawing = false;
+    leftToRight = true;
     mode = single;
 
     pic->clear(sf::Color::White);
@@ -206,8 +207,9 @@ void Runner::HandleEvents() {
                 else
                     elements[activeBox]->OnClick(event.mouseButton.x, event.mouseButton.y);
             } else { // In one of the graphs
-                if((int)mode <= 1 ) {// Single or Iterate
-                    if(event.mouseButton.x < window->getSize().x / 2) {
+                leftToRight = (event.mouseButton.x < window->getSize().x / 2); // True iff the click was in the left graph
+                if((int)mode <= 1 ) { // Single or Iterate
+                    if(leftToRight) {
                         graphCoords = grid.lGrid.WindowToGraph(event.mouseButton.x, event.mouseButton.y);
                     } else {
                         graphCoords = grid.rGrid.WindowToGraph(event.mouseButton.x, event.mouseButton.y);
@@ -240,11 +242,26 @@ void Runner::Iterate(bool keepIterating, cx* newPos) {
             isIterating = false;
             circRad = 1.0;
         }
-        for(int iii = 0; iii < numIterations + 1; iii++) { // Iterate 30 points at once, or just one
+
+        graphCoords = sf::Vector2f(lastPoint.real(), lastPoint.imag());
+        sf::CircleShape lastLoc = sf::CircleShape(circRad, 30);
+        lastLoc.setFillColor(sf::Color::Black);
+        if(lastGraph) { // lastLoc is on the left graph
+            lastLoc.setPosition(grid.lGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
+            pic->draw(lastLoc);
+        }
+        else {          // lastLoc is on the right graph
+            lastLoc.setPosition(grid.rGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
+            pic->draw(lastLoc);
+        }
+        if(newPos != NULL)
+            lastPoint = *newPos;
+        delete newPos;
+
+        for(int iii = 0; iii < numIterations; iii++) { // Iterate 30 points at once, or just one
             fct->setVar("Z", lastPoint); // Feed our current location into parser as the variable Z
             try {
-                if(iii != 0)
-                    lastPoint = fct->eval(); // Don't change position, so we can make it black first
+                lastPoint = fct->eval(); // Don't change position, so we can make it black first
             }
             catch (std::invalid_argument) { // Should mean we've "reached infinity", so we can stop
                 isIterating = false;
@@ -253,22 +270,25 @@ void Runner::Iterate(bool keepIterating, cx* newPos) {
 
             graphCoords = sf::Vector2f(lastPoint.real(), lastPoint.imag());
             sf::CircleShape newLoc = sf::CircleShape(circRad, 30);
-            if(iii == numIterations)
+            if(iii == numIterations - 1)
                 newLoc.setFillColor(sf::Color::Red);
             else
                 newLoc.setFillColor(sf::Color::Black);
-            newLoc.setPosition(grid.rGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
-            pic->draw(newLoc);
-            //newLoc.setPosition(grid.lGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
-            //pic->draw(newLoc);
-
-            if(iii == 0 && newPos != NULL) {
-                lastPoint = *newPos;
-                delete newPos;
+            if(leftToRight) { // Draw the output on the right graph
+                newLoc.setPosition(grid.rGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
+                pic->draw(newLoc);
+                lastGraph = false; // Mark as having been drawn on the right graph
+            }
+            else { // Draw the output on the left graph
+                newLoc.setPosition(grid.lGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
+                pic->draw(newLoc);
+                lastGraph = true; // Mark as having been draw on the left graph
+            }
+            leftToRight = !leftToRight;
             }
         }
     }
-}
+
 
 void Runner::SetActiveElement(double x, double y) {
     for(int iii = 0; iii < elements.size(); iii++) {
@@ -469,6 +489,7 @@ void Runner::DrawShape(bool toggleDrawing) {
         }
 
         /// Draw the grid to the screen
+        bool leftToRightLocal = leftToRight; // Local copy of leftToRight so that we can reset it when it is flipped by Iterate
         if(isDrawing && toggleDrawing) { // We were actively drawing, but are about to stop0
             // Convert the grid's coordinates to be those of the graph
             if(position.x < window->getSize().x / 2) {    // In the left grid
@@ -482,20 +503,21 @@ void Runner::DrawShape(bool toggleDrawing) {
                 }
             }
 
-            // Iterate a bunch of points on the grid
+            // Iterate a bunch of points on the grid and draw them to the other side
             int vertCount = shape.getVertexCount(); // Store as its own variable since it will be used a lot
             // Iterate vertically: Start at top, iterate down, move over & repeat
             delta = ((double)(shape[vertCount - 1].position.y - shape[0].position.y) / xLines) / GRID_POINT_DELTA;
             for(int iii = 0; iii <= yLines; iii++) {
                 for(int jjj = 0; jjj <= GRID_POINT_DELTA * xLines; jjj++) {
+                    leftToRight = leftToRightLocal;
                     Iterate(true, new cx(shape[yIndex + iii * 2].position.x,
                                          shape[yIndex + iii * 2].position.y + jjj * delta));
-                                         std::cout << shape[vertCount / 2 + iii * 2].position.x << "\n";
                 }
             }
             delta = ((double)(shape[vertCount - 1].position.x - shape[0].position.x) / yLines) / GRID_POINT_DELTA;
             for(int iii = 0; iii <= xLines; iii++) {
                 for(int jjj = 0; jjj <= GRID_POINT_DELTA * yLines; jjj++) {
+                    leftToRight = leftToRightLocal;
                     Iterate(true, new cx(shape[iii * 2].position.x + jjj * delta,
                                         shape[iii * 2].position.y));
                 }

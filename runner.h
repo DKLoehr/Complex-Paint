@@ -23,7 +23,8 @@ class Runner
 private:
     int activeBox;
     bool isIterating;
-    bool isDrawing; // True if we're in the middle of drawing a grid/circle/etc. shape, false otherwise
+    bool leftToRight;   // True if we're drawing on the right graph (meaning input was on the left); false if vice-versa
+    bool isDrawing;     // True if we're in the middle of drawing a grid/circle/etc. shape, false otherwise
     drawMode mode;
 
     sf::RenderWindow* window;   // The window to which we draw
@@ -84,6 +85,7 @@ private:
     InputBox equation;  // 25
 
     cx lastPoint;               // The position of the most recently-drawn point
+    bool lastGraph;             // Which graph lastPoint was drawn on; true = left, false = right
     sf::Vector2f graphCoords;   // The position of the point on the graph in sf::Vector form
 
     void Init(); // Initialize the class
