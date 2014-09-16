@@ -277,8 +277,8 @@ void Runner::SetActiveElement(double x, double y) {
                 elements[activeBox]->SetActive(false);  // Deactivate the previously-active box
                 activeBox = iii;                        // Update which box is active
                 elements[activeBox]->SetActive(true);   // Activate the newly-active box
-                elements[iii]->OnClick(x, y);           // For checkboxes; toggle them back
             }
+            elements[iii]->OnClick(x, y);           // For checkboxes; toggle them back
             break;                                      // Figured out which box is active, so we can stop looking now
         }
         elements[iii]->OnClick(x, y);                   // For checkboxes; toggle them back
