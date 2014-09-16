@@ -471,6 +471,10 @@ void Runner::DrawShape(bool toggleDrawing) {
 
     if(!isDrawing && toggleDrawing)
         position = sf::Mouse::getPosition(*window); // Get our initial position from where the mouse cursor was when it was clicked
+    if(sf::Mouse::getPosition(*window).y < 200 || // In the upper part of the window, out of the graphs
+       position.x < window->getSize().x / 2 && sf::Mouse::getPosition(*window).x > window->getSize().x / 2 || // In a different grid from the
+       position.x > window->getSize().x / 2 && sf::Mouse::getPosition(*window).x < window->getSize().x / 2)   // one we clicked in originally
+        return; // Our grid would cross a boundary, so don't draw a new one
 
     shapeSize = sf::Mouse::getPosition(*window) - position;
     int xLines = shapeSize.y / GRID_LINES_DELTA,    // Number of horizontal lines. Note: integer division to remove extra pixels
