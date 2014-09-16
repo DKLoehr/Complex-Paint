@@ -9,8 +9,8 @@
 #include "graph/DoubleGrid.h"
 
 #define HEIGHT_OFFSET 200   // The number of pixels between the top of the window and the top of the graphs
-#define GRID_LINES 10       // The number of lines in each direction on a grid drawn in grid mode
-#define GRID_DELTA 10      // The number of points between each grid line that we iterate
+#define GRID_LINES_DELTA 20       // The number of lines in each direction on a grid drawn in grid mode
+#define GRID_POINT_DELTA 3      // The number of points between each grid line that we iterate
 
 enum drawMode {
     single,

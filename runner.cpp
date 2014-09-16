@@ -440,18 +440,26 @@ void Runner::DrawShape(bool toggleDrawing) {
         position = sf::Mouse::getPosition(*window); // Get our initial position from where the mouse cursor was when it was clicked
 
     shapeSize = sf::Mouse::getPosition(*window) - position;
+    int xLines = shapeSize.y / GRID_LINES_DELTA,    // Number of horizontal lines. Note: integer division to remove extra pixels
+        yLines = shapeSize.x / GRID_LINES_DELTA;    // Number of vertical lines; also integer division
+    shapeSize.y = xLines * GRID_LINES_DELTA;        // Remove extra pixels that aren't enough to constitute a line
+    shapeSize.x = yLines * GRID_LINES_DELTA;
+    xLines = abs(xLines) + 1;
+    yLines = abs(yLines) + 1;
 
     if(mode == (drawMode) 2) {  // Grid mode
         /// Create the grid
         // Add our horizontal lines from top to bottom
-        double delta = (double)shapeSize.y / GRID_LINES; // Distance between lines in pixels
-        for(int iii = 0; iii <= GRID_LINES; iii++) {
+        double delta = (double)shapeSize.y / xLines; // Distance between lines in pixels
+        for(int iii = 0; iii <= xLines; iii++) {
             shape.append(sf::Vertex(sf::Vector2f(position.x, position.y + iii * delta)));
             shape.append(sf::Vertex(sf::Vector2f(position.x + shapeSize.x, position.y + iii * delta)));
         }
 
-        delta = (double)shapeSize.x / GRID_LINES; // Distance between lines in pixels
-        for(int iii = 0; iii <= GRID_LINES; iii++) {
+        int yIndex = shape.getVertexCount(); // Index of the first point of the vertical lines
+
+        delta = (double)shapeSize.x / yLines; // Distance between lines in pixels
+        for(int iii = 0; iii <= yLines; iii++) {
             shape.append(sf::Vertex(sf::Vector2f(position.x + iii * delta, position.y)));
             shape.append(sf::Vertex(sf::Vector2f(position.x + iii * delta, position.y + shapeSize.y)));
         }
@@ -476,16 +484,23 @@ void Runner::DrawShape(bool toggleDrawing) {
 
             // Iterate a bunch of points on the grid
             int vertCount = shape.getVertexCount(); // Store as its own variable since it will be used a lot
-            double dx = ((double)(shape[vertCount - 1].position.x - shape[0].position.x) / GRID_LINES) / GRID_DELTA,
-                   dy = ((double)(shape[vertCount - 1].position.y - shape[0].position.y) / GRID_LINES) / GRID_DELTA;
-            for(int iii = 0; iii <= GRID_LINES; iii++) {
-                for(int jjj = 0; jjj < GRID_DELTA * GRID_LINES; jjj++) {
-                    Iterate(true, new cx(shape[iii * 2].position.x + jjj * dx,
-                                         shape[iii * 2].position.y));
-                    Iterate(true, new cx(shape[vertCount / 2 + iii * 2].position.x,
-                                         shape[vertCount / 2 + iii * 2].position.y + jjj * dy));
+            // Iterate vertically: Start at top, iterate down, move over & repeat
+            delta = ((double)(shape[vertCount - 1].position.y - shape[0].position.y) / xLines) / GRID_POINT_DELTA;
+            for(int iii = 0; iii <= yLines; iii++) {
+                for(int jjj = 0; jjj <= GRID_POINT_DELTA * xLines; jjj++) {
+                    Iterate(true, new cx(shape[yIndex + iii * 2].position.x,
+                                         shape[yIndex + iii * 2].position.y + jjj * delta));
+                                         std::cout << shape[vertCount / 2 + iii * 2].position.x << "\n";
                 }
             }
+            delta = ((double)(shape[vertCount - 1].position.x - shape[0].position.x) / yLines) / GRID_POINT_DELTA;
+            for(int iii = 0; iii <= xLines; iii++) {
+                for(int jjj = 0; jjj <= GRID_POINT_DELTA * yLines; jjj++) {
+                    Iterate(true, new cx(shape[iii * 2].position.x + jjj * delta,
+                                        shape[iii * 2].position.y));
+                }
+            }
+
 
             // Convert shape's vertices to pic coordinates so we can draw the original version
             if(position.x < window->getSize().x / 2) {    // In the left grid
