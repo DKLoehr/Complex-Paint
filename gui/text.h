@@ -24,7 +24,8 @@ public:
     void Draw();
 
     double GetStringAsDouble(); // Only call if you know the string is just a single number
-    sf::Vector2f GetStringAsVector(); // Only call if you know the string is of the form "(int, int)"
+    sf::Vector2f GetStringAsVector(); // Only call if you know the string is of the form "(#, #)"
+    std::string GetOrderedPairElement(bool first); // Also only call if in the form (#1, #2); if first is true, returns #1, else, returns #2, both as strings
 };
 
 #endif //INPUT_BOX_H

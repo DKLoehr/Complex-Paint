@@ -117,3 +117,17 @@ sf::Vector2f InputBox::GetStringAsVector() {
     std::string yStr = str.substr(str.find(',') +  1, str.length());
     return sf::Vector2f(atof(xStr.c_str()), atof(yStr.c_str()));
 }
+
+std::string InputBox::GetOrderedPairElement(bool first) {
+    std::string str = m_text.getString();
+    if(str.find('(') != std::string::npos)
+        str = str.substr(1, std::string::npos);
+    if(str.find(')') != std::string::npos)
+        str = str.substr(0, str.length() - 1);
+    std::string xStr = str.substr(0, str.find(','));
+    std::string yStr = str.substr(str.find(',') +  1, str.length());
+    if(first)
+        return xStr;
+    else
+        return yStr;
+}

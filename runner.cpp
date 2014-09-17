@@ -319,26 +319,58 @@ void Runner::StepActiveElement(bool increment) {
 }
 
 void Runner::UpdateGraphs() {
-    grid.lGrid.SetRange(xRangeL.GetStringAsDouble(),        // Set the left grid's range to be that specified in the left range boxes
-                        yRangeL.GetStringAsDouble());
-    grid.lGrid.SetScale(xScaleL.GetStringAsDouble(),        // Set the left grid's scale to be that specified in the left scale boxes
-                        yScaleL.GetStringAsDouble());
-    if(centerL.GetText() != "")                             // If there's no entry, leave the center as it is
-        grid.lGrid.SetCenter(centerL.GetStringAsVector());  // Set the left grid's center to be that specified in the left center box
+    double x, y;                            // Values which will be the x and y ranges, scales, etc.
+    parser::Tree expr;                      // Tree to evaluate the expressions in the inputBoxes
+
+    expr = parser::Tree(xRangeL.GetText()); // Set the tree to the first inputBox
+    x = expr.eval().real();                 // Store the value in that box in x
+    expr = parser::Tree(yRangeL.GetText()); // Repeat for y
+    y = expr.eval().real();
+    grid.lGrid.SetRange(x, y);              // Set the left grid's range to be that specified in the left range boxes
+
+    expr = parser::Tree(xScaleL.GetText());
+    x = expr.eval().real();
+    expr = parser::Tree(yScaleL.GetText());
+    y = expr.eval().real();
+    grid.lGrid.SetScale(x, y);              // Set the left grid's scale to be that specified in the left scale boxes
+
+    if(centerL.GetText() != "") {                           // If there's no entry, leave the center as it is
+        expr = parser::Tree(centerL.GetOrderedPairElement(true));
+        x = expr.eval().real();
+        expr = parser::Tree(centerL.GetOrderedPairElement(false));
+        y = expr.eval().real();
+        grid.lGrid.SetCenter(sf::Vector2f(x, y));  // Set the left grid's center to be that specified in the left center box
+    }
+
     grid.lGrid.SetNumbers(numbersL.GetText() == "x");       // Set numbers on the axes to be on or off as specified by the left "numbers" checkbox
     grid.lGrid.SetLines(linesL.GetText() == "x");           // Set tick marks or whole grid lines to be on or off as specified by the left "lines" checkbox
 
-    grid.rGrid.SetRange(xRangeR.GetStringAsDouble(),        // Repeat for the right grid
-                        yRangeR.GetStringAsDouble());
-    grid.rGrid.SetScale(xScaleR.GetStringAsDouble(),
-                        yScaleR.GetStringAsDouble());
-    if(centerR.GetText() != "")
-        grid.rGrid.SetCenter(centerR.GetStringAsVector());
+    expr = parser::Tree(xRangeR.GetText()); // Repeat for the right grid
+    x = expr.eval().real();
+    expr = parser::Tree(yRangeR.GetText());
+    y = expr.eval().real();
+    grid.rGrid.SetRange(x, y);
+
+    expr = parser::Tree(xScaleR.GetText());
+    x = expr.eval().real();
+    expr = parser::Tree(yScaleR.GetText());
+    y = expr.eval().real();
+    grid.rGrid.SetScale(x, y);
+
+    if(centerR.GetText() != "") {
+        expr = parser::Tree(centerR.GetOrderedPairElement(true));
+        x = expr.eval().real();
+        expr = parser::Tree(centerR.GetOrderedPairElement(false));
+        y = expr.eval().real();
+        grid.rGrid.SetCenter(sf::Vector2f(x, y));  // Set the left grid's center to be that specified in the left center box
+    }
+
     grid.rGrid.SetNumbers(numbersR.GetText() == "x");
     grid.rGrid.SetLines(linesR.GetText() == "x");
+
     if(okGraph.GetOutlineColor() != sf::Color::Black) {     // If anything (besides numbers or lines) was changed
         okGraph.SetOutlineColor(sf::Color::Black);          // Mark "Save changes" button as up-to-date
-        ClearPic();                                         // Get rid of old point which are no longer accurate
+        ClearPic();                                         // Get rid of old points which are no longer accurate
     }
 }
 
@@ -481,8 +513,8 @@ void Runner::DrawShape(bool toggleDrawing) {
         yLines = shapeSize.x / GRID_LINES_DELTA;    // Number of vertical lines; also integer division
     shapeSize.y = xLines * GRID_LINES_DELTA;        // Remove extra pixels that aren't enough to constitute a line
     shapeSize.x = yLines * GRID_LINES_DELTA;
-    xLines = abs(xLines) + 1;
-    yLines = abs(yLines) + 1;
+    xLines = abs(xLines) + 1;   // Want a positive number of lines so that for loops are easier,
+    yLines = abs(yLines) + 1;   // Increment by one because we've only counted one of the extreme lines (far left/right or top/bottom)
 
     if(mode == (drawMode) 2) {  // Grid mode
         /// Create the grid
