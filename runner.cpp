@@ -320,48 +320,49 @@ void Runner::StepActiveElement(bool increment) {
 
 void Runner::UpdateGraphs() {
     double x, y;                            // Values which will be the x and y ranges, scales, etc.
-    parser::Tree expr;                      // Tree to evaluate the expressions in the inputBoxes
 
-    expr = parser::Tree(xRangeL.GetText()); // Set the tree to the first inputBox
-    x = expr.eval().real();                 // Store the value in that box in x
-    expr = parser::Tree(yRangeL.GetText()); // Repeat for y
-    y = expr.eval().real();
+    /// Left Grid
+    fct->setVar("Z", xRangeL.GetText());    // Set the variable Z to be our text to evaluate (Z is reset before use)
+    x = fct->evalVar("Z").real();           // Store the value of Z in x
+    fct->setVar("Z", yRangeL.GetText());    // Repeat for y
+    y = fct->evalVar("Z").real();
     grid.lGrid.SetRange(x, y);              // Set the left grid's range to be that specified in the left range boxes
 
-    expr = parser::Tree(xScaleL.GetText());
-    x = expr.eval().real();
-    expr = parser::Tree(yScaleL.GetText());
-    y = expr.eval().real();
+    fct->setVar("Z", xScaleL.GetText());    // Repeat for other values
+    x = fct->evalVar("Z").real();
+    fct->setVar("Z", yScaleL.GetText());
+    y = fct->evalVar("Z").real();
     grid.lGrid.SetScale(x, y);              // Set the left grid's scale to be that specified in the left scale boxes
 
-    if(centerL.GetText() != "") {                           // If there's no entry, leave the center as it is
-        expr = parser::Tree(centerL.GetOrderedPairElement(true));
-        x = expr.eval().real();
-        expr = parser::Tree(centerL.GetOrderedPairElement(false));
-        y = expr.eval().real();
+    if(centerL.GetText() != "") {           // If there's no entry, leave the center as it is
+        fct->setVar("Z", centerL.GetOrderedPairElement(true));
+        x = fct->evalVar("Z").real();
+        fct->setVar("Z", centerL.GetOrderedPairElement(false));
+        y = fct->evalVar("Z").real();
         grid.lGrid.SetCenter(sf::Vector2f(x, y));  // Set the left grid's center to be that specified in the left center box
     }
 
     grid.lGrid.SetNumbers(numbersL.GetText() == "x");       // Set numbers on the axes to be on or off as specified by the left "numbers" checkbox
     grid.lGrid.SetLines(linesL.GetText() == "x");           // Set tick marks or whole grid lines to be on or off as specified by the left "lines" checkbox
 
-    expr = parser::Tree(xRangeR.GetText()); // Repeat for the right grid
-    x = expr.eval().real();
-    expr = parser::Tree(yRangeR.GetText());
-    y = expr.eval().real();
+    /// Right Grid
+    fct->setVar("Z", xRangeR.GetText()); // Repeat for the right grid
+    x = fct->evalVar("Z").real();
+    fct->setVar("Z", yRangeR.GetText());
+    y = fct->evalVar("Z").real();
     grid.rGrid.SetRange(x, y);
 
-    expr = parser::Tree(xScaleR.GetText());
-    x = expr.eval().real();
-    expr = parser::Tree(yScaleR.GetText());
-    y = expr.eval().real();
+    fct->setVar("Z", xScaleR.GetText());
+    x = fct->evalVar("Z").real();
+    fct->setVar("Z", yScaleR.GetText());
+    y = fct->evalVar("Z").real();
     grid.rGrid.SetScale(x, y);
 
     if(centerR.GetText() != "") {
-        expr = parser::Tree(centerR.GetOrderedPairElement(true));
-        x = expr.eval().real();
-        expr = parser::Tree(centerR.GetOrderedPairElement(false));
-        y = expr.eval().real();
+        fct->setVar("Z", centerR.GetOrderedPairElement(true));
+        x = fct->evalVar("Z").real();
+        fct->setVar("Z", centerR.GetOrderedPairElement(false));
+        y = fct->evalVar("Z").real();
         grid.rGrid.SetCenter(sf::Vector2f(x, y));  // Set the left grid's center to be that specified in the left center box
     }
 
@@ -474,16 +475,6 @@ void Runner::ActivateButtons(sf::Event event) {
         centerR.SetText(centerL.GetText());
         if(numbersR.GetText() != numbersL.GetText()) numbersR.Toggle();
         if(linesR.GetText() != linesL.GetText()) linesR.Toggle();
-        break;
-    case 14: // One of the checkboxes
-    case 17:
-    case 23:
-    case 24:
-        okGraph.SetOutlineColor(sf::Color::Red);
-        if(event.type == sf::Event::MouseButtonPressed)
-            elements[activeBox]->OnClick(event.mouseButton.x, event.mouseButton.y);
-        else
-            elements[activeBox]->OnEnter();
         break;
     case 25: // Save Changes for graphs
         UpdateGraphs();
