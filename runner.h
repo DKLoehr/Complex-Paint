@@ -13,9 +13,9 @@
 #define GRID_POINT_DELTA 3      // The number of points between each grid line that we iterate
 
 enum drawMode {
-    single,
-    iterative,
-    grid
+    mSingle,
+    mIterative,
+    mGrid
 };
 
 class Runner

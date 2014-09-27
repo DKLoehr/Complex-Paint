@@ -13,7 +13,7 @@ void Runner::Init() {
     isIterating = false;
     isDrawing = false;
     leftToRight = true;
-    mode = single;
+    mode = mSingle;
 
     pic->clear(sf::Color::White);
     graphs.setPosition(0, HEIGHT_OFFSET);
@@ -204,15 +204,10 @@ void Runner::HandleEvents() {
                                 sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)));
         } else if(event.type == sf::Event::MouseButtonPressed) {
             if(event.mouseButton.y < 200) { // Above the graphs
-                if(activeBox == 15)
-                    UpdateGraphs();
-                else if(activeBox == 17)
-                    UpdateEquation();
-                else
-                    elements[activeBox]->OnClick(event.mouseButton.x, event.mouseButton.y);
+                ActivateButtons(event);
             } else { // In one of the graphs
                 leftToRight = (event.mouseButton.x < window->getSize().x / 2); // True iff the click was in the left graph
-                if((int)mode <= 1 ) { // Single or Iterate
+                if(mode == mSingle || mode == mIterative) { // Single or Iterate mode
                     if(leftToRight) {
                         graphCoords = grid.lGrid.WindowToGraph(event.mouseButton.x, event.mouseButton.y);
                     } else {
@@ -235,14 +230,14 @@ void Runner::Iterate(bool keepIterating, cx* newPos) {
     if(keepIterating) {
         double circRad = 1;
         int numIterations = 1;
-        if(mode == single) {
+        if(mode == mSingle) {
             isIterating = false;
             circRad = 1.5;
         }
-        else if (mode == iterative) {
+        else if (mode == mIterative) {
             numIterations = 90;
             circRad = .75;
-        } else if(mode == (drawMode)2) { // Grid mode
+        } else if(mode == mGrid) { // Grid mode
             isIterating = false;
             circRad = 1.0;
         }
@@ -434,21 +429,21 @@ void Runner::ActivateButtons(sf::Event event) {
         break;
     case 5: // Single point mode
         Iterate(false);
-        mode = single;
+        mode = mSingle;
         modeSingle.SetOutlineColor(sf::Color::Green);
         modeIterate.SetOutlineColor(sf::Color::Black);
         modeGrid.SetOutlineColor(sf::Color::Black);
         break;
     case 6: // Iterate mode
         Iterate(false);
-        mode = iterative;
+        mode = mIterative;
         modeIterate.SetOutlineColor(sf::Color::Green);
         modeSingle.SetOutlineColor(sf::Color::Black);
         modeGrid.SetOutlineColor(sf::Color::Black);
         break;
     case 7: // Grid mode
         Iterate(false);
-        mode = (drawMode)2; // Grid mode
+        mode = mGrid; // Grid mode
         modeGrid.SetOutlineColor(sf::Color::Green);
         modeSingle.SetOutlineColor(sf::Color::Black);
         modeIterate.SetOutlineColor(sf::Color::Black);
@@ -507,7 +502,7 @@ void Runner::DrawShape(bool toggleDrawing) {
     xLines = abs(xLines) + 1;   // Want a positive number of lines so that for loops are easier,
     yLines = abs(yLines) + 1;   // Increment by one because we've only counted one of the extreme lines (far left/right or top/bottom)
 
-    if(mode == (drawMode) 2) {  // Grid mode
+    if(mode == mGrid) {  // Grid mode
         /// Create the grid
         // Add our horizontal lines from top to bottom
         double delta = (double)shapeSize.y / xLines; // Distance between lines in pixels
