@@ -253,8 +253,19 @@ void Runner::Iterate(bool keepIterating, cx* newPos) {
             lastLoc.setPosition(grid.rGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
             pic->draw(lastLoc);
         }
-        if(newPos != NULL)
+        if(newPos != NULL) {
             lastPoint = *newPos;
+            if(mode == mIterative) {
+                sf::CircleShape firstLoc = sf::CircleShape(circRad, 30);
+                firstLoc.setFillColor(sf::Color::Green);
+                firstLoc.setPosition(grid.lGrid.GraphToPic(sf::Vector2f(lastPoint.real(), lastPoint.imag())) -
+                                                           sf::Vector2f(circRad, circRad));
+                pic->draw(firstLoc);
+                firstLoc.setPosition(grid.rGrid.GraphToPic(sf::Vector2f(lastPoint.real(), lastPoint.imag())) -
+                                                           sf::Vector2f(circRad, circRad));
+                pic->draw(firstLoc);
+            }
+        }
         delete newPos;
 
         for(int iii = 0; iii < numIterations; iii++) { // Iterate 30 points at once, or just one
@@ -273,7 +284,13 @@ void Runner::Iterate(bool keepIterating, cx* newPos) {
                 newLoc.setFillColor(sf::Color::Red);
             else
                 newLoc.setFillColor(sf::Color::Black);
-            if(leftToRight) { // Draw the output on the right graph
+            if(mode == mIterative) { // Iterate mode draws to both windows; other modes only draw to one
+                newLoc.setPosition(grid.rGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
+                pic->draw(newLoc);
+                newLoc.setPosition(grid.lGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
+                pic->draw(newLoc);
+            }
+            else if(leftToRight) { // Draw the output on the right graph
                 newLoc.setPosition(grid.rGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
                 pic->draw(newLoc);
                 lastGraph = false; // Mark as having been drawn on the right graph
@@ -284,9 +301,9 @@ void Runner::Iterate(bool keepIterating, cx* newPos) {
                 lastGraph = true; // Mark as having been draw on the left graph
             }
             leftToRight = !leftToRight;
-            }
         }
     }
+}
 
 
 void Runner::SetActiveElement(double x, double y) {
