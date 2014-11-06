@@ -501,15 +501,29 @@ void Runner::ActivateButtons(sf::Event event) {
 
 void Runner::DrawShape(bool toggleDrawing) {
     static sf::Vector2i position; // Starting position of our shape
+
+    if(!isDrawing && toggleDrawing)
+        position = sf::Mouse::getPosition(*window); // Get our initial position from where the mouse cursor was when it was clicked
+    if(sf::Mouse::getPosition(*window).y < 200 || // In the upper part of the window, out of the graphs, or
+        position.x < window->getSize().x / 2 && sf::Mouse::getPosition(*window).x > window->getSize().x / 2 || // In a different grid from the
+        position.x > window->getSize().x / 2 && sf::Mouse::getPosition(*window).x < window->getSize().x / 2)   // one we clicked in originally
+            return; // Our picture would cross a boundary, so don't draw a new one
+
+    if(mode == mGrid) {  // Grid mode
+        DrawGrid(toggleDrawing);
+    }
+    if(toggleDrawing)           // Toggle whether or not we're actively creating our shape
+        isDrawing = !isDrawing;
+
+}
+
+void Runner::DrawGrid(bool toggleDrawing) {
+    static sf::Vector2i position; // Starting position of our shape
     sf::Vector2i shapeSize;
     shape = sf::VertexArray(sf::Lines, 0); // VertexArray to hold rectangular-type shapes
 
     if(!isDrawing && toggleDrawing)
         position = sf::Mouse::getPosition(*window); // Get our initial position from where the mouse cursor was when it was clicked
-    if(sf::Mouse::getPosition(*window).y < 200 || // In the upper part of the window, out of the graphs
-       position.x < window->getSize().x / 2 && sf::Mouse::getPosition(*window).x > window->getSize().x / 2 || // In a different grid from the
-       position.x > window->getSize().x / 2 && sf::Mouse::getPosition(*window).x < window->getSize().x / 2)   // one we clicked in originally
-        return; // Our grid would cross a boundary, so don't draw a new one
 
     shapeSize = sf::Mouse::getPosition(*window) - position;
     int xLines = shapeSize.y / GRID_LINES_DELTA,    // Number of horizontal lines. Note: integer division to remove extra pixels
@@ -519,81 +533,74 @@ void Runner::DrawShape(bool toggleDrawing) {
     xLines = abs(xLines) + 1;   // Want a positive number of lines so that for loops are easier,
     yLines = abs(yLines) + 1;   // Increment by one because we've only counted one of the extreme lines (far left/right or top/bottom)
 
-    if(mode == mGrid) {  // Grid mode
-        /// Create the grid
-        // Add our horizontal lines from top to bottom
-        double delta = (double)shapeSize.y / xLines; // Distance between lines in pixels
-        for(int iii = 0; iii <= xLines; iii++) {
-            shape.append(sf::Vertex(sf::Vector2f(position.x, position.y + iii * delta)));
-            shape.append(sf::Vertex(sf::Vector2f(position.x + shapeSize.x, position.y + iii * delta)));
-        }
-
-        int yIndex = shape.getVertexCount(); // Index of the first point of the vertical lines
-
-        delta = (double)shapeSize.x / yLines; // Distance between lines in pixels
-        for(int iii = 0; iii <= yLines; iii++) {
-            shape.append(sf::Vertex(sf::Vector2f(position.x + iii * delta, position.y)));
-            shape.append(sf::Vertex(sf::Vector2f(position.x + iii * delta, position.y + shapeSize.y)));
-        }
-
-        for(int iii = 0; iii < shape.getVertexCount(); iii++) { // Make every vertex black for drawing
-            shape[iii].color = sf::Color::Black;
-        }
-
-        /// Draw the grid to the screen
-        bool leftToRightLocal = leftToRight; // Local copy of leftToRight so that we can reset it when it is flipped by Iterate
-        if(isDrawing && toggleDrawing) { // We were actively drawing, but are about to stop0
-            // Convert the grid's coordinates to be those of the graph
-            if(position.x < window->getSize().x / 2) {    // In the left grid
-                for(int iii = 0; iii < shape.getVertexCount(); iii++) {
-                    shape[iii].position = grid.lGrid.WindowToGraph(shape[iii].position);
-                }
-            }
-            else {  // In the right grid
-                for(int iii = 0; iii < shape.getVertexCount(); iii++) {
-                    shape[iii].position = grid.rGrid.WindowToGraph(shape[iii].position);
-                }
-            }
-
-            // Iterate a bunch of points on the grid and draw them to the other side
-            int vertCount = shape.getVertexCount(); // Store as its own variable since it will be used a lot
-            // Iterate vertically: Start at top, iterate down, move over & repeat
-            delta = ((double)(shape[vertCount - 1].position.y - shape[0].position.y) / xLines) / GRID_POINT_DELTA;
-            for(int iii = 0; iii <= yLines; iii++) {
-                for(int jjj = 0; jjj <= GRID_POINT_DELTA * xLines; jjj++) {
-                    leftToRight = leftToRightLocal;
-                    Iterate(true, new cx(shape[yIndex + iii * 2].position.x,
-                                         shape[yIndex + iii * 2].position.y + jjj * delta));
-                }
-            }
-            delta = ((double)(shape[vertCount - 1].position.x - shape[0].position.x) / yLines) / GRID_POINT_DELTA;
-            for(int iii = 0; iii <= xLines; iii++) {
-                for(int jjj = 0; jjj <= GRID_POINT_DELTA * yLines; jjj++) {
-                    leftToRight = leftToRightLocal;
-                    Iterate(true, new cx(shape[iii * 2].position.x + jjj * delta,
-                                        shape[iii * 2].position.y));
-                }
-            }
-
-
-            // Convert shape's vertices to pic coordinates so we can draw the original version
-            if(position.x < window->getSize().x / 2) {    // In the left grid
-                for(int iii = 0; iii < shape.getVertexCount(); iii++) {
-                    shape[iii].position = grid.lGrid.GraphToPic(shape[iii].position);
-                }
-            }
-            else {  // In the right grid
-                for(int iii = 0; iii < shape.getVertexCount(); iii++) {
-                    shape[iii].position = grid.rGrid.GraphToPic(shape[iii].position);
-                }
-            }
-            pic->draw(shape);
-        }
+    /// Create the grid
+    // Add our horizontal lines from top to bottom
+    double delta = (double)shapeSize.y / xLines; // Distance between lines in pixels
+    for(int iii = 0; iii <= xLines; iii++) {
+        shape.append(sf::Vertex(sf::Vector2f(position.x, position.y + iii * delta)));
+        shape.append(sf::Vertex(sf::Vector2f(position.x + shapeSize.x, position.y + iii * delta)));
     }
 
-    if(toggleDrawing)           // Toggle whether or not we're actively creating our shape
-        isDrawing = !isDrawing;
+    int yIndex = shape.getVertexCount(); // Index of the first point of the vertical lines
 
+    delta = (double)shapeSize.x / yLines; // Distance between lines in pixels
+    for(int iii = 0; iii <= yLines; iii++) {
+        shape.append(sf::Vertex(sf::Vector2f(position.x + iii * delta, position.y)));
+        shape.append(sf::Vertex(sf::Vector2f(position.x + iii * delta, position.y + shapeSize.y)));
+    }
+
+    for(int iii = 0; iii < shape.getVertexCount(); iii++) { // Make every vertex black for drawing
+        shape[iii].color = sf::Color::Black;
+    }
+
+    /// Draw the grid to the screen
+    bool leftToRightLocal = leftToRight; // Local copy of leftToRight so that we can reset it when it is flipped by Iterate
+    if(isDrawing && toggleDrawing) { // We were actively drawing, but are about to stop0
+        // Convert the grid's coordinates to be those of the graph
+        if(position.x < window->getSize().x / 2) {    // In the left grid
+            for(int iii = 0; iii < shape.getVertexCount(); iii++) {
+                shape[iii].position = grid.lGrid.WindowToGraph(shape[iii].position);
+            }
+        }
+        else {  // In the right grid
+            for(int iii = 0; iii < shape.getVertexCount(); iii++) {
+                shape[iii].position = grid.rGrid.WindowToGraph(shape[iii].position);
+            }
+        }
+
+        // Iterate a bunch of points on the grid and draw them to the other side
+        int vertCount = shape.getVertexCount(); // Store as its own variable since it will be used a lot
+        // Iterate vertically: Start at top, iterate down, move over & repeat
+        delta = ((double)(shape[vertCount - 1].position.y - shape[0].position.y) / xLines) / GRID_POINT_DELTA;
+        for(int iii = 0; iii <= yLines; iii++) {
+            for(int jjj = 0; jjj <= GRID_POINT_DELTA * xLines; jjj++) {
+                leftToRight = leftToRightLocal;
+                Iterate(true, new cx(shape[yIndex + iii * 2].position.x,
+                                     shape[yIndex + iii * 2].position.y + jjj * delta));
+            }
+        }
+        delta = ((double)(shape[vertCount - 1].position.x - shape[0].position.x) / yLines) / GRID_POINT_DELTA;
+        for(int iii = 0; iii <= xLines; iii++) {
+            for(int jjj = 0; jjj <= GRID_POINT_DELTA * yLines; jjj++) {
+                leftToRight = leftToRightLocal;
+                Iterate(true, new cx(shape[iii * 2].position.x + jjj * delta,
+                                     shape[iii * 2].position.y));
+            }
+        }
+
+        // Convert shape's vertices to pic coordinates so we can draw the original version
+        if(position.x < window->getSize().x / 2) {    // In the left grid
+            for(int iii = 0; iii < shape.getVertexCount(); iii++) {
+                shape[iii].position = grid.lGrid.GraphToPic(shape[iii].position);
+            }
+        }
+        else {  // In the right grid
+            for(int iii = 0; iii < shape.getVertexCount(); iii++) {
+                shape[iii].position = grid.rGrid.GraphToPic(shape[iii].position);
+            }
+        }
+        pic->draw(shape);
+    }
 }
 
 void Runner::ClearPic() {

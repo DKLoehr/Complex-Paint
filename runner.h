@@ -101,6 +101,7 @@ private:
     void ActivateButtons(sf::Event event);      // Activate buttons depending on activeBox and/or the event; event is the event that activated a button
 
     void DrawShape(bool toggleDrawing = false); // Draws a shape based on mode; toggles whether or not it's drawing anything if passed true
+    void DrawGrid(bool toggleDrawing); // Draws a grid; called by DrawShape
 
     void ClearPic(); // Clear all points drawn to pic
 
