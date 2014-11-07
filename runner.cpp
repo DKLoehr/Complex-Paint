@@ -603,8 +603,6 @@ void Runner::DrawShape(bool toggleDrawing) {
 void Runner::DrawLine(sf::Vector2i position) {
     sf::Vector2i endPoint = sf::Mouse::getPosition(*window);
 
-    shape.resize(0); // Clear out the previous line, since only the fixed endpoint will still be on it
-
     double numPoints = sqrt((endPoint.x - position.x) * (endPoint.x - position.x) +
                          (endPoint.y - position.y) * (endPoint.y - position.y)) /
                          LINE_POINT_DELTA;
@@ -674,7 +672,18 @@ void Runner::DrawGrid(sf::Vector2i position) {
 }
 
 void Runner::DrawCirc1(sf::Vector2i position) {
-    std::cout << "Circ1\n";
+    sf::Vector2i endPoint = sf::Mouse::getPosition(*window);
+    if(endPoint.x < window->getSize().x / 2) // In left graph
+        position = sf::Vector2i(grid.lGrid.GraphToWindow(0,0));
+    else // In right graph
+        position = sf::Vector2i(grid.rGrid.GraphToWindow(0,0));
+    double radius = sqrt((endPoint.x - position.x) * (endPoint.x - position.x) +
+                         (endPoint.y - position.y) * (endPoint.y - position.y));
+    double theta = acos((2 * radius * radius - CIRC1_POINT_DELTA * CIRC1_POINT_DELTA) / (2 * radius * radius));
+    for(int iii = 0; iii < 2 * PI / theta + 1; iii++) {
+        shape.append(sf::Vertex(sf::Vector2f(position) + sf::Vector2f(radius * cos(theta * iii), radius * sin(theta * iii))));
+        shape.append(sf::Vertex(sf::Vector2f(position) + sf::Vector2f(radius * cos(theta * (iii + 1)), radius * sin(theta * (iii + 1)))));
+    }
 }
 
 void Runner::DrawCirc2(sf::Vector2i position) {
