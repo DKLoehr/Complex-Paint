@@ -687,7 +687,14 @@ void Runner::DrawCirc1(sf::Vector2i position) {
 }
 
 void Runner::DrawCirc2(sf::Vector2i position) {
-    std::cout << "Circ2\n";
+    sf::Vector2i endPoint = sf::Mouse::getPosition(*window);
+    double radius = sqrt((endPoint.x - position.x) * (endPoint.x - position.x) +
+                         (endPoint.y - position.y) * (endPoint.y - position.y));
+    double theta = acos((2 * radius * radius - CIRC1_POINT_DELTA * CIRC1_POINT_DELTA) / (2 * radius * radius));
+    for(int iii = 0; iii < 2 * PI / theta + 1; iii++) {
+        shape.append(sf::Vertex(sf::Vector2f(position) + sf::Vector2f(radius * cos(theta * iii), radius * sin(theta * iii))));
+        shape.append(sf::Vertex(sf::Vector2f(position) + sf::Vector2f(radius * cos(theta * (iii + 1)), radius * sin(theta * (iii + 1)))));
+    }
 }
 
 void Runner::DrawCirc3(sf::Vector2i position) {
