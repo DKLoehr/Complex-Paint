@@ -690,7 +690,7 @@ void Runner::DrawCirc2(sf::Vector2i position) {
     sf::Vector2i endPoint = sf::Mouse::getPosition(*window);
     double radius = sqrt((endPoint.x - position.x) * (endPoint.x - position.x) +
                          (endPoint.y - position.y) * (endPoint.y - position.y));
-    double theta = acos((2 * radius * radius - CIRC1_POINT_DELTA * CIRC1_POINT_DELTA) / (2 * radius * radius));
+    double theta = acos((2 * radius * radius - CIRC2_POINT_DELTA * CIRC2_POINT_DELTA) / (2 * radius * radius));
     for(int iii = 0; iii < 2 * PI / theta + 1; iii++) {
         shape.append(sf::Vertex(sf::Vector2f(position) + sf::Vector2f(radius * cos(theta * iii), radius * sin(theta * iii))));
         shape.append(sf::Vertex(sf::Vector2f(position) + sf::Vector2f(radius * cos(theta * (iii + 1)), radius * sin(theta * (iii + 1)))));
@@ -698,7 +698,18 @@ void Runner::DrawCirc2(sf::Vector2i position) {
 }
 
 void Runner::DrawCirc3(sf::Vector2i position) {
-    std::cout << "Circ3\n";
+    sf::Vector2i endPoint = sf::Mouse::getPosition(*window);
+    double radius = sqrt((endPoint.x - position.x) * (endPoint.x - position.x) +
+                         (endPoint.y - position.y) * (endPoint.y - position.y));
+    int numCircles = radius / CIRC3_RAD_DELTA; // Integer division to get rid of extra pixels
+    for(int iii = 0; iii < numCircles; iii++) {
+        radius = iii * CIRC3_RAD_DELTA;
+        double theta = acos((2 * radius * radius - CIRC3_POINT_DELTA * CIRC3_POINT_DELTA) / (2 * radius * radius));
+        for(int jjj = 0; jjj < 2 * PI / theta + 1; jjj++) {
+            shape.append(sf::Vertex(sf::Vector2f(position) + sf::Vector2f(radius * cos(theta * jjj), radius * sin(theta * jjj))));
+            shape.append(sf::Vertex(sf::Vector2f(position) + sf::Vector2f(radius * cos(theta * (jjj + 1)), radius * sin(theta * (jjj + 1)))));
+        }
+    }
 }
 
 void Runner::DrawFree(sf::Vector2i position) {

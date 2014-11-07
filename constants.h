@@ -24,4 +24,8 @@
 // Circle2 constants:
 #define CIRC2_POINT_DELTA 3  // The number of pixels between each adjacent point on the circle
 
+// Circle3 constants:
+#define CIRC3_POINT_DELTA 3  // The number of pixels between each adjacent point on the circle
+#define CIRC3_RAD_DELTA 10   // The distance in pixels between each adjacent circle
+
 #endif // CONSTANTS_H
