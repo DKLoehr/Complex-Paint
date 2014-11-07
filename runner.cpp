@@ -41,7 +41,7 @@ void Runner::Init() {
     elements = std::vector<GUI*>(0);
 
     /** Equation-related elements **/
-    equation = InputBox(window, inFont, 5, 5, 350, 15); // 26
+    equation = InputBox(window, inFont, 5, 5, 350, 15); // 32
     // Equation must be at the end of the vector so it precedes variable boxes, so we'll push it back later
 
     okEquation = Button(window, inFont, equation.GetPosition().x + equation.GetSize().x + 7, equation.GetPosition().y,
@@ -67,87 +67,114 @@ void Runner::Init() {
 
 
     /** Drawing mode-related elements **/
-    modeSingle = Button(window, inFont, window->getSize().x / 2 - 135, 93, 45, 15, "Point");  // 5
+    modeSingle = Button(window, inFont, presetLin.GetPosition().x, 85, 45, 15, "Point");  // 5
     modeSingle.SetOutlineColor(sf::Color::Green);
     elements.push_back(&modeSingle);
 
-    modeIterate = Button(window, inFont, window->getSize().x / 2 - 5, modeSingle.GetPosition().y,
+    modeIterate = Button(window, inFont, modeSingle.GetPosition().x + modeSingle.GetSize().x + BUTTON_DELTA, modeSingle.GetPosition().y,
                                 65, 15, "Iterate"); // 6
     elements.push_back(&modeIterate);
 
-    modeGrid = Button(window, inFont, window->getSize().x / 2 + 135, modeSingle.GetPosition().y,
-                                40, 15, "Grid"); // 7
+    modeLine = Button(window, inFont, modeIterate.GetPosition().x + modeIterate.GetSize().x + BUTTON_DELTA, modeSingle.GetPosition().y,
+                                38, 15, "Line");    // 7
+    elements.push_back(&modeLine);
+
+    modeRect = Button(window, inFont, modeLine.GetPosition().x + modeLine.GetSize().x + BUTTON_DELTA, modeSingle.GetPosition().y,
+                                82, 15, "Rectangle"); // 8
+    elements.push_back(&modeRect);
+
+    modeGrid = Button(window, inFont,  modeRect.GetPosition().x + modeRect.GetSize().x + BUTTON_DELTA, modeSingle.GetPosition().y,
+                                40, 15, "Grid"); // 9
     elements.push_back(&modeGrid);
 
+    // Line break
+
+    modeCirc1 = Button(window, inFont,  modeSingle.GetPosition().x + 23, modeSingle.GetPosition().y + BUTTON_DELTA,
+                                62, 15, "Circle1"); // 10
+    elements.push_back(&modeCirc1);
+
+    modeCirc2 = Button(window, inFont,  modeCirc1.GetPosition().x + modeCirc1.GetSize().x + BUTTON_DELTA, modeCirc1.GetPosition().y,
+                                63, 15, "Circle2"); // 11
+    elements.push_back(&modeCirc2);
+
+    modeCirc3 = Button(window, inFont,  modeCirc2.GetPosition().x + modeCirc2.GetSize().x + BUTTON_DELTA, modeCirc1.GetPosition().y,
+                                63, 15, "Circle3"); // 12
+    elements.push_back(&modeCirc3);
+
+    modeFree = Button(window, inFont,  modeCirc3.GetPosition().x + modeCirc3.GetSize().x + BUTTON_DELTA, modeCirc1.GetPosition().y,
+                                75, 15, "Freedraw"); // 13
+    elements.push_back(&modeFree);
+
+
     /// Clear graph button
-    clearGraphs = Button(window, inFont, window->getSize().x / 2 - 23, 175, 46, 15, "Clear"); // 8
+    clearGraphs = Button(window, inFont, window->getSize().x / 2 - 23, 175, 46, 15, "Clear"); // 14
     elements.push_back(&clearGraphs);
 
     /** Graph-related elements **/
     /// Button to copy changes from the right side to the left
     mirrorL = Button(window, inFont, lTitle.getPosition().x + ((std::string)lTitle.getString()).length() * 10 + 5,
-                     lTitle.getPosition().y, 15, 15, "<"); // 9
+                     lTitle.getPosition().y, 15, 15, "<"); // 15
     elements.push_back(&mirrorL);
 
-    mirrorR = Button(window, inFont, mirrorL.GetPosition().x + 20, mirrorL.GetPosition().y, 15, 15, ">"); // 10
+    mirrorR = Button(window, inFont, mirrorL.GetPosition().x + 20, mirrorL.GetPosition().y, 15, 15, ">"); // 16
     elements.push_back(&mirrorR);
 
     /// Left-side elements
-    xRangeL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 30, 55, 15, "x Range"); // 11
+    xRangeL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 30, 55, 15, "x Range"); // 17
     xRangeL.SetText("2");
     elements.push_back(&xRangeL);
 
-    yRangeL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 50, 55, 15, "y Range"); // 12
+    yRangeL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 50, 55, 15, "y Range"); // 18
     yRangeL.SetText("2");
     elements.push_back(&yRangeL);
 
-    xScaleL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 70, 55, 15, "x Scale"); // 13
+    xScaleL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 70, 55, 15, "x Scale"); // 19
     xScaleL.SetText("1");
     elements.push_back(&xScaleL);
 
-    yScaleL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 90, 55, 15, "y Scale"); // 14
+    yScaleL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 90, 55, 15, "y Scale"); // 20
     yScaleL.SetText("1");
     elements.push_back(&yScaleL);
 
-    centerL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 110, 55, 15, "Center "); // 15
+    centerL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 110, 55, 15, "Center "); // 21
     centerL.SetText("(0,0)");
     elements.push_back(&centerL);
 
-    numbersL = Checkbox(window, inFont, window->getSize().x * 3 / 4 + 5, 130, "Numbers", true); // 16
+    numbersL = Checkbox(window, inFont, window->getSize().x * 3 / 4 + 5, 130, "Numbers", true); // 22
     elements.push_back(&numbersL);
 
-    linesL = Checkbox(window, inFont, window->getSize().x * 3 / 4 + 5, 150, "Lines", false);    // 17
+    linesL = Checkbox(window, inFont, window->getSize().x * 3 / 4 + 5, 150, "Lines", false);    // 23
     elements.push_back(&linesL);
 
     /// Right-side elements
-    xRangeR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 30, 55, 15, "x Range"); // 18
+    xRangeR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 30, 55, 15, "x Range"); // 24
     xRangeR.SetText("2");
     elements.push_back(&xRangeR);
 
-    yRangeR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 50, 55, 15, "y Range"); // 19
+    yRangeR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 50, 55, 15, "y Range"); // 25
     yRangeR.SetText("2");
     elements.push_back(&yRangeR);
 
-    xScaleR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 70, 55, 15, "x Scale"); // 20
+    xScaleR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 70, 55, 15, "x Scale"); // 26
     xScaleR.SetText("1");
     elements.push_back(&xScaleR);
 
-    yScaleR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 90, 55, 15, "y Scale"); // 21
+    yScaleR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 90, 55, 15, "y Scale"); // 27
     yScaleR.SetText("1");
     elements.push_back(&yScaleR);
 
-    centerR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 110, 55, 15, "Center "); // 22
+    centerR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 110, 55, 15, "Center "); // 28
     centerR.SetText("(0,0)");
     elements.push_back(&centerR);
 
-    numbersR = Checkbox(window, inFont, window->getSize().x * 7 / 8 + 5, 130, "Numbers", true); // 23
+    numbersR = Checkbox(window, inFont, window->getSize().x * 7 / 8 + 5, 130, "Numbers", true); // 29
     elements.push_back(&numbersR);
 
-    linesR = Checkbox(window, inFont, window->getSize().x * 7 / 8 + 5, 150, "Lines", false); // 24
+    linesR = Checkbox(window, inFont, window->getSize().x * 7 / 8 + 5, 150, "Lines", false); // 30
     elements.push_back(&linesR);
 
     /// General graph-related elements
-    okGraph = Button(window, inFont, window->getSize().x * 7 / 8 - 54, 175, // 25
+    okGraph = Button(window, inFont, window->getSize().x * 7 / 8 - 54, 175, // 31
                                 108, 15, "Save Changes");
     elements.push_back(&okGraph);
 
@@ -159,7 +186,7 @@ void Runner::Init() {
     for(int iii = 0; iii < elements.size(); iii++) {
         elements[iii]->SetActive(false);
     }
-    activeBox = 26; // Start out highlighting the equation entering box
+    activeBox = 32; // Start out highlighting the equation entering box
     elements[activeBox]->SetActive(true);
     UpdateGraphs();
 }
@@ -444,31 +471,24 @@ void Runner::ActivateButtons(sf::Event event) {
         equation.SetText("rpm() * sqrt(z - C)");
         UpdateEquation();
         break;
-    case 5: // Single point mode
+    case 5: // Changing the current mode
+    case 6:
+    case 7:
+    case 8:
+    case 9:
+    case 10:
+    case 11:
+    case 12:
+    case 13:
         Iterate(false);
-        mode = mSingle;
-        modeSingle.SetOutlineColor(sf::Color::Green);
-        modeIterate.SetOutlineColor(sf::Color::Black);
-        modeGrid.SetOutlineColor(sf::Color::Black);
+        elements[(int)mode + 5]->SetOutlineColor(sf::Color::Black); // Reset the coloring of the last-selected mode button
+        mode = (drawMode)(activeBox - 5);                           // Update our current draw mode
+        elements[(int)mode + 5]->SetOutlineColor(sf::Color::Green); // Color the active mode green
         break;
-    case 6: // Iterate mode
-        Iterate(false);
-        mode = mIterative;
-        modeIterate.SetOutlineColor(sf::Color::Green);
-        modeSingle.SetOutlineColor(sf::Color::Black);
-        modeGrid.SetOutlineColor(sf::Color::Black);
-        break;
-    case 7: // Grid mode
-        Iterate(false);
-        mode = mGrid; // Grid mode
-        modeGrid.SetOutlineColor(sf::Color::Green);
-        modeSingle.SetOutlineColor(sf::Color::Black);
-        modeIterate.SetOutlineColor(sf::Color::Black);
-        break;
-    case 8: // Clear
+    case 14: // Clear
         ClearPic();
         break;
-    case 9: // Mirror R->L
+    case 15: // Mirror R->L
         okGraph.SetOutlineColor(sf::Color::Red);
         xRangeL.SetText(xRangeR.GetText());
         yRangeL.SetText(yRangeR.GetText());
@@ -478,7 +498,7 @@ void Runner::ActivateButtons(sf::Event event) {
         if(numbersL.GetText() != numbersR.GetText()) numbersL.Toggle();
         if(linesL.GetText() != linesR.GetText()) linesL.Toggle();
         break;
-    case 10: // Mirror L->R
+    case 16: // Mirror L->R
         okGraph.SetOutlineColor(sf::Color::Red);
         xRangeR.SetText(xRangeL.GetText());
         yRangeR.SetText(yRangeL.GetText());
@@ -488,7 +508,7 @@ void Runner::ActivateButtons(sf::Event event) {
         if(numbersR.GetText() != numbersL.GetText()) numbersR.Toggle();
         if(linesR.GetText() != linesL.GetText()) linesR.Toggle();
         break;
-    case 25: // Save Changes for graphs
+    case 31: // Save Changes for graphs
         UpdateGraphs();
         break;
     default:
@@ -511,8 +531,31 @@ void Runner::DrawShape(bool toggleDrawing) {
             return; // Our picture would cross a boundary, so don't draw a new one
 
     switch(mode) {
+    case mLine:
+        DrawLine(position);
+        break;
+    case mRect:
+        DrawRect(position);
+        break;
     case mGrid:
-        DrawGrid(toggleDrawing);
+        DrawGrid(position);
+        break;
+    case mCirc1:
+        DrawCirc1(position);
+        break;
+    case mCirc2:
+        DrawCirc2(position);
+        break;
+    case mCirc3:
+        DrawCirc3(position);
+        break;
+    case mFree:
+        DrawFree(position);
+        break;
+    }
+
+    for(int iii = 0; iii < shape.getVertexCount(); iii++) { // Make every vertex black for drawing
+        shape[iii].color = sf::Color::Black;
     }
 
     /// Draw the shape to the other grid if we're done drawing
@@ -550,20 +593,37 @@ void Runner::DrawShape(bool toggleDrawing) {
             }
         }
         pic->draw(shape);
+        Iterate(false);
     }
 
     if(toggleDrawing)           // Toggle whether or not we're actively creating our shape
         isDrawing = !isDrawing;
 }
 
-void Runner::DrawGrid(bool toggleDrawing) {
-    static sf::Vector2i position; // Starting position of our shape
-    sf::Vector2i shapeSize;
+void Runner::DrawLine(sf::Vector2i position) {
+    sf::Vector2i endPoint = sf::Mouse::getPosition(*window);
 
-    if(!isDrawing && toggleDrawing)
-        position = sf::Mouse::getPosition(*window); // Get our initial position from where the mouse cursor was when it was clicked
+    shape.resize(0); // Clear out the previous line, since only the fixed endpoint will still be on it
 
-    shapeSize = sf::Mouse::getPosition(*window) - position;
+    double numPoints = sqrt((endPoint.x - position.x) * (endPoint.x - position.x) +
+                         (endPoint.y - position.y) * (endPoint.y - position.y)) /
+                         LINE_POINT_DELTA;
+    for(int iii = 0; iii <= numPoints; iii++) {
+        double scale = iii / numPoints;
+        shape.append(sf::Vertex(sf::Vector2f((1 - scale) * position.x + scale * endPoint.x,
+                                             (1 - scale) * position.y + scale * endPoint.y)));
+        scale += 1 / numPoints;
+        shape.append(sf::Vertex(sf::Vector2f((1 - scale) * position.x + scale * endPoint.x,
+                                             (1 - scale) * position.y + scale * endPoint.y)));
+    }
+}
+
+void Runner::DrawRect(sf::Vector2i position) {
+    std::cout << "Rect\n";
+}
+
+void Runner::DrawGrid(sf::Vector2i position) {
+    sf::Vector2i shapeSize = sf::Mouse::getPosition(*window) - position;
     int xLines = shapeSize.y / GRID_LINES_DELTA,    // Number of horizontal lines. Note: integer division to remove extra pixels
         yLines = shapeSize.x / GRID_LINES_DELTA;    // Number of vertical lines; also integer division
     shapeSize.y = xLines * GRID_LINES_DELTA;        // Remove extra pixels that aren't enough to constitute a line
@@ -593,10 +653,22 @@ void Runner::DrawGrid(bool toggleDrawing) {
             shape.append(sf::Vertex(sf::Vector2f(position.x + iii * delta, position.y + (jjj + 1) * pointDelta)));
         }
     }
+}
 
-    for(int iii = 0; iii < shape.getVertexCount(); iii++) { // Make every vertex black for drawing
-        shape[iii].color = sf::Color::Black;
-    }
+void Runner::DrawCirc1(sf::Vector2i position) {
+    std::cout << "Circ1\n";
+}
+
+void Runner::DrawCirc2(sf::Vector2i position) {
+    std::cout << "Circ2\n";
+}
+
+void Runner::DrawCirc3(sf::Vector2i position) {
+    std::cout << "Circ3\n";
+}
+
+void Runner::DrawFree(sf::Vector2i position) {
+    std::cout << "Free\n";
 }
 
 void Runner::ClearPic() {

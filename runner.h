@@ -12,7 +12,13 @@
 enum drawMode {
     mSingle,
     mIterative,
-    mGrid
+    mLine,
+    mRect,
+    mGrid,
+    mCirc1,
+    mCirc2,
+    mCirc3,
+    mFree
 };
 
 class Runner
@@ -40,7 +46,7 @@ private:
 
 
     std::vector<GUI*> elements;  // An alternate way of accessing each gui element
-    const int elementsSize = 27; // Initial size of elements (without any variables)
+    const int elementsSize = 33; // Initial size of elements (without any variables)
 
     Button okEquation;  // 0
 
@@ -53,34 +59,40 @@ private:
     /// Buttons to represent different possible drawing modes
     Button modeSingle;  // 5
     Button modeIterate; // 6
-    Button modeGrid;    // 7
+    Button modeLine;    // 7
+    Button modeRect;    // 8
+    Button modeGrid;    // 9
+    Button modeCirc1;   // 10 -- Centered at origin
+    Button modeCirc2;   // 11 -- Centered at click & radius
+    Button modeCirc3;   // 12 -- Concentric from click
+    Button modeFree;    // 13
 
     /// Button to clear both graphs
-    Button clearGraphs; // 8
+    Button clearGraphs; // 14
 
 
     /// Elements for changing graph settings
-    Button mirrorL;     // 9
-    Button mirrorR;     // 10
+    Button mirrorL;     // 15
+    Button mirrorR;     // 16
 
-    InputBox xRangeL;   // 11
-    InputBox yRangeL;   // 12
-    InputBox xScaleL;   // 13
-    InputBox yScaleL;   // 14
-    InputBox centerL;   // 15
-    Checkbox numbersL;  // 16
-    Checkbox linesL;    // 17
-    InputBox xRangeR;   // 18
-    InputBox yRangeR;   // 19
-    InputBox xScaleR;   // 20
-    InputBox yScaleR;   // 21
-    InputBox centerR;   // 22
-    Checkbox numbersR;  // 23
-    Checkbox linesR;    // 24
-    Button okGraph;     // 25
+    InputBox xRangeL;   // 17
+    InputBox yRangeL;   // 18
+    InputBox xScaleL;   // 19
+    InputBox yScaleL;   // 20
+    InputBox centerL;   // 21
+    Checkbox numbersL;  // 22
+    Checkbox linesL;    // 23
+    InputBox xRangeR;   // 24
+    InputBox yRangeR;   // 25
+    InputBox xScaleR;   // 26
+    InputBox yScaleR;   // 27
+    InputBox centerR;   // 28
+    Checkbox numbersR;  // 29
+    Checkbox linesR;    // 30
+    Button okGraph;     // 31
 
     /// Elements to do with changing equation settings
-    InputBox equation;  // 26
+    InputBox equation;  // 32
 
     cx lastPoint;               // The position of the most recently-drawn point
     bool lastGraph;             // Which graph lastPoint was drawn on; true = left, false = right
@@ -98,7 +110,14 @@ private:
     void ActivateButtons(sf::Event event);      // Activate buttons depending on activeBox and/or the event; event is the event that activated a button
 
     void DrawShape(bool toggleDrawing = false); // Draws a shape based on mode; toggles whether or not it's drawing anything if passed true
-    void DrawGrid(bool toggleDrawing); // Draws a grid; called by DrawShape
+    /// Functions called by DrawShape
+    void DrawLine(sf::Vector2i);  // Draws a line from the previous and current mouse location
+    void DrawRect(sf::Vector2i);  // Draws a rectangle with corners at the previous and current mouse location
+    void DrawGrid(sf::Vector2i);  // Draws a grid with corners at the previous and current mouse location
+    void DrawCirc1(sf::Vector2i); // Draws a circle centered at the origin passing through the current mouse location
+    void DrawCirc2(sf::Vector2i); // Draws a circle centered at the previous mouse location passing through the current mouse location
+    void DrawCirc3(sf::Vector2i); // Draws concentric circles centered at the previous mouse location
+    void DrawFree(sf::Vector2i);  // Draws the current mouse location
 
     void ClearPic(); // Clear all points drawn to pic
 
