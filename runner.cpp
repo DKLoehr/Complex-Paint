@@ -501,6 +501,7 @@ void Runner::ActivateButtons(sf::Event event) {
 
 void Runner::DrawShape(bool toggleDrawing) {
     static sf::Vector2i position; // Starting position of our shape
+    shape = sf::VertexArray(sf::Lines, 0); // VertexArray to hold shapes
 
     if(!isDrawing && toggleDrawing)
         position = sf::Mouse::getPosition(*window); // Get our initial position from where the mouse cursor was when it was clicked
@@ -509,54 +510,16 @@ void Runner::DrawShape(bool toggleDrawing) {
         position.x > window->getSize().x / 2 && sf::Mouse::getPosition(*window).x < window->getSize().x / 2)   // one we clicked in originally
             return; // Our picture would cross a boundary, so don't draw a new one
 
-    if(mode == mGrid) {  // Grid mode
+    switch(mode) {
+    case mGrid:
         DrawGrid(toggleDrawing);
     }
-    if(toggleDrawing)           // Toggle whether or not we're actively creating our shape
-        isDrawing = !isDrawing;
 
-}
+    /// Draw the shape to the other grid if we're done drawing
+    if(isDrawing && toggleDrawing) { // We were actively drawing, but are about to stop
+        bool leftToRightLocal = leftToRight; // Local copy of leftToRight so that we can reset it when it is flipped by Iterate
 
-void Runner::DrawGrid(bool toggleDrawing) {
-    static sf::Vector2i position; // Starting position of our shape
-    sf::Vector2i shapeSize;
-    shape = sf::VertexArray(sf::Lines, 0); // VertexArray to hold rectangular-type shapes
-
-    if(!isDrawing && toggleDrawing)
-        position = sf::Mouse::getPosition(*window); // Get our initial position from where the mouse cursor was when it was clicked
-
-    shapeSize = sf::Mouse::getPosition(*window) - position;
-    int xLines = shapeSize.y / GRID_LINES_DELTA,    // Number of horizontal lines. Note: integer division to remove extra pixels
-        yLines = shapeSize.x / GRID_LINES_DELTA;    // Number of vertical lines; also integer division
-    shapeSize.y = xLines * GRID_LINES_DELTA;        // Remove extra pixels that aren't enough to constitute a line
-    shapeSize.x = yLines * GRID_LINES_DELTA;
-    xLines = abs(xLines) + 1;   // Want a positive number of lines so that for loops are easier,
-    yLines = abs(yLines) + 1;   // Increment by one because we've only counted one of the extreme lines (far left/right or top/bottom)
-
-    /// Create the grid
-    // Add our horizontal lines from top to bottom
-    double delta = (double)shapeSize.y / xLines; // Distance between lines in pixels
-    for(int iii = 0; iii <= xLines; iii++) {
-        shape.append(sf::Vertex(sf::Vector2f(position.x, position.y + iii * delta)));
-        shape.append(sf::Vertex(sf::Vector2f(position.x + shapeSize.x, position.y + iii * delta)));
-    }
-
-    int yIndex = shape.getVertexCount(); // Index of the first point of the vertical lines
-
-    delta = (double)shapeSize.x / yLines; // Distance between lines in pixels
-    for(int iii = 0; iii <= yLines; iii++) {
-        shape.append(sf::Vertex(sf::Vector2f(position.x + iii * delta, position.y)));
-        shape.append(sf::Vertex(sf::Vector2f(position.x + iii * delta, position.y + shapeSize.y)));
-    }
-
-    for(int iii = 0; iii < shape.getVertexCount(); iii++) { // Make every vertex black for drawing
-        shape[iii].color = sf::Color::Black;
-    }
-
-    /// Draw the grid to the screen
-    bool leftToRightLocal = leftToRight; // Local copy of leftToRight so that we can reset it when it is flipped by Iterate
-    if(isDrawing && toggleDrawing) { // We were actively drawing, but are about to stop0
-        // Convert the grid's coordinates to be those of the graph
+        // Convert the shape's coordinates to be those of the graph
         if(position.x < window->getSize().x / 2) {    // In the left grid
             for(int iii = 0; iii < shape.getVertexCount(); iii++) {
                 shape[iii].position = grid.lGrid.WindowToGraph(shape[iii].position);
@@ -568,24 +531,11 @@ void Runner::DrawGrid(bool toggleDrawing) {
             }
         }
 
-        // Iterate a bunch of points on the grid and draw them to the other side
-        int vertCount = shape.getVertexCount(); // Store as its own variable since it will be used a lot
-        // Iterate vertically: Start at top, iterate down, move over & repeat
-        delta = ((double)(shape[vertCount - 1].position.y - shape[0].position.y) / xLines) / GRID_POINT_DELTA;
-        for(int iii = 0; iii <= yLines; iii++) {
-            for(int jjj = 0; jjj <= GRID_POINT_DELTA * xLines; jjj++) {
-                leftToRight = leftToRightLocal;
-                Iterate(true, new cx(shape[yIndex + iii * 2].position.x,
-                                     shape[yIndex + iii * 2].position.y + jjj * delta));
-            }
-        }
-        delta = ((double)(shape[vertCount - 1].position.x - shape[0].position.x) / yLines) / GRID_POINT_DELTA;
-        for(int iii = 0; iii <= xLines; iii++) {
-            for(int jjj = 0; jjj <= GRID_POINT_DELTA * yLines; jjj++) {
-                leftToRight = leftToRightLocal;
-                Iterate(true, new cx(shape[iii * 2].position.x + jjj * delta,
-                                     shape[iii * 2].position.y));
-            }
+        for(int iii = 0; iii < shape.getVertexCount(); iii++) {
+            leftToRight = leftToRightLocal;
+            Iterate(true, new cx(shape[iii].position.x, shape[iii].position.y));
+            if(iii % 3 == 0) // Every third vertex is a repeat of the previous one, so don't waste time redrawing it
+                iii++;
         }
 
         // Convert shape's vertices to pic coordinates so we can draw the original version
@@ -600,6 +550,52 @@ void Runner::DrawGrid(bool toggleDrawing) {
             }
         }
         pic->draw(shape);
+    }
+
+    if(toggleDrawing)           // Toggle whether or not we're actively creating our shape
+        isDrawing = !isDrawing;
+}
+
+void Runner::DrawGrid(bool toggleDrawing) {
+    static sf::Vector2i position; // Starting position of our shape
+    sf::Vector2i shapeSize;
+
+    if(!isDrawing && toggleDrawing)
+        position = sf::Mouse::getPosition(*window); // Get our initial position from where the mouse cursor was when it was clicked
+
+    shapeSize = sf::Mouse::getPosition(*window) - position;
+    int xLines = shapeSize.y / GRID_LINES_DELTA,    // Number of horizontal lines. Note: integer division to remove extra pixels
+        yLines = shapeSize.x / GRID_LINES_DELTA;    // Number of vertical lines; also integer division
+    shapeSize.y = xLines * GRID_LINES_DELTA;        // Remove extra pixels that aren't enough to constitute a line
+    shapeSize.x = yLines * GRID_LINES_DELTA;
+    xLines = abs(xLines) + 1;   // Want a positive number of lines;
+    yLines = abs(yLines) + 1;   // Increment by one because we've only counted one of the extreme lines (far left/right or top/bottom)
+
+
+    /// Create the grid
+    // Add our horizontal lines from top to bottom (if in standard orientation)
+    int delta = GRID_LINES_DELTA; // Distance between lines in pixels
+    double pointDelta = (double)GRID_LINES_DELTA / GRID_POINT_NUMBER;
+    if(shapeSize.y < 0) delta *= -1;
+    if(shapeSize.x < 0) pointDelta *= -1;
+
+    for(int iii = 0; iii < xLines; iii++) { // Iterate between lines
+        for(int jjj = 0; jjj < (yLines - 1) * GRID_POINT_NUMBER; jjj++) {
+            shape.append(sf::Vertex(sf::Vector2f(position.x + jjj * pointDelta, position.y + iii * delta)));
+            shape.append(sf::Vertex(sf::Vector2f(position.x + (jjj + 1) * pointDelta, position.y + iii * delta)));
+        }
+    }
+
+    // Add vertical lines from left to right (if in standard orientation)
+    for(int iii = 0; iii < yLines; iii++) { // Iterate between lines
+        for(int jjj = 0; jjj < (xLines - 1) * GRID_POINT_NUMBER; jjj++) {
+            shape.append(sf::Vertex(sf::Vector2f(position.x + iii * delta, position.y + jjj * pointDelta)));
+            shape.append(sf::Vertex(sf::Vector2f(position.x + iii * delta, position.y + (jjj + 1) * pointDelta)));
+        }
+    }
+
+    for(int iii = 0; iii < shape.getVertexCount(); iii++) { // Make every vertex black for drawing
+        shape[iii].color = sf::Color::Black;
     }
 }
 
