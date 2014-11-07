@@ -111,13 +111,13 @@ private:
 
     void DrawShape(bool toggleDrawing = false); // Draws a shape based on mode; toggles whether or not it's drawing anything if passed true
     /// Functions called by DrawShape
-    void DrawLine(sf::Vector2i);  // Draws a line from the previous and current mouse location
-    void DrawRect(sf::Vector2i);  // Draws a rectangle with corners at the previous and current mouse location
-    void DrawGrid(sf::Vector2i);  // Draws a grid with corners at the previous and current mouse location
-    void DrawCirc1(sf::Vector2i); // Draws a circle centered at the origin passing through the current mouse location
-    void DrawCirc2(sf::Vector2i); // Draws a circle centered at the previous mouse location passing through the current mouse location
-    void DrawCirc3(sf::Vector2i); // Draws concentric circles centered at the previous mouse location
-    void DrawFree(sf::Vector2i);  // Draws the current mouse location
+    void DrawLine(sf::Vector2i position);  // Draws a line from the previous and current mouse location
+    void DrawRect(sf::Vector2i position);  // Draws a rectangle with corners at the previous and current mouse location
+    void DrawGrid(sf::Vector2i position);  // Draws a grid with corners at the previous and current mouse location
+    void DrawCirc1(sf::Vector2i position); // Draws a circle centered at the origin passing through the current mouse location
+    void DrawCirc2(sf::Vector2i position); // Draws a circle centered at the previous mouse location passing through the current mouse location
+    void DrawCirc3(sf::Vector2i position); // Draws concentric circles centered at the previous mouse location
+    void DrawFree(sf::Vector2i position, bool toggleDrawing);  // Draws the current mouse location
 
     void ClearPic(); // Clear all points drawn to pic
 

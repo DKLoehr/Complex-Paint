@@ -521,7 +521,8 @@ void Runner::ActivateButtons(sf::Event event) {
 
 void Runner::DrawShape(bool toggleDrawing) {
     static sf::Vector2i position; // Starting position of our shape
-    shape = sf::VertexArray(sf::Lines, 0); // VertexArray to hold shapes
+    if(mode != mFree)
+        shape = sf::VertexArray(sf::Lines, 0); // VertexArray to hold shapes
 
     if(!isDrawing && toggleDrawing)
         position = sf::Mouse::getPosition(*window); // Get our initial position from where the mouse cursor was when it was clicked
@@ -550,7 +551,7 @@ void Runner::DrawShape(bool toggleDrawing) {
         DrawCirc3(position);
         break;
     case mFree:
-        DrawFree(position);
+        DrawFree(position, toggleDrawing);
         break;
     }
 
@@ -647,7 +648,6 @@ void Runner::DrawGrid(sf::Vector2i position) {
     xLines = abs(xLines) + 1;   // Want a positive number of lines;
     yLines = abs(yLines) + 1;   // Increment by one because we've only counted one of the extreme lines (far left/right or top/bottom)
 
-
     /// Create the grid
     // Add our horizontal lines from top to bottom (if in standard orientation)
     int delta = GRID_LINES_DELTA; // Distance between lines in pixels
@@ -661,6 +661,11 @@ void Runner::DrawGrid(sf::Vector2i position) {
             shape.append(sf::Vertex(sf::Vector2f(position.x + (jjj + 1) * pointDelta, position.y + iii * delta)));
         }
     }
+
+    delta = abs(delta);
+    pointDelta = abs(pointDelta);
+    if(shapeSize.x < 0) delta *= -1;
+    if(shapeSize.y < 0) pointDelta *= -1;
 
     // Add vertical lines from left to right (if in standard orientation)
     for(int iii = 0; iii < yLines; iii++) { // Iterate between lines
@@ -712,8 +717,13 @@ void Runner::DrawCirc3(sf::Vector2i position) {
     }
 }
 
-void Runner::DrawFree(sf::Vector2i position) {
-    std::cout << "Free\n";
+void Runner::DrawFree(sf::Vector2i position, bool toggleDrawing) {
+    if(!isDrawing && toggleDrawing) { // We're starting to draw a new figure
+        shape.resize(0);
+        shape.append(sf::Vertex(sf::Vector2f(position)));
+    }
+    shape.append(sf::Vertex(sf::Vector2f(sf::Mouse::getPosition(*window))));
+    shape.append(sf::Vertex(sf::Vector2f(sf::Mouse::getPosition(*window))));
 }
 
 void Runner::ClearPic() {
