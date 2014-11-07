@@ -619,7 +619,25 @@ void Runner::DrawLine(sf::Vector2i position) {
 }
 
 void Runner::DrawRect(sf::Vector2i position) {
-    std::cout << "Rect\n";
+    sf::Vector2i shapeSize = sf::Mouse::getPosition(*window) - position;
+
+    double pointDeltaX = (double)shapeSize.x / (shapeSize.x / RECT_POINT_DELTA),
+           pointDeltaY = (double)shapeSize.y / (shapeSize.y / RECT_POINT_DELTA);
+    if(shapeSize.x < 0) pointDeltaX *= -1;
+    if(shapeSize.y < 0) pointDeltaY *= -1;
+    double numPointsX = abs(shapeSize.x / RECT_POINT_DELTA),
+           numPointsY = abs(shapeSize.y / RECT_POINT_DELTA);
+
+    for(int iii = 0; iii < 2; iii++) { // Iterate for each pair of lines
+        for(int jjj = 0; jjj < numPointsX; jjj++) { // Horizontal lines
+            shape.append(sf::Vertex(sf::Vector2f(position.x + jjj * pointDeltaX, position.y + iii * shapeSize.y)));
+            shape.append(sf::Vertex(sf::Vector2f(position.x + (jjj + 1) * pointDeltaX, position.y + iii * shapeSize.y)));
+        }
+        for(int jjj = 0; jjj < numPointsY; jjj++) { // Vertical lines
+            shape.append(sf::Vertex(sf::Vector2f(position.x + iii * shapeSize.x, position.y + jjj * pointDeltaY)));
+            shape.append(sf::Vertex(sf::Vector2f(position.x + iii * shapeSize.x, position.y + (jjj + 1) * pointDeltaY)));
+        }
+    }
 }
 
 void Runner::DrawGrid(sf::Vector2i position) {
