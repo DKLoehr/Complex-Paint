@@ -26,6 +26,7 @@ void Runner::Init() {
 
     loc = sf::CircleShape(1, 30);
     loc.setFillColor(sf::Color::Black);
+    loc.setPosition(-2, -2); // Make loc invisible until it's moved onto the screen
 
     lastPoint = std::complex<double>(0, 0);
     graphCoords = sf::Vector2f(0, 0);
