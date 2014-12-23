@@ -14,6 +14,7 @@ InputBox::InputBox(sf::RenderWindow* window, sf::Font* font, int x, int y, int w
     GUI(window, font, x, y, width, height)
 {
     m_cursorPos = 0;
+    m_stringPos = 0;
     m_cursor = sf::RectangleShape(sf::Vector2f(1, m_rectangle.getSize().y));
     m_cursor.setOutlineColor(sf::Color::Black);
     m_cursor.setFillColor(sf::Color::Black);
@@ -24,6 +25,7 @@ InputBox::InputBox(sf::RenderWindow* window, sf::Font* font, int x, int y, int w
     m_cap.setString(cap);
 
     m_rectangle.setOutlineColor(sf::Color(100,100,100));
+    m_rectangle.setSize(m_rectangle.getSize() - sf::Vector2f((int)m_rectangle.getSize().x % 9, 0));
 
     m_cap.setPosition(x, y - 2);
     m_rectangle.setPosition(x + cap.length() * 10, y);
@@ -72,16 +74,26 @@ void InputBox::OnClick(double xP, double yP) {
 }
 
 void InputBox::SetCursor(int newCursorPos) {
+    int origPos = m_cursorPos;
     m_cursorPos = newCursorPos;
     if(m_cursorPos < 0)
         m_cursorPos = 0;
     if(m_cursorPos > ((std::string)m_text.getString()).length())
         m_cursorPos = ((std::string)m_text.getString()).length();
     if(m_cursorPos * 9 > m_rectangle.getSize().x)
-        m_cursorPos = m_rectangle.getSize().x;
+        m_cursorPos =(m_rectangle.getSize().x + 1) / 9;
 
     m_cursor.setPosition(m_rectangle.getPosition() + sf::Vector2f(m_cursorPos * 9, 0));
-}
+    if(((std::string)m_text.getString()).length() < m_rectangle.getSize().x / 9) {
+        m_stringPos = m_cursorPos;
+    } else {
+        m_stringPos = newCursorPos + m_stringPos - origPos;
+    }
+    if(m_stringPos < 0)
+        m_stringPos = 0;
+    if(m_stringPos > ((std::string)m_text.getString()).length())
+        m_stringPos = ((std::string)m_text.getString()).length();
+    }
 
 void InputBox::OnTextEntered(char n) {
     EnterText(n);
@@ -91,29 +103,17 @@ void InputBox::EnterText(char n) {
     if(IsValid(n)) { // n is a valid character
         std::string temp = m_text.getString();
         if(n != 8) { // Some character
-            m_text.setString(temp.substr(0, m_cursorPos) + n + temp.substr(m_cursorPos, temp.length()));
+            m_text.setString(temp.substr(0, m_stringPos) + n + temp.substr(m_stringPos, temp.length()));
             SetCursor(m_cursorPos + 1);
         } else if(n == 8) { // Backspace
-            if(m_cursorPos > 0)
-                m_text.setString(temp.substr(0, m_cursorPos - 1) + temp.substr(m_cursorPos, temp.length()));
-            SetCursor(m_cursorPos - 1);
+            if(m_stringPos > 0)
+                m_text.setString(temp.substr(0, m_stringPos - 1) + temp.substr(m_stringPos, temp.length()));
+            if(((std::string)m_text.getString()).length() * 9 <= m_rectangle.getSize().x)
+                SetCursor(m_cursorPos - 1);
+            else
+                SetCursor(m_cursorPos);
         }
     }
-    /*
-    if(IsValid(n)) { // n is a valid character
-        std::string temp = m_text.getString();
-        int stringPos = m_cursorPos;   // Position of the cursor within the string
-        if(((std::string)m_text.getString()).length() * 9 > m_rectangle.getSize().x) // String is overflowing
-            stringPos += ((std::string)m_text.getString()).length() - m_rectangle.getSize().x / 9;
-        if(n != 8) { // Some character
-            m_text.setString(temp.substr(0, stringPos) + n + temp.substr(stringPos, temp.length()));
-            SetCursor(m_cursorPos + 1);
-        } else if(n == 8) { // Backspace
-            if(stringPos > 0)
-                m_text.setString(temp.substr(0, stringPos - 1) + temp.substr(stringPos, temp.length()));
-            SetCursor(m_cursorPos - 1);
-        }
-    }*/
 }
 
 void InputBox::OnKeyPressed(sf::Keyboard::Key key) {
@@ -126,9 +126,9 @@ void InputBox::OnKeyPressed(sf::Keyboard::Key key) {
 void InputBox::Draw() {
     m_w->draw(m_rectangle);
     std::string str = m_text.getString();
-    std::string truncStr;
-    if(str.length() * 10 > m_size.x) {
-        truncStr = str.substr(str.length() - m_size.x / 10, std::string::npos);
+    if(str.length() * 9 > m_rectangle.getSize().x + 1) {
+        std::string truncStr;
+        truncStr = str.substr(m_stringPos - m_cursorPos, m_rectangle.getSize().x / 9);
         m_text.setString(truncStr);
     }
     m_w->draw(m_text);

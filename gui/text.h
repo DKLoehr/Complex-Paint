@@ -7,6 +7,7 @@ class InputBox : public GUI
 {
 private:
     int m_cursorPos;
+    int m_stringPos;
     sf::RectangleShape m_cursor;
 
     std::clock_t m_start;
