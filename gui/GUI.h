@@ -36,8 +36,10 @@ public:
     virtual void SetPosition(double x, double y) = 0;
 
     virtual bool OnEnter() = 0;
-    virtual bool OnClick(double xP, double yP) = 0; // Returns true if the gui element was clicked
+    virtual void OnClick(double xP, double yP) = 0; // Stuff to do if the gui element was clicked
+    bool IsClicked(double xP, double yP); // Returns true if the gui element was clicked
     virtual void OnTextEntered(char n) = 0;
+    virtual void OnKeyPressed(sf::Keyboard::Key key) = 0;
 
     sf::Vector2f GetPosition();
     sf::Vector2f GetSize();

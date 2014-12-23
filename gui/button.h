@@ -15,8 +15,9 @@ public:
     void SetPosition(double x, double y);
 
     bool OnEnter(); // Always returns true
-    bool OnClick(double xP, double yP); // Returns true if the button was clicked
+    void OnClick(double xP, double yP);
     void OnTextEntered(char n);
+    void OnKeyPressed(sf::Keyboard::Key key);
 };
 
 #endif //BUTTON_H

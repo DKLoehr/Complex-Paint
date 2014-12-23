@@ -38,17 +38,14 @@ bool Button::OnEnter() {
     return true;
 }
 
-bool Button::OnClick(double xP, double yP) {
-    double xScale = m_w->getSize().x / m_wSize.x, yScale = m_w->getSize().y / m_wSize.y;
-
-    if((m_position.x - 3) * xScale < xP && xP < (m_position.x + m_size.x + 3) * xScale &&
-       (m_position.y - 3) * yScale < yP && yP < (m_position.y + m_size.y + 2) * yScale) {
-       return true;
-    } else {
-        return false;
-    }
+void Button::OnClick(double xP, double yP) {
+    return;
 }
 
 void Button::OnTextEntered(char n) {
+    return;
+}
+
+void Button::OnKeyPressed(sf::Keyboard::Key key) {
     return;
 }

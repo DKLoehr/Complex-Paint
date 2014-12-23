@@ -3,6 +3,7 @@
 #include "text.h"
 #include <iostream>
 #include <stdlib.h>
+#include <ctime>
 
 InputBox::InputBox() {
 
@@ -12,6 +13,14 @@ InputBox::InputBox(sf::RenderWindow* window, sf::Font* font, int x, int y, int w
                    std::string cap):
     GUI(window, font, x, y, width, height)
 {
+    m_cursorPos = 0;
+    m_cursor = sf::RectangleShape(sf::Vector2f(1, m_rectangle.getSize().y));
+    m_cursor.setOutlineColor(sf::Color::Black);
+    m_cursor.setFillColor(sf::Color::Black);
+
+    m_start = std::clock();
+    m_drawCursor = true;
+
     m_cap.setString(cap);
 
     m_rectangle.setOutlineColor(sf::Color(100,100,100));
@@ -19,6 +28,8 @@ InputBox::InputBox(sf::RenderWindow* window, sf::Font* font, int x, int y, int w
     m_cap.setPosition(x, y - 2);
     m_rectangle.setPosition(x + cap.length() * 10, y);
     m_text.setPosition(x + cap.length() * 10, y - 2);
+
+    m_cursor.setPosition(m_rectangle.getPosition() + sf::Vector2f(1, 0));
 };
 
 
@@ -32,13 +43,11 @@ bool InputBox::IsValid(char n) {
 
 void InputBox::SetActive(bool active) {
     isActive = active;
-    DrawWhite();
     if(isActive) {
         m_rectangle.setFillColor(sf::Color::White);
     } else {
         m_rectangle.setFillColor(sf::Color(150, 150, 150));
     }
-    Draw();
 }
 
 void InputBox::SetPosition(sf::Vector2f newPos) {
@@ -56,37 +65,47 @@ bool InputBox::OnEnter() {
     return false;
 }
 
-bool InputBox::OnClick(double xP, double yP) {
+void InputBox::OnClick(double xP, double yP) {
     double xScale = m_w->getSize().x / m_wSize.x, yScale = m_w->getSize().y / m_wSize.y;
-    int cap = (((std::string)m_cap.getString()).length() + 1) * 10;
 
-    if((m_position.x - 3) * xScale < xP && xP < (m_position.x + m_size.x + cap + 5) * xScale &&
-       (m_position.y - 3) * yScale < yP && yP < (m_position.y + m_size.y + 2) * yScale)
-        return true;
-    else
-        return false;
+    SetCursor((int)((xP - m_rectangle.getPosition().x) / 9 + .5)); ///TODO: Add in scaling properly
+}
+
+void InputBox::SetCursor(int newCursorPos) {
+    m_cursorPos = newCursorPos;
+    if(m_cursorPos < 0)
+        m_cursorPos = 0;
+    if(m_cursorPos > ((std::string)m_text.getString()).length())
+        m_cursorPos = ((std::string)m_text.getString()).length();
+    if(m_cursorPos > m_rectangle.getSize().x / 9)
+        m_cursorPos = m_rectangle.getSize().x / 9;
+
+    m_cursor.setPosition(m_rectangle.getPosition() + sf::Vector2f(m_cursorPos * 9, 0));
 }
 
 void InputBox::OnTextEntered(char n) {
-    if(IsValid(n)) { // n is a valid character
-        std::string temp = m_text.getString();
-        if(n != 8) { // Some character
-            m_text.setString(temp.substr(0, temp.length()) + n);
-        } else if(n == 8) { // Backspace
-            m_text.setString(temp.substr(0, temp.length() - 1));
-        }
-    }
+    EnterText(n);
 }
 
 void InputBox::EnterText(char n) {
     if(IsValid(n)) { // n is a valid character
         std::string temp = m_text.getString();
         if(n != 8) { // Some character
-            m_text.setString(temp.substr(0, temp.length()) + n);
+            m_text.setString(temp.substr(0, m_cursorPos) + n + temp.substr(m_cursorPos, temp.length()));
+            SetCursor(m_cursorPos + 1);
         } else if(n == 8) { // Backspace
-            m_text.setString(temp.substr(0, temp.length() - 1));
+            if(m_cursorPos > 0)
+                m_text.setString(temp.substr(0, m_cursorPos - 1) + temp.substr(m_cursorPos, temp.length()));
+            SetCursor(m_cursorPos - 1);
         }
     }
+}
+
+void InputBox::OnKeyPressed(sf::Keyboard::Key key) {
+    if(key == sf::Keyboard::Right)
+        SetCursor(m_cursorPos + 1);
+    if(key == sf::Keyboard::Left)
+        SetCursor(m_cursorPos - 1);
 }
 
 void InputBox::Draw() {
@@ -100,11 +119,18 @@ void InputBox::Draw() {
     m_w->draw(m_text);
     m_text.setString(str);
     m_w->draw(m_cap);
+    if(isActive) {
+        if((std::clock() - m_start)/ (double)CLOCKS_PER_SEC > .5) {
+            m_drawCursor = !m_drawCursor;
+            m_start = std::clock();
+        }
+        if(m_drawCursor)
+            m_w->draw(m_cursor);
+    }
 }
 
 double InputBox::GetStringAsDouble() {
     return atof(((std::string)m_text.getString()).c_str());
-
 }
 
 sf::Vector2f InputBox::GetStringAsVector() {

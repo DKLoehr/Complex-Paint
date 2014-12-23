@@ -210,6 +210,8 @@ void Runner::HandleEvents() {
         } else if((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Return) ||
                   (event.type == sf::Event::MouseButtonPressed && event.mouseButton.y < 200)) {
             ActivateButtons(event);
+        } else if(event.type == sf::Event::KeyPressed) {
+            elements[activeBox]->OnKeyPressed(event.key.code);
         } else if(event.type == sf::Event::MouseMoved) {
             if(event.mouseMove.y < 200) // Upper part of the screen
                 SetActiveElement(event.mouseMove.x, event.mouseMove.y);
@@ -336,16 +338,14 @@ void Runner::Iterate(bool keepIterating, cx* newPos) {
 
 void Runner::SetActiveElement(double x, double y) {
     for(int iii = 0; iii < elements.size(); iii++) {
-        if(elements[iii]->OnClick(x, y)) {              // True iff x and y are in that element's box; will toggle checkboxes, so must toggle back later
+        if(elements[iii]->IsClicked(x, y)) {            // True iff x and y are in that element's box
             if(activeBox != iii) {                      // If the active box has changed
                 elements[activeBox]->SetActive(false);  // Deactivate the previously-active box
                 activeBox = iii;                        // Update which box is active
                 elements[activeBox]->SetActive(true);   // Activate the newly-active box
             }
-            elements[iii]->OnClick(x, y);           // For checkboxes; toggle them back
             break;                                      // Figured out which box is active, so we can stop looking now
         }
-        elements[iii]->OnClick(x, y);                   // For checkboxes; toggle them back
     }
 }
 

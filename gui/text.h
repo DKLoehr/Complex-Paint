@@ -6,7 +6,15 @@
 class InputBox : public GUI
 {
 private:
+    int m_cursorPos;
+    sf::RectangleShape m_cursor;
+
+    std::clock_t m_start;
+    bool m_drawCursor;
+
     bool IsValid(char n);
+
+    void SetCursor(int newCursorPos);
 public:
     InputBox(); // Warning -- since this doesn't take a window, this is useless!
     InputBox(sf::RenderWindow* window, sf::Font* font, int x, int y, int charWidth, int charHeight, std::string cap = "");
@@ -17,8 +25,9 @@ public:
     void SetPosition(double x, double y);
 
     bool OnEnter(); // Does nothing
-    bool OnClick(double xP, double yP); // Does nothing
+    void OnClick(double xP, double yP); // Sets cursor
     void OnTextEntered(char n); // Adds text to string
+    void OnKeyPressed(sf::Keyboard::Key key);
     void EnterText(char n); // Same as OnTextEntered
 
     void Draw();

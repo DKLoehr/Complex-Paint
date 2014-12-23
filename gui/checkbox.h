@@ -21,8 +21,9 @@ public:
     void SetPosition(double x, double y);
 
     bool OnEnter(); // Toggles, and returns true
-    bool OnClick(double xP, double yP); // Returns true if the checkbox was clicked
+    void OnClick(double xP, double yP); // Returns true if the checkbox was clicked
     void OnTextEntered(char n); // Does nothing
+    void OnKeyPressed(sf::Keyboard::Key key);
 };
 
 #endif // CHECKBOX_H
