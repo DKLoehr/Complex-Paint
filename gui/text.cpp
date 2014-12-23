@@ -99,6 +99,21 @@ void InputBox::EnterText(char n) {
             SetCursor(m_cursorPos - 1);
         }
     }
+    /*
+    if(IsValid(n)) { // n is a valid character
+        std::string temp = m_text.getString();
+        int stringPos = m_cursorPos;   // Position of the cursor within the string
+        if(((std::string)m_text.getString()).length() * 9 > m_rectangle.getSize().x) // String is overflowing
+            stringPos += ((std::string)m_text.getString()).length() - m_rectangle.getSize().x / 9;
+        if(n != 8) { // Some character
+            m_text.setString(temp.substr(0, stringPos) + n + temp.substr(stringPos, temp.length()));
+            SetCursor(m_cursorPos + 1);
+        } else if(n == 8) { // Backspace
+            if(stringPos > 0)
+                m_text.setString(temp.substr(0, stringPos - 1) + temp.substr(stringPos, temp.length()));
+            SetCursor(m_cursorPos - 1);
+        }
+    }*/
 }
 
 void InputBox::OnKeyPressed(sf::Keyboard::Key key) {

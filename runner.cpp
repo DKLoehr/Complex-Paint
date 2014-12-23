@@ -207,8 +207,7 @@ void Runner::HandleEvents() {
                 else // Graph box changed
                     okGraph.SetOutlineColor(sf::Color::Red);
             }
-        } else if((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Return) ||
-                  (event.type == sf::Event::MouseButtonPressed && event.mouseButton.y < 200)) {
+        } else if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Return) {
             ActivateButtons(event);
         } else if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tab) {
             StepActiveElement(!(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ||
@@ -216,24 +215,22 @@ void Runner::HandleEvents() {
         } else if(event.type == sf::Event::KeyPressed) {
             elements[activeBox]->OnKeyPressed(event.key.code);
         } else if(event.type == sf::Event::MouseMoved) {
-            if(event.mouseMove.y < 200) // Upper part of the screen
-                SetActiveElement(event.mouseMove.x, event.mouseMove.y);
-            else { // In one of the graphs
-                loc.setFillColor(sf::Color::Black);
-                if(event.mouseMove.x < window->getSize().x / 2) { // Left Graph
-                    sf::Vector2f graphLoc(grid.lGrid.WindowToGraph(event.mouseMove.x, event.mouseMove.y));
-                    fct->setVar("Z", cx(graphLoc.x, graphLoc.y));
-                    cx newLoc(fct->eval());
-                    loc.setPosition(grid.rGrid.GraphToWindow(newLoc.real(), newLoc.imag()));
-                } else { // Right Graph
-                    sf::Vector2f graphLoc(grid.rGrid.WindowToGraph(event.mouseMove.x, event.mouseMove.y));
-                    fct->setVar("Z", cx(graphLoc.x, graphLoc.y));
-                    cx newLoc(fct->eval());
-                    loc.setPosition(grid.lGrid.GraphToWindow(newLoc.real(), newLoc.imag()));
-                }
+            // In one of the graphs
+            loc.setFillColor(sf::Color::Black);
+            if(event.mouseMove.x < window->getSize().x / 2) { // Left Graph
+                sf::Vector2f graphLoc(grid.lGrid.WindowToGraph(event.mouseMove.x, event.mouseMove.y));
+                fct->setVar("Z", cx(graphLoc.x, graphLoc.y));
+                cx newLoc(fct->eval());
+                loc.setPosition(grid.rGrid.GraphToWindow(newLoc.real(), newLoc.imag()));
+            } else { // Right Graph
+                sf::Vector2f graphLoc(grid.rGrid.WindowToGraph(event.mouseMove.x, event.mouseMove.y));
+                fct->setVar("Z", cx(graphLoc.x, graphLoc.y));
+                cx newLoc(fct->eval());
+                loc.setPosition(grid.lGrid.GraphToWindow(newLoc.real(), newLoc.imag()));
             }
         } else if(event.type == sf::Event::MouseButtonPressed) {
-            if(event.mouseButton.y < 200) { // Above the graphs
+            if(event.mouseButton.y < HEIGHT_OFFSET) { // Above the graphs
+                SetActiveElement(event.mouseButton.x, event.mouseButton.y);
                 ActivateButtons(event);
             } else { // In one of the graphs
                 leftToRight = (event.mouseButton.x < window->getSize().x / 2); // True iff the click was in the left graph
@@ -245,7 +242,7 @@ void Runner::HandleEvents() {
                     }
                     Iterate(!isIterating, new cx(graphCoords.x, graphCoords.y)); // Stop iterating if we were iterating, or start if we weren't
                 }
-                else { // Grid mode
+                else { // Other mode
                     DrawShape(true);
                 }
             }
