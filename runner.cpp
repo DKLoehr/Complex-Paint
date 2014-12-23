@@ -210,6 +210,9 @@ void Runner::HandleEvents() {
         } else if((event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Return) ||
                   (event.type == sf::Event::MouseButtonPressed && event.mouseButton.y < 200)) {
             ActivateButtons(event);
+        } else if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tab) {
+            StepActiveElement(!(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ||
+                                sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)));
         } else if(event.type == sf::Event::KeyPressed) {
             elements[activeBox]->OnKeyPressed(event.key.code);
         } else if(event.type == sf::Event::MouseMoved) {
@@ -229,9 +232,6 @@ void Runner::HandleEvents() {
                     loc.setPosition(grid.lGrid.GraphToWindow(newLoc.real(), newLoc.imag()));
                 }
             }
-        } else if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tab) {
-            StepActiveElement(!(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ||
-                                sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)));
         } else if(event.type == sf::Event::MouseButtonPressed) {
             if(event.mouseButton.y < 200) { // Above the graphs
                 ActivateButtons(event);

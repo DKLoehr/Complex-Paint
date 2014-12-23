@@ -77,8 +77,8 @@ void InputBox::SetCursor(int newCursorPos) {
         m_cursorPos = 0;
     if(m_cursorPos > ((std::string)m_text.getString()).length())
         m_cursorPos = ((std::string)m_text.getString()).length();
-    if(m_cursorPos > m_rectangle.getSize().x / 9)
-        m_cursorPos = m_rectangle.getSize().x / 9;
+    if(m_cursorPos * 9 > m_rectangle.getSize().x)
+        m_cursorPos = m_rectangle.getSize().x;
 
     m_cursor.setPosition(m_rectangle.getPosition() + sf::Vector2f(m_cursorPos * 9, 0));
 }
