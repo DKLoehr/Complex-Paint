@@ -494,7 +494,6 @@ void Runner::UpdateEquation() {
         }
     }
     okEquation.SetOutlineColor(sf::Color::Black); // Mark the "Save Changes" button as being up-to-date
-    drawingJulia = (activeBox == 4);
 }
 
 void Runner::ActivateButtons(sf::Event event) {
@@ -504,18 +503,22 @@ void Runner::ActivateButtons(sf::Event event) {
         break;
     case 1: // Linear Preset
         equation.SetText("A*z + B");
+        drawingJulia = false;
         UpdateEquation();
         break;
     case 2: // Polar Preset
         equation.SetText("(R*cos(2*pi*T)+R*sin(2*pi*T)*i)*z+B");
         UpdateEquation();
+        drawingJulia = false;
         break;
     case 3: // Quadratic Preset
         equation.SetText("z^2 + C");
+        drawingJulia = false;
         UpdateEquation();
         break;
     case 4: // Inverse Quadratic Preset
         equation.SetText("rpm() * sqrt(z - C)");
+        drawingJulia = true;
         UpdateEquation();
         break;
     case 5: // Changing the current mode
@@ -530,7 +533,6 @@ void Runner::ActivateButtons(sf::Event event) {
         Iterate(false);
         elements[(int)mode + 5]->SetOutlineColor(sf::Color::Black); // Reset the coloring of the last-selected mode button
         mode = (drawMode)(activeBox - 5);                           // Update our current draw mode
-        drawingJulia = (activeBox == 4);
         elements[(int)mode + 5]->SetOutlineColor(sf::Color::Green); // Color the active mode green
         break;
     case 14: // Clear
