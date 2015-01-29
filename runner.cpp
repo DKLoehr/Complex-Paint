@@ -30,8 +30,8 @@ void Runner::Init() {
     grid = DoubleGrid(window, *inFont, HEIGHT_OFFSET);
     grid.Draw();
 
-    loc = sf::CircleShape(1, 30);
-    loc.setFillColor(sf::Color::Black);
+    loc = sf::CircleShape(1.5, 30);
+    loc.setFillColor(sf::Color::Red);
     loc.setPosition(-2, -2); // Make loc invisible until it's moved onto the screen
 
     lastPoint = std::complex<double>(0, 0);
@@ -226,7 +226,6 @@ void Runner::HandleEvents() {
             elements[activeBox]->OnKeyPressed(event.key.code);
         } else if(event.type == sf::Event::MouseMoved) {
             // In one of the graphs
-            loc.setFillColor(sf::Color::Black);
             if(event.mouseMove.x < window->getSize().x / 2) { // Left Graph
                 sf::Vector2f graphLoc(grid.lGrid.WindowToGraph(event.mouseMove.x, event.mouseMove.y));
                 fct->setVar("Z", cx(graphLoc.x, graphLoc.y));
