@@ -219,7 +219,7 @@ void Runner::HandleEvents() {
             }
             break;
         case sf::Event::KeyPressed:
-            switch(event.key.code) {
+            switch(event.key.code) { // Begin event.key.code switch statement
             case sf::Keyboard::Escape:
                 window->close();
                 break;

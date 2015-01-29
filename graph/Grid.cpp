@@ -192,10 +192,6 @@ sf::Vector2f Grid::GraphToWindow(double xPos, double yPos) {
 }
 
 sf::Vector2f Grid::GraphToPic(sf::Vector2f gLoc) {
-    /*sf::Vector2f coords = GraphToWindow(gLoc);
-    coords -= sf::Vector2f(0, m_origWin.y); // subtract original window size
-    coords.y *= -1;
-    return coords;*/
     return GraphToWindow(gLoc) - sf::Vector2f(0, m_position.y);
 }
 
