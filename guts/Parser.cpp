@@ -216,6 +216,13 @@ int Tree::checkParenthesis(string s) {
 
 // Parse, avoids having to pass m_root
 int Tree::parse() {
+	string& s = m_root->m_val;
+	int i;
+	while((i = s.find("-i")) >= 0) {
+		s.insert(i+1, "1");
+	}
+	m_root->m_val = s;
+	cout<<"\n" + m_root->m_val;
 	return parse(m_root);
 }
 
