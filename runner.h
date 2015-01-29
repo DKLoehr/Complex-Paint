@@ -128,6 +128,7 @@ private:
     void ClearJPic(); // Clear all points drawn to jpic
 
     void DrawPoint(sf::CircleShape& point, sf::Vector2f pos, bool left); // Draws a given point to the right and/or left graphs on the appropriate layer
+    std::string SanitizeString(std::string str); // Modify a string so that it's valid for the parser
 
 public:
     Runner(sf::RenderWindow* w, sf::Font* font, sf::RenderTexture* p, sf::RenderTexture* j); // Constructor

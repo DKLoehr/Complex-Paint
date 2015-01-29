@@ -433,20 +433,16 @@ void Runner::UpdateEquation() {
     Iterate(false); // Stop iterating
 
     /// Update the tree with the new equation
-    delete fct;                             // Get rid of our old, outdated equation tree
-    std::string func = equation.GetText();  // Get the string with the new equation
-    for(int iii = 0; iii < func.length(); iii ++) {
-        if(func[iii] == 'z')                // Equate user input of 'z' with 'Z'
-            func.replace(iii, 1, "Z");      // Replace instances of 'z' with 'Z', since parser requires uppercase parameters
-    }
-    fct = new parser::Tree(func);           // Create a new tree with our modified equation
+    delete fct;                                             // Get rid of our old, outdated equation tree
+    std::string func = SanitizeString(equation.GetText());  // Get our updated equation and sanitize it
+    fct = new parser::Tree(func);                           // Create a new tree with our new, sanitized equation
 
     /** Replace the old parameter inputBoxes with the new ones **/
 
     /// Update fct with new values and remove old inputBoxes
     while(elements.size() > elementsSize) { // While we have more elements than we started with (all extra ones are parameter boxes)
-        fct->setVar(elements[elements.size() - 1]->GetCap().substr(0, 1),   // Figure out which param the bottom inputBox corresponds to...
-                    elements[elements.size() - 1]->GetText());              // And set that parameter with the string in that box
+        fct->setVar(elements[elements.size() - 1]->GetCap().substr(0, 1),       // Figure out which param the bottom inputBox corresponds to...
+                    SanitizeString(elements[elements.size() - 1]->GetText()));  // And set that parameter with the string in that box
         delete elements[elements.size() - 1];   // Remove the last inputBox from memory to prevent memory leaks
         elements.pop_back();                    // Remove the last inputBox from the array
     }
@@ -456,10 +452,10 @@ void Runner::UpdateEquation() {
     for(int iii = 'A'; iii < 'Z' && elements.size() < elementsSize + 8; iii++) { // Max 8 vars for now due to screen size constraints
         if(func.find(iii) != std::string::npos) { // If this parameter appears in the equation...
             elements.push_back(new InputBox(window, inFont, 3, (elements.size() - elementsSize + 1.25) * 20, // Add a new inputBox
-                                        150, 15, std::string(1, (char)iii) + " "));                          // for this parameer
+                                        150, 15, std::string(1, (char)iii) + " "));                          // for this parameter
             elements[elements.size() - 1]->SetActive(false);                                    // Don't have the box start active
             elements[elements.size() - 1]->SetText(fct->getVarFct(std::string(1, (char)iii)));  // Set the parameter to have the last value
-                                                                                            // entered (0 if this is the first time it's used)
+                                                                                                // entered (0 if this is the first time it's used)
         }
     }
     okEquation.SetOutlineColor(sf::Color::Black); // Mark the "Save Changes" button as being up-to-date
@@ -774,6 +770,16 @@ void Runner::DrawPoint(sf::CircleShape& point, sf::Vector2f pos, bool left) {
         jpic->draw(point);
     else
         pic->draw(point);
+}
+
+std::string Runner::SanitizeString(std::string str){
+    for(int iii = 0; iii < str.length(); iii++) {
+        if(str[iii] == 'z')                // Equate user input of 'z' with 'Z'
+            str.replace(iii, 1, "Z");      // Replace instances of 'z' with 'Z', since parser requires uppercase parameters
+        else if(iii != 0 && str[iii] == 'i' && str[iii - 1] == '-')
+            str.replace(iii - 1, 1, "-1");     ///Workaround for a bug: replace -i with -1i to ensure it's parsed correctly
+    }
+    return str;
 }
 
 void Runner::Draw() {
