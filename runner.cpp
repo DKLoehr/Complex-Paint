@@ -205,11 +205,11 @@ void Runner::Init() {
 void Runner::HandleEvents() {
     sf::Event event;
     while(window->pollEvent(event)) {
-        if(event.type == sf::Event::Closed ||
-           (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape))
-        {
+        switch(event.type) {
+        case sf::Event::Closed:
             window->close();
-        } else if(event.type == sf::Event::TextEntered) {
+            break;
+        case sf::Event::TextEntered:
             elements[activeBox]->OnTextEntered(event.text.unicode);
             if(event.text.unicode != 9 && activeBox >= 16 && activeBox != 27) { // One of the inputBoxes, wasn't tab
                 if(activeBox >= 33) // Equation or variables
@@ -217,15 +217,25 @@ void Runner::HandleEvents() {
                 else // Graph box changed
                     okGraph.SetOutlineColor(sf::Color::Red);
             }
-        } else if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Return) {
-            ActivateButtons(event);
-        } else if(event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tab) {
-            StepActiveElement(!(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ||
-                                sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)));
-        } else if(event.type == sf::Event::KeyPressed) {
-            elements[activeBox]->OnKeyPressed(event.key.code);
-        } else if(event.type == sf::Event::MouseMoved) {
-            // In one of the graphs
+            break;
+        case sf::Event::KeyPressed:
+            switch(event.key.code) {
+            case sf::Keyboard::Escape:
+                window->close();
+                break;
+            case sf::Keyboard::Return:
+                ActivateButtons(event);
+                break;
+            case sf::Keyboard::Tab:
+                StepActiveElement(!(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ||
+                                    sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)));
+                break;
+            default:
+                elements[activeBox]->OnKeyPressed(event.key.code);
+                break;
+            } // End event.key.code switch statement
+            break;
+        case sf::Event::MouseMoved:
             if(event.mouseMove.y > HEIGHT_OFFSET) {
                 if(event.mouseMove.x < window->getSize().x / 2) { // Left Graph
                     sf::Vector2f graphLoc(grid.lGrid.WindowToGraph(event.mouseMove.x, event.mouseMove.y));
@@ -239,7 +249,8 @@ void Runner::HandleEvents() {
                     loc.setPosition(grid.lGrid.GraphToWindow(newLoc.real(), newLoc.imag()));
                 }
             }
-        } else if(event.type == sf::Event::MouseButtonPressed) {
+            break;
+        case sf::Event::MouseButtonPressed:
             if(event.mouseButton.y < HEIGHT_OFFSET) { // Above the graphs
                 SetActiveElement(event.mouseButton.x, event.mouseButton.y);
                 ActivateButtons(event);
@@ -257,6 +268,7 @@ void Runner::HandleEvents() {
                     DrawShape(true);
                 }
             }
+            break;
         }
     }
     DrawShape(false);

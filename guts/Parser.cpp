@@ -222,7 +222,6 @@ int Tree::parse() {
 		s.insert(i+1, "1");
 	}
 	m_root->m_val = s;
-	cout<<"\n" + m_root->m_val;
 	return parse(m_root);
 }
 
