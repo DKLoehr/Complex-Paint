@@ -226,16 +226,18 @@ void Runner::HandleEvents() {
             elements[activeBox]->OnKeyPressed(event.key.code);
         } else if(event.type == sf::Event::MouseMoved) {
             // In one of the graphs
-            if(event.mouseMove.x < window->getSize().x / 2) { // Left Graph
-                sf::Vector2f graphLoc(grid.lGrid.WindowToGraph(event.mouseMove.x, event.mouseMove.y));
-                fct->setVar("Z", cx(graphLoc.x, graphLoc.y));
-                cx newLoc(fct->eval());
-                loc.setPosition(grid.rGrid.GraphToWindow(newLoc.real(), newLoc.imag()));
-            } else { // Right Graph
-                sf::Vector2f graphLoc(grid.rGrid.WindowToGraph(event.mouseMove.x, event.mouseMove.y));
-                fct->setVar("Z", cx(graphLoc.x, graphLoc.y));
-                cx newLoc(fct->eval());
-                loc.setPosition(grid.lGrid.GraphToWindow(newLoc.real(), newLoc.imag()));
+            if(event.mouseMove.y > HEIGHT_OFFSET) {
+                if(event.mouseMove.x < window->getSize().x / 2) { // Left Graph
+                    sf::Vector2f graphLoc(grid.lGrid.WindowToGraph(event.mouseMove.x, event.mouseMove.y));
+                    fct->setVar("Z", cx(graphLoc.x, graphLoc.y));
+                    cx newLoc(fct->eval());
+                    loc.setPosition(grid.rGrid.GraphToWindow(newLoc.real(), newLoc.imag()));
+                } else { // Right Graph
+                    sf::Vector2f graphLoc(grid.rGrid.WindowToGraph(event.mouseMove.x, event.mouseMove.y));
+                    fct->setVar("Z", cx(graphLoc.x, graphLoc.y));
+                    cx newLoc(fct->eval());
+                    loc.setPosition(grid.lGrid.GraphToWindow(newLoc.real(), newLoc.imag()));
+                }
             }
         } else if(event.type == sf::Event::MouseButtonPressed) {
             if(event.mouseButton.y < HEIGHT_OFFSET) { // Above the graphs
@@ -263,119 +265,86 @@ void Runner::HandleEvents() {
 
 void Runner::Iterate(bool keepIterating, cx* newPos) {
     isIterating = keepIterating;
-    if(keepIterating) {
-        double circRad = 1;
-        int numIterations = 1;
-        if(mode == mSingle) {
-            isIterating = false;
-            circRad = 1.5;
-        }
-        else if (mode == mIterative) {
-            numIterations = 90;
-            circRad = .75;
-        } else if(mode == mGrid) { // Grid mode
-            isIterating = false;
-            circRad = 1.0;
-        }
+    if(!keepIterating)
+        return;
 
-        graphCoords = sf::Vector2f(lastPoint.real(), lastPoint.imag());
-        sf::CircleShape lastLoc = sf::CircleShape(circRad, 30);
-        lastLoc.setFillColor(sf::Color::Black);
-        if(lastGraph) { // lastLoc is on the left graph
-            lastLoc.setPosition(grid.lGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
-            if(drawingJulia)
-                jpic->draw(lastLoc);
-            else
-                pic->draw(lastLoc);
+    /** Setup: Size of the points, how many times to iterate **/
+    double circRad = 1;
+    int numIterations = 1;
+    if(mode == mSingle) {
+        isIterating = false;
+        circRad = 1.5;
+    }
+    else if (mode == mIterative) {
+        numIterations = 90;
+        circRad = .75;
+    } else if(mode == mGrid) { // Grid mode
+        isIterating = false;
+        circRad = 1.0;
+    }
+    sf::CircleShape point = sf::CircleShape(circRad, 30); // Point that we draw to the screen
+    point.setFillColor(sf::Color::Black);
+
+    /** Draw special points:
+        First point of an iteration is green,
+        Draw over previous green ones
+        Draw over the last drawn point (which was drawn in red) **/
+
+    /// Draw over last drawn point, so it's no longer red
+    graphCoords = sf::Vector2f(lastPoint.real(), lastPoint.imag()); // Location of the last drawn point (currently red)
+    DrawPoint(point, graphCoords, lastGraph); // Draw over it in black
+    if(newPos != NULL) { // We've been given a new starting position
+        /// Draw over the previous first point, so it's no longer green
+        if(lastStartPos != NULL) { // We have a green point currently on the screen
+            point.setFillColor(sf::Color::Black); // Draw over previous first point in black
+            graphCoords = sf::Vector2f(lastStartPos->real(), lastStartPos->imag()); // Coordinates of previous first point
+            DrawPoint(point, graphCoords, true); // Draw over the previous first point (is still green) on both graphs
+            DrawPoint(point, graphCoords, false);
         }
-        else {          // lastLoc is on the right graph
-            lastLoc.setPosition(grid.rGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
-            if(drawingJulia)
-                jpic->draw(lastLoc);
-            else
-                pic->draw(lastLoc);
-        }
-        if(newPos != NULL) {
-            sf::CircleShape firstLoc = sf::CircleShape(circRad, 30);
-            if(lastStartPos != NULL) {
-                firstLoc.setFillColor(sf::Color::Black);
-                firstLoc.setPosition(grid.lGrid.GraphToPic(sf::Vector2f(lastStartPos->real(), lastStartPos->imag())) -
-                                                           sf::Vector2f(circRad, circRad));
-                if(drawingJulia)
-                    jpic->draw(firstLoc);
-                else
-                    pic->draw(firstLoc);
-                firstLoc.setPosition(grid.rGrid.GraphToPic(sf::Vector2f(lastStartPos->real(), lastStartPos->imag())) -
-                                                           sf::Vector2f(circRad, circRad));
-                if(drawingJulia)
-                    jpic->draw(firstLoc);
-                else
-                    pic->draw(firstLoc);
-            }
-            lastPoint = *newPos;
-            if(lastStartPos == NULL) {
+        if(mode == mIterative) {
+            if(lastStartPos == NULL) {      // Store our current first point in the appropriate manner
                 lastStartPos = new cx(*newPos);
             } else {
                 *lastStartPos = *newPos;
             }
-            if(mode == mIterative) {
-                firstLoc.setFillColor(sf::Color::Green);
-                firstLoc.setPosition(grid.lGrid.GraphToPic(sf::Vector2f(lastPoint.real(), lastPoint.imag())) -
-                                                           sf::Vector2f(circRad, circRad));
-                if(drawingJulia)
-                    jpic->draw(firstLoc);
-                else
-                    pic->draw(firstLoc);
-                firstLoc.setPosition(grid.rGrid.GraphToPic(sf::Vector2f(lastPoint.real(), lastPoint.imag())) -
-                                                           sf::Vector2f(circRad, circRad));
-                if(drawingJulia)
-                    jpic->draw(firstLoc);
-                else
-                    pic->draw(firstLoc);
-            }
         }
-        delete newPos;
 
-        for(int iii = 0; iii < numIterations; iii++) { // Iterate 30 points at once, or just one
-            fct->setVar("Z", lastPoint); // Feed our current location into parser as the variable Z
-            try {
-                lastPoint = fct->eval(); // Don't change position, so we can make it black first
-            }
-            catch (std::invalid_argument) { // Should mean we've "reached infinity", so we can stop
-                isIterating = false;
-                return;
-            }
-
-            graphCoords = sf::Vector2f(lastPoint.real(), lastPoint.imag());
-            sf::CircleShape newLoc = sf::CircleShape(circRad, 30);
-            if(iii == numIterations - 1)
-                newLoc.setFillColor(sf::Color::Red);
-            else
-                newLoc.setFillColor(sf::Color::Black);
-            if(mode == mIterative) { // Iterate mode draws to both windows; other modes only draw to one
-                newLoc.setPosition(grid.rGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
-                if(drawingJulia) { // Julia set, draw to a different layer
-                    jpic->draw(newLoc);
-                } else {
-                    pic->draw(newLoc);
-                }
-                newLoc.setPosition(grid.lGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
-                if(drawingJulia) { // Julia set, draw to a different layer
-                    jpic->draw(newLoc);
-                } else {
-                    pic->draw(newLoc);
-                }
-            } else if(leftToRight) { // Draw the output on the right graph
-                newLoc.setPosition(grid.rGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
-                pic->draw(newLoc);
-                lastGraph = false; // Mark as having been drawn on the right graph
-            } else { // Draw the output on the left graph
-                newLoc.setPosition(grid.lGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
-                pic->draw(newLoc);
-                lastGraph = true; // Mark as having been draw on the left graph
-            }
-            leftToRight = !leftToRight;
+        /// Draw the first point of an iteration in green
+        if(mode == mIterative) {
+            point.setFillColor(sf::Color::Green); // Draw the first point in green
+            graphCoords = sf::Vector2f(newPos->real(), newPos->imag()); // Coordinates of our new starting point
+            DrawPoint(point, graphCoords, true); // Draw the first point to both graphs
+            DrawPoint(point, graphCoords, false);
         }
+        lastPoint = *newPos; // Mark the last point drawn
+    }
+    delete newPos; // Drawn this point, so free its memory to prevent leaks
+
+
+    /** Draw regular points **/
+    for(int iii = 0; iii < numIterations; iii++) { // Iterate many points at once, or just one
+        fct->setVar("Z", lastPoint); // Feed our current location into parser as the variable Z
+        try {
+            lastPoint = fct->eval(); // Don't change position, so we can make it black first
+        }
+        catch (std::invalid_argument) { // Should mean we've "reached infinity", so we can stop
+            isIterating = false;
+            return;
+        }
+
+        graphCoords = sf::Vector2f(lastPoint.real(), lastPoint.imag()); // Coordinates of the last drawn point
+        if(iii == numIterations - 1)
+            point.setFillColor(sf::Color::Red);    // First point, so draw it in red
+        else
+            point.setFillColor(sf::Color::Black);  // Otherwise, it's black
+        if(mode == mIterative) {                    // Iterate mode draws to both windows; other modes only draw to one
+            DrawPoint(point, graphCoords, true);   // Draw to both windows
+            DrawPoint(point, graphCoords, false);
+        } else {
+            DrawPoint(point, graphCoords, !leftToRight);
+            lastGraph = !leftToRight; // Mark which graph we most recently drew to
+        }
+        leftToRight = !leftToRight;
     }
 }
 
@@ -793,6 +762,18 @@ void Runner::ClearJPic() {
     lastPoint = cx(0, 0);                   // Move our last drawn point to the origin
     delete(lastStartPos);
     lastStartPos = NULL;
+}
+
+void Runner::DrawPoint(sf::CircleShape& point, sf::Vector2f pos, bool left) {
+    if(left) {
+        point.setPosition(grid.lGrid.GraphToPic(pos) - sf::Vector2f(point.getRadius(), point.getRadius()));
+    } else {
+        point.setPosition(grid.rGrid.GraphToPic(pos) - sf::Vector2f(point.getRadius(), point.getRadius()));
+    }
+    if(drawingJulia)
+        jpic->draw(point);
+    else
+        pic->draw(point);
 }
 
 void Runner::Draw() {
