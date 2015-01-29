@@ -30,7 +30,7 @@ I: Entering Equations: The box in the top left corner is the equation input box.
 
 * Once you have entered your equation, press the nearby "Save Changes" button. This will adjust the parameters below the equation box to show the ones you've used. You may then edit the values of those parameters. Once you have done this, hit the "Save Changes" button again. Note that the border of the "Save Changes" button will be red if you have unsaved changes for either the equation or the parameters.
 
-* You may click on any of the four presets to get pre-written equations that are often used. This automatically saves changes.
+* You may click on any of the four presets to get pre-written equations that are often used. This automatically saves changes. The presets are:
 	* Linear: 	Az + B
 	* Polar Linear: (R*cos(2*pi*T)+R*sin(2*pi*T)*i)*z+B
 	* Quadratic: 	z^2 + C
