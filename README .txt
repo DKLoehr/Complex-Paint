@@ -8,10 +8,10 @@ The source code was written in C++ and uses the SFML Library. The source code is
 ==========================
 Installation Instructions:
 Extract the .zip file to whatever directory you wish to keep it in. 
-For Windows, ensure that the file VeraMono.txt is in the same directory as CPaintWin.exe
+For Windows, ensure that the file VeraMono.ttf is in the same directory as CPaintWin.exe
 To run, double-click the .exe file (Windows) or the app (Macs)
 
-===================
+
 Usage Instructions:
 
 ======================
