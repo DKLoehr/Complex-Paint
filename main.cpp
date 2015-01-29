@@ -14,8 +14,11 @@ int main() {
     sf::RenderTexture pic;
     if(!pic.create(window.getSize().x, window.getSize().y - HEIGHT_OFFSET))
         return -2;
+    sf::RenderTexture jpic;
+    if(!jpic.create(window.getSize().x, window.getSize().y - HEIGHT_OFFSET))
+        return -3;
 
-    Runner run = Runner(&window, &inFont, &pic);
+    Runner run = Runner(&window, &inFont, &pic, &jpic);
 
     while(window.isOpen()) {
         run.HandleEvents();

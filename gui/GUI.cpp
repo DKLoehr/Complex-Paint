@@ -31,6 +31,10 @@ GUI::GUI(sf::RenderWindow* window, sf::Font* font, double x, double y, double wi
     m_text.setPosition(x, y - 2);
 }
 
+bool GUI::GetActive() {
+    return isActive;
+}
+
 void GUI::SetBoxColor(sf::Color c) {
     m_rectangle.setFillColor(c);
 }

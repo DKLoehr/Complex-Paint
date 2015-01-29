@@ -1,9 +1,11 @@
 #include "runner.h"
 
-Runner::Runner(sf::RenderWindow* w, sf::Font* font, sf::RenderTexture* p) :
+Runner::Runner(sf::RenderWindow* w, sf::Font* font, sf::RenderTexture* p, sf::RenderTexture* j) :
     window(w),
     inFont(font),
-    pic(p)
+    pic(p),
+    jpic(j)
+
 {
     Init();
 }
@@ -13,11 +15,15 @@ void Runner::Init() {
     isIterating = false;
     isDrawing = false;
     leftToRight = true;
+    drawingJulia = false;
     mode = mSingle;
 
     pic->clear(sf::Color::White);
+    jpic->clear(sf::Color(0, 0, 0, 0)); // Transparent white
     graphs.setPosition(0, HEIGHT_OFFSET);
     graphs.setTexture(pic->getTexture());
+    jgraphs.setPosition(0, HEIGHT_OFFSET);
+    jgraphs.setTexture(jpic->getTexture());
 
     fct = new parser::Tree("Z");
 
@@ -29,6 +35,7 @@ void Runner::Init() {
     loc.setPosition(-2, -2); // Make loc invisible until it's moved onto the screen
 
     lastPoint = std::complex<double>(0, 0);
+    lastStartPos = NULL;
     graphCoords = sf::Vector2f(0, 0);
 
     lTitle = sf::Text("Left Graph", *inFont, 15);
@@ -108,74 +115,77 @@ void Runner::Init() {
 
 
     /// Clear graph button
-    clearGraphs = Button(window, inFont, window->getSize().x / 2 - 23, 175, 46, 15, "Clear"); // 14
+    clearGraphs = Button(window, inFont, window->getSize().x / 2 - 125, 175, 100, 15, "Clear Graph"); // 14
     elements.push_back(&clearGraphs);
+
+    clearJulia = Button(window, inFont, window->getSize().x / 2 + 25, 175, 100, 15, "Clear Julia");  // 15
+    elements.push_back(&clearJulia);
 
     /** Graph-related elements **/
     /// Button to copy changes from the right side to the left
     mirrorL = Button(window, inFont, lTitle.getPosition().x + ((std::string)lTitle.getString()).length() * 10 + 5,
-                     lTitle.getPosition().y, 15, 15, "<"); // 15
+                     lTitle.getPosition().y, 15, 15, "<"); // 16
     elements.push_back(&mirrorL);
 
-    mirrorR = Button(window, inFont, mirrorL.GetPosition().x + 20, mirrorL.GetPosition().y, 15, 15, ">"); // 16
+    mirrorR = Button(window, inFont, mirrorL.GetPosition().x + 20, mirrorL.GetPosition().y, 15, 15, ">"); // 17
     elements.push_back(&mirrorR);
 
     /// Left-side elements
-    xRangeL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 30, 55, 15, "x Range"); // 17
+    xRangeL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 30, 55, 15, "x Range"); // 18
     xRangeL.SetText("2");
     elements.push_back(&xRangeL);
 
-    yRangeL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 50, 55, 15, "y Range"); // 18
+    yRangeL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 50, 55, 15, "y Range"); // 19
     yRangeL.SetText("2");
     elements.push_back(&yRangeL);
 
-    xScaleL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 70, 55, 15, "x Scale"); // 19
+    xScaleL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 70, 55, 15, "x Scale"); // 20
     xScaleL.SetText("1");
     elements.push_back(&xScaleL);
 
-    yScaleL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 90, 55, 15, "y Scale"); // 20
+    yScaleL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 90, 55, 15, "y Scale"); // 21
     yScaleL.SetText("1");
     elements.push_back(&yScaleL);
 
-    centerL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 110, 55, 15, "Center "); // 21
+    centerL = InputBox(window, inFont, window->getSize().x * 3 / 4 + 5, 110, 55, 15, "Center "); // 22
     centerL.SetText("(0,0)");
     elements.push_back(&centerL);
 
-    numbersL = Checkbox(window, inFont, window->getSize().x * 3 / 4 + 5, 130, "Numbers", true); // 22
+    numbersL = Checkbox(window, inFont, window->getSize().x * 3 / 4 + 5, 130, "Numbers", true); // 23
     elements.push_back(&numbersL);
 
-    linesL = Checkbox(window, inFont, window->getSize().x * 3 / 4 + 5, 150, "Lines", false);    // 23
+    linesL = Checkbox(window, inFont, window->getSize().x * 3 / 4 + 5, 150, "Lines", false);    // 24
     elements.push_back(&linesL);
 
     /// Right-side elements
-    xRangeR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 30, 55, 15, "x Range"); // 24
+    xRangeR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 30, 55, 15, "x Range"); // 25
     xRangeR.SetText("2");
     elements.push_back(&xRangeR);
 
-    yRangeR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 50, 55, 15, "y Range"); // 25
+    yRangeR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 50, 55, 15, "y Range"); // 26
     yRangeR.SetText("2");
     elements.push_back(&yRangeR);
 
-    xScaleR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 70, 55, 15, "x Scale"); // 26
+    xScaleR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 70, 55, 15, "x Scale"); // 27
     xScaleR.SetText("1");
     elements.push_back(&xScaleR);
 
-    yScaleR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 90, 55, 15, "y Scale"); // 27
+    yScaleR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 90, 55, 15, "y Scale"); // 28
     yScaleR.SetText("1");
     elements.push_back(&yScaleR);
 
-    centerR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 110, 55, 15, "Center "); // 28
+    centerR = InputBox(window, inFont, window->getSize().x * 7 / 8 + 5, 110, 55, 15, "Center "); // 29
     centerR.SetText("(0,0)");
     elements.push_back(&centerR);
 
-    numbersR = Checkbox(window, inFont, window->getSize().x * 7 / 8 + 5, 130, "Numbers", true); // 29
+    numbersR = Checkbox(window, inFont, window->getSize().x * 7 / 8 + 5, 130, "Numbers", true); // 30
     elements.push_back(&numbersR);
 
-    linesR = Checkbox(window, inFont, window->getSize().x * 7 / 8 + 5, 150, "Lines", false); // 30
+    linesR = Checkbox(window, inFont, window->getSize().x * 7 / 8 + 5, 150, "Lines", false); // 31
     elements.push_back(&linesR);
 
     /// General graph-related elements
-    okGraph = Button(window, inFont, window->getSize().x * 7 / 8 - 54, 175, // 31
+    okGraph = Button(window, inFont, window->getSize().x * 7 / 8 - 54, 175, // 32
                                 108, 15, "Save Changes");
     elements.push_back(&okGraph);
 
@@ -187,7 +197,7 @@ void Runner::Init() {
     for(int iii = 0; iii < elements.size(); iii++) {
         elements[iii]->SetActive(false);
     }
-    activeBox = 32; // Start out highlighting the equation entering box
+    activeBox = elementsSize - 1; // Start out highlighting the equation entering box
     elements[activeBox]->SetActive(true);
     UpdateGraphs();
 }
@@ -201,8 +211,8 @@ void Runner::HandleEvents() {
             window->close();
         } else if(event.type == sf::Event::TextEntered) {
             elements[activeBox]->OnTextEntered(event.text.unicode);
-            if(event.text.unicode != 9 && activeBox >= 11 && activeBox != 25) { // One of the inputBoxes, wasn't tab
-                if(activeBox >= 26) // Equation or variables
+            if(event.text.unicode != 9 && activeBox >= 16 && activeBox != 27) { // One of the inputBoxes, wasn't tab
+                if(activeBox >= 33) // Equation or variables
                     okEquation.SetOutlineColor(sf::Color::Red);
                 else // Graph box changed
                     okGraph.SetOutlineColor(sf::Color::Red);
@@ -274,23 +284,55 @@ void Runner::Iterate(bool keepIterating, cx* newPos) {
         lastLoc.setFillColor(sf::Color::Black);
         if(lastGraph) { // lastLoc is on the left graph
             lastLoc.setPosition(grid.lGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
-            pic->draw(lastLoc);
+            if(drawingJulia)
+                jpic->draw(lastLoc);
+            else
+                pic->draw(lastLoc);
         }
         else {          // lastLoc is on the right graph
             lastLoc.setPosition(grid.rGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
-            pic->draw(lastLoc);
+            if(drawingJulia)
+                jpic->draw(lastLoc);
+            else
+                pic->draw(lastLoc);
         }
         if(newPos != NULL) {
+            sf::CircleShape firstLoc = sf::CircleShape(circRad, 30);
+            if(lastStartPos != NULL) {
+                firstLoc.setFillColor(sf::Color::Black);
+                firstLoc.setPosition(grid.lGrid.GraphToPic(sf::Vector2f(lastStartPos->real(), lastStartPos->imag())) -
+                                                           sf::Vector2f(circRad, circRad));
+                if(drawingJulia)
+                    jpic->draw(firstLoc);
+                else
+                    pic->draw(firstLoc);
+                firstLoc.setPosition(grid.rGrid.GraphToPic(sf::Vector2f(lastStartPos->real(), lastStartPos->imag())) -
+                                                           sf::Vector2f(circRad, circRad));
+                if(drawingJulia)
+                    jpic->draw(firstLoc);
+                else
+                    pic->draw(firstLoc);
+            }
             lastPoint = *newPos;
+            if(lastStartPos == NULL) {
+                lastStartPos = new cx(*newPos);
+            } else {
+                *lastStartPos = *newPos;
+            }
             if(mode == mIterative) {
-                sf::CircleShape firstLoc = sf::CircleShape(circRad, 30);
                 firstLoc.setFillColor(sf::Color::Green);
                 firstLoc.setPosition(grid.lGrid.GraphToPic(sf::Vector2f(lastPoint.real(), lastPoint.imag())) -
                                                            sf::Vector2f(circRad, circRad));
-                pic->draw(firstLoc);
+                if(drawingJulia)
+                    jpic->draw(firstLoc);
+                else
+                    pic->draw(firstLoc);
                 firstLoc.setPosition(grid.rGrid.GraphToPic(sf::Vector2f(lastPoint.real(), lastPoint.imag())) -
                                                            sf::Vector2f(circRad, circRad));
-                pic->draw(firstLoc);
+                if(drawingJulia)
+                    jpic->draw(firstLoc);
+                else
+                    pic->draw(firstLoc);
             }
         }
         delete newPos;
@@ -313,16 +355,22 @@ void Runner::Iterate(bool keepIterating, cx* newPos) {
                 newLoc.setFillColor(sf::Color::Black);
             if(mode == mIterative) { // Iterate mode draws to both windows; other modes only draw to one
                 newLoc.setPosition(grid.rGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
-                pic->draw(newLoc);
+                if(drawingJulia) { // Julia set, draw to a different layer
+                    jpic->draw(newLoc);
+                } else {
+                    pic->draw(newLoc);
+                }
                 newLoc.setPosition(grid.lGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
-                pic->draw(newLoc);
-            }
-            else if(leftToRight) { // Draw the output on the right graph
+                if(drawingJulia) { // Julia set, draw to a different layer
+                    jpic->draw(newLoc);
+                } else {
+                    pic->draw(newLoc);
+                }
+            } else if(leftToRight) { // Draw the output on the right graph
                 newLoc.setPosition(grid.rGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
                 pic->draw(newLoc);
                 lastGraph = false; // Mark as having been drawn on the right graph
-            }
-            else { // Draw the output on the left graph
+            } else { // Draw the output on the left graph
                 newLoc.setPosition(grid.lGrid.GraphToPic(graphCoords) - sf::Vector2f(circRad, circRad));
                 pic->draw(newLoc);
                 lastGraph = true; // Mark as having been draw on the left graph
@@ -409,6 +457,7 @@ void Runner::UpdateGraphs() {
     if(okGraph.GetOutlineColor() != sf::Color::Black) {     // If anything (besides numbers or lines) was changed
         okGraph.SetOutlineColor(sf::Color::Black);          // Mark "Save changes" button as up-to-date
         ClearPic();                                         // Get rid of old points which are no longer accurate
+        ClearJPic();
     }
 }
 
@@ -446,6 +495,7 @@ void Runner::UpdateEquation() {
         }
     }
     okEquation.SetOutlineColor(sf::Color::Black); // Mark the "Save Changes" button as being up-to-date
+    drawingJulia = (activeBox == 4);
 }
 
 void Runner::ActivateButtons(sf::Event event) {
@@ -481,12 +531,16 @@ void Runner::ActivateButtons(sf::Event event) {
         Iterate(false);
         elements[(int)mode + 5]->SetOutlineColor(sf::Color::Black); // Reset the coloring of the last-selected mode button
         mode = (drawMode)(activeBox - 5);                           // Update our current draw mode
+        drawingJulia = (activeBox == 4);
         elements[(int)mode + 5]->SetOutlineColor(sf::Color::Green); // Color the active mode green
         break;
     case 14: // Clear
         ClearPic();
         break;
-    case 15: // Mirror R->L
+    case 15:
+        ClearJPic(); // Clear julia set
+        break;
+    case 16: // Mirror R->L
         okGraph.SetOutlineColor(sf::Color::Red);
         xRangeL.SetText(xRangeR.GetText());
         yRangeL.SetText(yRangeR.GetText());
@@ -496,7 +550,7 @@ void Runner::ActivateButtons(sf::Event event) {
         if(numbersL.GetText() != numbersR.GetText()) numbersL.Toggle();
         if(linesL.GetText() != linesR.GetText()) linesL.Toggle();
         break;
-    case 16: // Mirror L->R
+    case 17: // Mirror L->R
         okGraph.SetOutlineColor(sf::Color::Red);
         xRangeR.SetText(xRangeL.GetText());
         yRangeR.SetText(yRangeL.GetText());
@@ -506,7 +560,7 @@ void Runner::ActivateButtons(sf::Event event) {
         if(numbersR.GetText() != numbersL.GetText()) numbersR.Toggle();
         if(linesR.GetText() != linesL.GetText()) linesR.Toggle();
         break;
-    case 31: // Save Changes for graphs
+    case 32: // Save Changes for graphs
         UpdateGraphs();
         break;
     default:
@@ -727,7 +781,17 @@ void Runner::DrawFree(sf::Vector2i position, bool toggleDrawing) {
 void Runner::ClearPic() {
     Iterate(false);                 // Stop iterating
     pic->clear(sf::Color::White);   // Clear the canvas (pic) to be fully white
-    lastPoint = cx(0, 0);              // Move our last drawn point to the origin
+    lastPoint = cx(0, 0);           // Move our last drawn point to the origin
+    delete(lastStartPos);
+    lastStartPos = NULL;
+}
+
+void Runner::ClearJPic() {
+    Iterate(false);                         // Stop iterating
+    jpic->clear(sf::Color(0, 0, 0, 0));   // Clear the julia set canvas (jpic) to be transparent white
+    lastPoint = cx(0, 0);                   // Move our last drawn point to the origin
+    delete(lastStartPos);
+    lastStartPos = NULL;
 }
 
 void Runner::Draw() {
@@ -743,7 +807,9 @@ void Runner::Draw() {
 
     /// Draw graph elements
     pic->display(); // Update our graph with the newest points
-    window->draw(graphs); // Draw the updated graph to the screen
+    window->draw(graphs); // Draw the updated graph of the first layer to the screen
+    jpic->display();
+    window->draw(jgraphs); // Draw the second layer
     grid.Draw(); // Draw the axes over the graph
 
     if (isDrawing) { // If we're actively drawing a shape

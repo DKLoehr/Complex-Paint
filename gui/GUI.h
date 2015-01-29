@@ -31,6 +31,7 @@ public:
     sf::Color GetOutlineColor();
 
     virtual void SetActive(bool active) = 0;
+    bool GetActive(); // Returns isActive
 
     virtual void SetPosition(sf::Vector2f newPos) = 0;
     virtual void SetPosition(double x, double y) = 0;
