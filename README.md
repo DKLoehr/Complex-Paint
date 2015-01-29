@@ -17,7 +17,8 @@ Usage Instructions:
 
 I: Entering Equations: The box in the top left corner is the equation input box. Equations should be typed in according to the following rules: 
 
-* 'z' or 'Z' (both are equivalent) is the input (the number corresponding to where you clicked on the graph.
+* 'z' or 'Z' (both are equivalent) is the input (the number corresponding to where you clicked on the graph).
+
 * Parameters should be uppercase: e.g. 'A' 'B', but not 'a' or 'c'. You may use up to 8 parameters due to space constraints.
 
 * You can currently perform the four basic operations (+,-,*,/) as you'd expect, but you must use an operator: If you type in "AB", the program will crash; type "A * B" instead. You may also use ^ for exponentiation (A^2) = A * A = "A squared".
