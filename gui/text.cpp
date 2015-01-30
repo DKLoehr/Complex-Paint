@@ -68,8 +68,6 @@ bool InputBox::OnEnter() {
 }
 
 void InputBox::OnClick(double xP, double yP) {
-    double xScale = m_w->getSize().x / m_wSize.x, yScale = m_w->getSize().y / m_wSize.y;
-
     SetCursor((int)((xP - m_rectangle.getPosition().x) / 9 + .5)); ///TODO: Add in scaling properly
 }
 

@@ -269,6 +269,8 @@ void Runner::HandleEvents() {
                 }
             }
             break;
+            default:
+                continue;
         }
     }
     DrawShape(false);
