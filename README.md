@@ -96,3 +96,32 @@ Known Issues and Workarounds:
 
 * Negative numbers are not parsed properly; e.g. "5*-5" will cause the program to crash. Workaround: Put parentheses around the negative number; e.g. "5*(-5)" is parsed correctly
 * "-i" is replaced with "-1i" when entered into an equation or variable; this should not affect usage, and is in fact a workaround for a problem related to parsing "-i"
+
+=============
+V: Changelog:
+
+1.5:
+* Made the mouse pointer dot slightly larger and colored red.
+* Added a separate layer which Julia sets are drawn to, and a separate button to clear that layer
+* Added a workaround for the c =-i bug (Replacing it with c =-1i)
+
+1.4:
+* Prevented window resizing, as it was causing major issues on macs.
+* Caused many points that lie off the current graph to not be drawn at all.
+* Added a cursor to InputBoxes.
+* Elements are no longer activated just by being moused over, but must be clicked in.
+
+1.3: 
+* Overhauled shape generation code, and added modes Line, Rectangle, Circle1, Circle2, Circle3, Freedraw.
+* Changed parameter boxes to evaluate expressions in the same way as the equation box.
+
+1.2:
+* Implemented Grid mode.
+* Fixed a bug where checkboxes were toggled just by mousing over them.
+
+1.1:
+* Fixed a bug in the Mac version which prevented the clear button from working properly.
+* Fixed a bug in both versions in which iterations of the Linear equation would not appear.
+
+1.0:
+* First Release!

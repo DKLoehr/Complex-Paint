@@ -37,7 +37,7 @@ I: Entering Equations: The box in the top left corner is the equation input box.
 	* Quadratic: 	z^2 + C
 	* Inverse Quad: rpm() * sqrt(z - C)
 
-============================
+================================
 II: Changing the Graph Settings: 
 
 The set of buttons in the top-right corner of the screen control the graph settings: size, location, and format. The column on the left controls the graph on the left; the right column is similar. The buttons have the following meanings:
@@ -59,7 +59,7 @@ The set of buttons in the top-right corner of the screen control the graph setti
 
 * Once you have made your changes, hit the "Save Changes" button below the columns to see them go into effect. Note that the border of this button will be red if you have unsaved changes.
 
-====================
+==================================
 III: Drawing things: The fun part!
 
 Once you have entered your equation and parameter values, moving your mouse in one of the two graphs on the bottom of the screen will cause the other graph to display a point that moves with your mouse, showing where you would end up if you applied that equation to your current location. 
@@ -91,8 +91,37 @@ Note that the code also tracks if you are drawing a Julia set: this is assumed t
 
 Hitting the "Clear Graph" button will clear anything drawn on the regular layer (leaving the Julia set layer untouched); Hitting the "Clear Julia" button will clear anything drawn on the Julia Set layer (leaving the regular layer untouched.)
 
-=============
-Known Issues and Workarounds:
+=================================
+IV: Known Issues and Workarounds:
 
 * Negative numbers are not parsed properly; e.g. "5*-5" will cause the program to crash. Workaround: Put parentheses around the negative number; e.g. "5*(-5)" is parsed correctly
 * "-i" is replaced with "-1i" when entered into an equation or variable; this should not affect usage, and is in fact a workaround for a problem related to parsing "-i"
+
+=============
+V: Changelog:
+
+1.5:
+* Made the mouse pointer dot slightly larger and colored red.
+* Added a separate layer which Julia sets are drawn to, and a separate button to clear that layer
+* Added a workaround for the c =-i bug (Replacing it with c =-1i)
+
+1.4:
+* Prevented window resizing, as it was causing major issues on macs.
+* Caused many points that lie off the current graph to not be drawn at all.
+* Added a cursor to InputBoxes.
+* Elements are no longer activated just by being moused over, but must be clicked in.
+
+1.3: 
+* Overhauled shape generation code, and added modes Line, Rectangle, Circle1, Circle2, Circle3, Freedraw.
+* Changed parameter boxes to evaluate expressions in the same way as the equation box.
+
+1.2:
+* Implemented Grid mode.
+* Fixed a bug where checkboxes were toggled just by mousing over them.
+
+1.1:
+* Fixed a bug in the Mac version which prevented the clear button from working properly.
+* Fixed a bug in both versions in which iterations of the Linear equation would not appear.
+
+1.0:
+* First Release!
