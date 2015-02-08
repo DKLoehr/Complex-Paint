@@ -127,7 +127,7 @@ private:
     void ClearPic();  // Clear all points drawn to pic
     void ClearJPic(); // Clear all points drawn to jpic
 
-    void DrawPoint(sf::CircleShape& point, sf::Vector2f pos, bool left); // Draws a given point to the right and/or left graphs on the appropriate layer
+    void DrawPoint(sf::CircleShape& point, sf::Vector2f pos, bool left); // Draws a given point to the left or right graph on the appropriate layer
     std::string SanitizeString(std::string str); // Modify a string so that it's valid for the parser
 
 public:
