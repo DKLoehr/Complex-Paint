@@ -50,52 +50,52 @@
 		<button onclick="CopyGraph(1)"> Copy <-- </button>
 		<form id="graphSettings" method="POST">
 			<div id="LxMin">
-				x Min: <input type="text" id="LxMinBox">
+				x Min: <input type="text" id="LxMinBox" value="-2">
 			</div>
 			<div id="RxMin">
-				x Min: <input type="text" id="RxMinBox">
+				x Min: <input type="text" id="RxMinBox" value="-2">
 			</div>
 
 			<br>
 			<div id="LxMax">
-				x Max: <input type="text" id="LxMaxBox">
+				x Max: <input type="text" id="LxMaxBox" value="2">
 			</div>
 			<div id="RxMax">
-				x Max: <input type="text" id="RxMaxBox">
+				x Max: <input type="text" id="RxMaxBox" value="2">
 			</div>
 	
 			<br>
 	
 			<div id="LyMin">
-				y Min: <input type="text" id="LyMinBox">
+				y Min: <input type="text" id="LyMinBox" value="-2">
 			</div>
 			<div id="RyMin">
-				y Min: <input type="text" id="RyMinBox">
+				y Min: <input type="text" id="RyMinBox" value="-2">
 			</div>
 			<br>
 			<div id="LyMax">
-				y Max: <input type="text" id="LyMaxBox">
+				y Max: <input type="text" id="LyMaxBox" value="2">
 			</div>
 			<div id="RyMax">
-				y Max: <input type="text" id="RyMaxBox">
+				y Max: <input type="text" id="RyMaxBox" value="2">
 			</div>
 			<br>
 	
 			<div id="LScale">
-				Scale: <input type="text" id="LScaleBox">
+				Scale: <input type="text" id="LScaleBox" value=".5">
 			</div>
 			<div id="RScale">
-				Scale: <input type="text" id="RScaleBox">
+				Scale: <input type="text" id="RScaleBox" value=".5">
 			</div>
 			<br>
 			<input type="button" value="Submit" onclick="UpdateGraphs()">
 		</form>
 	</div>
 
-	<canvas id="leftGraph" width="750" height="750" style="border:1px solid #000000;">
+	<canvas id="leftGraph" width="750" height="750" style="border:1px solid #06c000;">
 	</canvas>
 	
-	<canvas id="rightGraph" width="750" height="750" style="border:1px solid #000000;">
+	<canvas id="rightGraph" width="750" height="750" style="border:1px solid #06c000;">
 	</canvas> <br>
 
 	<button onclick="ClearGraph()"> Clear Graph </button>
