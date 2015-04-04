@@ -33,15 +33,15 @@
 	<div id="modes">
 		<h2> Mode </h2>
 		<p> Current: <span id="currentMode">Point</span> </p>
-		<button onclick="updateMode('Point')"> Point </button>
-		<button onclick="updateMode('Iterate')"> Iterate </button>
-		<button onclick="updateMode('Line')"> Line </button>
-		<button onclick="updateMode('Rectangle')"> Rectangle </button> <br> <br>
-		<button onclick="updateMode('Grid')"> Grid </button>
-		<button onclick="updateMode('Circle1')"> Circle1 </button>
-		<button onclick="updateMode('Circle2')"> Circle2 </button>
-		<button onclick="updateMode('Circle3')"> Circle3 </button> <br> <br>
-		<button onclick="updateMode('Freedraw')"> Freedraw </button>
+		<button onclick="UpdateMode('Point')"> Point </button>
+		<button onclick="UpdateMode('Iterate')"> Iterate </button>
+		<button onclick="UpdateMode('Line')"> Line </button>
+		<button onclick="UpdateMode('Rectangle')"> Rectangle </button> <br> <br>
+		<button onclick="UpdateMode('Grid')"> Grid </button>
+		<button onclick="UpdateMode('Circle1')"> Circle1 </button>
+		<button onclick="UpdateMode('Circle2')"> Circle2 </button>
+		<button onclick="UpdateMode('Circle3')"> Circle3 </button> <br> <br>
+		<button onclick="UpdateMode('Freedraw')"> Freedraw </button>
 	</div>
 		
 	<div id="grSettings">
@@ -91,5 +91,13 @@
 			<input type="button" value="Submit" onclick="UpdateGraphs()">
 		</form>
 	</div>
+
+	<canvas id="leftGraph" width="750" height="750" style="border:1px solid #000000;">
+	</canvas>
+	
+	<canvas id="rightGraph" width="750" height="750" style="border:1px solid #000000;">
+	</canvas> <br>
+
+	<button onclick="ClearGraph()"> Clear Graph </button>
 </body>
 </html>

@@ -32,7 +32,7 @@ function Preset(newEqStr) {
 	UpdateEquation();
 }
 
-function updateMode(newMode) {
+function UpdateMode(newMode) {
 	document.getElementById("currentMode").innerHTML = newMode;
 }
 
@@ -50,6 +50,10 @@ function CopyGraph(direction) {
 		document.getElementById("LyMaxBox").value = document.getElementById("RyMaxBox").value;
 		document.getElementById("LScaleBox").value = document.getElementById("RScaleBox").value;
 	}
+}
+
+function ClearGraph() {
+	return;
 }
 
 function foo() {
