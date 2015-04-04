@@ -105,7 +105,7 @@ function MathToGraph(point, left) {
 	return newpt;
 }
 
-function EvalString() {
+function EvalString(str) {
 	return;
 }
 
