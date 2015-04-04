@@ -1,0 +1,95 @@
+<html>
+
+<head>
+	<title>Complex Paint Revamped</title>
+	<script src="CPaintWebScript.js"> </script>
+</head>
+
+<body onload="Init()">
+	<h1>Complex Paint Revamped</h1>
+	<button onclick="foo()"> Foo </button>
+	<p id="foopar"></p>
+	
+	<div id="eqSettings">
+		<h2> Equation </h2>
+		<form id="equation" method="POST">
+			Equation: <input type="text" name="eqBox">
+			<input type="button" value="Submit" onclick="UpdateEquation()">
+			<div id="vars">
+			</div>
+		</form>
+	</div>
+	
+	<div id="presets">
+		<h2> Presets </h2>	
+		<button onclick="Preset('A*z + B')"> Linear </button>
+		<button onclick="Preset('R*cos(2*pi*T)+R*sin(2*pi*T)*i)*z+B')"> 
+			Polar Linear
+		</button>
+		<button onclick="Preset('z^2 + C')"> Quadratic </button>
+		<button onclick="Preset('rpm() * sqrt(z - C)')"> Inverse Quad </button>
+	</div>
+	
+	<div id="modes">
+		<h2> Mode </h2>
+		<p> Current: <span id="currentMode">Point</span> </p>
+		<button onclick="updateMode('Point')"> Point </button>
+		<button onclick="updateMode('Iterate')"> Iterate </button>
+		<button onclick="updateMode('Line')"> Line </button>
+		<button onclick="updateMode('Rectangle')"> Rectangle </button> <br> <br>
+		<button onclick="updateMode('Grid')"> Grid </button>
+		<button onclick="updateMode('Circle1')"> Circle1 </button>
+		<button onclick="updateMode('Circle2')"> Circle2 </button>
+		<button onclick="updateMode('Circle3')"> Circle3 </button> <br> <br>
+		<button onclick="updateMode('Freedraw')"> Freedraw </button>
+	</div>
+		
+	<div id="grSettings">
+		<h2> Graphs </h2>
+		<button onclick="CopyGraph(0)"> Copy --> </button>
+		<button onclick="CopyGraph(1)"> Copy <-- </button>
+		<form id="graphSettings" method="POST">
+			<div id="LxMin">
+				x Min: <input type="text" id="LxMinBox">
+			</div>
+			<div id="RxMin">
+				x Min: <input type="text" id="RxMinBox">
+			</div>
+
+			<br>
+			<div id="LxMax">
+				x Max: <input type="text" id="LxMaxBox">
+			</div>
+			<div id="RxMax">
+				x Max: <input type="text" id="RxMaxBox">
+			</div>
+	
+			<br>
+	
+			<div id="LyMin">
+				y Min: <input type="text" id="LyMinBox">
+			</div>
+			<div id="RyMin">
+				y Min: <input type="text" id="RyMinBox">
+			</div>
+			<br>
+			<div id="LyMax">
+				y Max: <input type="text" id="LyMaxBox">
+			</div>
+			<div id="RyMax">
+				y Max: <input type="text" id="RyMaxBox">
+			</div>
+			<br>
+	
+			<div id="LScale">
+				Scale: <input type="text" id="LScaleBox">
+			</div>
+			<div id="RScale">
+				Scale: <input type="text" id="RScaleBox">
+			</div>
+			<br>
+			<input type="button" value="Submit" onclick="UpdateGraphs()">
+		</form>
+	</div>
+</body>
+</html>
