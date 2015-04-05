@@ -2,20 +2,19 @@
 
 <head>
 	<title>Complex Paint Revamped</title>
+	<link rel="stylesheet" href="CPaintWebStyle.css">
 	<script src="math.min.js"> </script>
 	<script src="CPaintWebScript.js"> </script>
 </head>
 
 <body onload="Init()">
 	<h1>Complex Paint Revamped</h1>
-	<button onclick="foo()"> Foo </button>
-	<p id="foopar"></p>
 	
 	<div id="eqSettings">
 		<h2> Equation </h2>
 		<form id="equation" method="POST">
 			Equation: <input type="text" id	="eqBox">
-			<input type="button" value="Submit" onclick="UpdateEquation()">
+			<input type="button" if="eqButton" value="Submit" onclick="UpdateEquation()">
 			<div id="vars">
 			</div>
 		</form>
@@ -24,7 +23,7 @@
 	<div id="presets">
 		<h2> Presets </h2>	
 		<button onclick="Preset('A*z + B')"> Linear </button>
-		<button onclick="Preset('R*cos(2*pi*T)+R*sin(2*pi*T)*i)*z+B')"> 
+		<button onclick="Preset('(R*cos(2*pi*T)+R*sin(2*pi*T)*i)*z+B')"> 
 			Polar Linear
 		</button>
 		<button onclick="Preset('z^2 + C')"> Quadratic </button>
@@ -33,7 +32,7 @@
 	
 	<div id="modes">
 		<h2> Mode </h2>
-		<p> Current: <span id="currentMode">Point</span> </p>
+		<p id="current"> Current: <span id="currentMode">Point</span> </p>
 		<button onclick="UpdateMode('Point')"> Point </button>
 		<button onclick="UpdateMode('Iterate')"> Iterate </button>
 		<button onclick="UpdateMode('Line')"> Line </button>
@@ -47,60 +46,58 @@
 		
 	<div id="grSettings">
 		<h2> Graphs </h2>
-		<button onclick="CopyGraph(0)"> Copy --> </button>
-		<button onclick="CopyGraph(1)"> Copy <-- </button>
+		<button id="CopyL" onclick="CopyGraph(0)"> Copy --> </button>
+		<input type="button" id="graphButton" value="Submit" onclick="UpdateGraphs()">
+		<button id="CopyR" onclick="CopyGraph(1)"> Copy <-- </button>
 		<form id="graphSettings" method="POST">
-			<div id="LxMin">
+		<div id="lGraph">	
+			<div id="LxMin" class="lGraph">
 				x Min: <input type="text" id="LxMinBox" value="-2">
 			</div>
-			<div id="RxMin">
-				x Min: <input type="text" id="RxMinBox" value="-2">
-			</div>
-
-			<br>
-			<div id="LxMax">
+			<div id="LxMax" class="lGraph">
 				x Max: <input type="text" id="LxMaxBox" value="2">
-			</div>
-			<div id="RxMax">
-				x Max: <input type="text" id="RxMaxBox" value="2">
-			</div>
-	
-			<br>
-	
-			<div id="LyMin">
+			</div>	
+			<div id="LyMin" class="lGraph">
 				y Min: <input type="text" id="LyMinBox" value="-2">
 			</div>
-			<div id="RyMin">
-				y Min: <input type="text" id="RyMinBox" value="-2">
-			</div>
-			<br>
-			<div id="LyMax">
+			<div id="LyMax" class="lGraph">
 				y Max: <input type="text" id="LyMaxBox" value="2">
-			</div>
-			<div id="RyMax">
-				y Max: <input type="text" id="RyMaxBox" value="2">
-			</div>
-			<br>
-	
-			<div id="LScale">
+			</div>	
+			<div id="LScale" class="lGraph">
 				Scale: <input type="text" id="LScaleBox" value=".5">
 			</div>
-			<div id="RScale">
+		</div>
+		<br>			
+		<div id="rGraph">
+			<div id="RxMin" class="rGraph">
+				<span>x Min: <input type="text" id="RxMinBox" value="-2"></span>
+			</div>
+			
+			<div id="RxMax" class="rGraph">
+				x Max: <input type="text" id="RxMaxBox" value="2">
+			</div>
+			<div id="RyMin" class="rGraph">
+				y Min: <input type="text" id="RyMinBox" value="-2">
+			</div>
+			<div id="RyMax" class="rGraph">
+				y Max: <input type="text" id="RyMaxBox" value="2">
+			</div>
+			<div id="RScale" class="rGraph">
 				Scale: <input type="text" id="RScaleBox" value=".5">
 			</div>
-			<br>
-			<input type="button" value="Submit" onclick="UpdateGraphs()">
+		</div>
 		</form>
 	</div>
 
-	<canvas id="leftGraph" width="750" height="750" style="border:1px solid #06c000;" 
-		onclick="graphClick(event)">
-	</canvas>
+	<div id="graphs">
+		<button id="clear" onclick="ClearGraphs()"> Clear Graphs </button> <br>
+		<canvas id="leftGraph" width="600" height="600" style="border:1px solid #06c000;" 
+			onclick="graphClick(event)">
+		</canvas>
 	
-	<canvas id="rightGraph" width="750" height="750" style="border:1px solid #06c000;"
-		onclick="graphClick(event)">
-	</canvas> <br>
-
-	<button onclick="ClearGraphs()"> Clear Graphs </button>
+		<canvas id="rightGraph" width="600" height="600" style="border:1px solid #06c000;"
+			onclick="graphClick(event)">
+		</canvas>
+	</div>
 </body>
 </html>

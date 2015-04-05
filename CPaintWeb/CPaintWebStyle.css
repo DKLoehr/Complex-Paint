@@ -1,0 +1,97 @@
+body {
+	background-color: linen;
+}
+
+canvas {
+	background-color: white;
+}
+
+h2 {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#vars {
+	position: absolute;
+}
+
+#presets { 
+	position: absolute;
+	left: 315px;
+	top: 85px;
+}
+
+#modes {
+	position: absolute;
+	left: 650px;
+	top: 85px;
+}
+
+#current {
+	position: absolute;
+	left: 80px;
+	top: 10px;
+}
+
+#grSettings {
+	position: absolute;
+	left: 895px;
+	top: 85px;
+}
+
+#CopyL {
+	position: relative;
+	left: 75px;
+}
+
+#graphButton {
+	position: relative;
+	left: 115px;
+}
+
+#CopyR {
+	position: relative;
+	left: 175px;
+}
+
+#lGraph {
+	position: absolute;
+	left: 0px;
+	top: 100px;
+}
+
+#LxMin, #LxMax, #LyMin, #LyMax, #LScale {
+	white-space: nowrap;
+	padding-bottom: 5px;
+}
+
+#LxMinBox, #LxMaxBox, #LyMinBox, #LyMaxBox, #LScaleBox {
+	position: absolute;
+	left: 50px;
+}
+
+#rGraph {
+	position: absolute;
+	left: 225px;
+	top: 100px;
+}
+
+#RxMin, #RxMax, #RyMin, #RyMax, #RScale {
+	white-space: nowrap;
+	padding-bottom: 5px;
+}
+
+#RxMinBox, #RxMaxBox, #RyMinBox, #RyMaxBox, #RScaleBox {
+	position: absolute;
+	left: 50px;
+}
+
+#graphs {
+	position: relative;
+	top: 160px;
+}
+
+#clear {
+	position: relative;
+	left: 560px;
+}
