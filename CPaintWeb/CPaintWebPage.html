@@ -31,7 +31,6 @@
 	
 	<div id="modes">
 		<h2> Mode </h2>
-		<p> Current: <span id="currentMode">Point</span> </p>
 		<select id="modeSelect" onchange="var me=document.getElementById('modeSelect');UpdateMode(me.options[me.selectedIndex].value);">
 			<option value='Point'> Point </option>
 			<option value='Iterate'> Iterate </option>
@@ -48,7 +47,7 @@
 	<div id="grSettings">
 		<h2> Graphs </h2>
 		<button id="CopyL" onclick="CopyGraph(0)"> Copy --> </button>
-6:59 PM 4/5/2015		<button id="CopyR" onclick="CopyGraph(1)"> Copy <-- </button>
+		<button id="CopyR" onclick="CopyGraph(1)"> Copy <-- </button>
 		<form id="graphSettings" method="POST">
 		
 		<div id="lGraph">	
