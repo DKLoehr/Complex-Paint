@@ -33,15 +33,17 @@
 	<div id="modes">
 		<h2> Mode </h2>
 		<p> Current: <span id="currentMode">Point</span> </p>
-		<button onclick="UpdateMode('Point')"> Point </button>
-		<button onclick="UpdateMode('Iterate')"> Iterate </button>
-		<button onclick="UpdateMode('Line')"> Line </button>
-		<button onclick="UpdateMode('Rectangle')"> Rectangle </button> <br> <br>
-		<button onclick="UpdateMode('Grid')"> Grid </button>
-		<button onclick="UpdateMode('Circle1')"> Circle1 </button>
-		<button onclick="UpdateMode('Circle2')"> Circle2 </button>
-		<button onclick="UpdateMode('Circle3')"> Circle3 </button> <br> <br>
-		<button onclick="UpdateMode('Freedraw')"> Freedraw </button>
+		<select id="modeSelect" onchange="var me=document.getElementById('modeSelect');UpdateMode(me.options[me.selectedIndex].value);">
+		<option value='Point'> Point </option>
+		<option value='Iterate'> Iterate </option>
+		<option value='Line'> Line </option>
+		<option value='Rectangle'> Rectangle </option>
+		<option value='Grid'> Grid </option>
+		<option value='Circle1'> Circle1 </option>
+		<option value='Circle2'> Circle2 </option>
+		<option value='Circle3'> Circle3 </option>
+		<option value='Freedraw'> Freedraw </option>
+		</select>
 	</div>
 		
 	<div id="grSettings">
