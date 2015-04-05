@@ -9,7 +9,7 @@
 
 <body onload="Init()">
 	<h1>Complex Paint Revamped</h1>
-	
+	<span id="debug">Debug: </span>	
 	<div id="eqSettings">
 		<h2> Equation </h2>
 		<form id="equation" method="POST">
@@ -31,16 +31,16 @@
 	
 	<div id="modes">
 		<h2> Mode </h2>
-		<select id="modeSelect" onchange="var me=document.getElementById('modeSelect');UpdateMode(me.options[me.selectedIndex].value);">
-			<option value='Point'> Point </option>
-			<option value='Iterate'> Iterate </option>
-			<option value='Line'> Line </option>
-			<option value='Rectangle'> Rectangle </option>
-			<option value='Grid'> Grid </option>
-			<option value='Circle1'> Circle1 </option>
-			<option value='Circle2'> Circle2 </option>
-			<option value='Circle3'> Circle3 </option>
-			<option value='Freedraw'> Freedraw </option>
+		<select id="modeSelect">
+			<option value='Point'>Point</option>
+			<option value='Iterate'>Iterate</option>
+			<option value='Line'>Line</option>
+			<option value='Rectangle'>Rectangle</option>
+			<option value='Grid'>Grid</option>
+			<option value='Circle1'>Circle1</option>
+			<option value='Circle2'>Circle2</option>
+			<option value='Circle3'>Circle3</option>
+			<option value='Freedraw'>Freedraw</option>
 		</select>
 	</div>
 		
