@@ -13,77 +13,78 @@
 	<div id="eqSettings">
 		<h2> Equation </h2>
 		<form id="equation" method="POST">
-			Equation: <input type="text" id	="eqBox">
-			<input type="button" if="eqButton" value="Submit" onclick="UpdateEquation()">
+			Equation: <input type="text" id	="eqBox" onchange="UpdateEquation()">
 			<div id="vars">
 			</div>
 		</form>
 	</div>
 	
 	<div id="presets">
-		<h2> Presets </h2>	
-		<button onclick="Preset('A*z + B')"> Linear </button>
-		<button onclick="Preset('(R*cos(2*pi*T)+R*sin(2*pi*T)*i)*z+B')"> 
-			Polar Linear
-		</button>
-		<button onclick="Preset('z^2 + C')"> Quadratic </button>
-		<button onclick="Preset('rpm() * sqrt(z - C)')"> Inverse Quad </button>
+		<h2> Load Preset </h2>	
+		<select id="presetSelect" onchange="var me=document.getElementById('presetSelect');Preset(me.options[me.selectedIndex].value);">
+			<option value="(A*z + B" >Linear</option>
+			<option value="R*cos(2*pi*T)+R*sin(2*pi*T)*i)*z+B" >Polar Linear</option>
+			<option value="z^2 + C"  >Quadratic</option>
+			<option value="rpm() * sqrt(z - C)" >Inverse Quad</option>
+		</select>
 	</div>
 	
 	<div id="modes">
 		<h2> Mode </h2>
-		<p id="current"> Current: <span id="currentMode">Point</span> </p>
-		<button onclick="UpdateMode('Point')"> Point </button>
-		<button onclick="UpdateMode('Iterate')"> Iterate </button>
-		<button onclick="UpdateMode('Line')"> Line </button>
-		<button onclick="UpdateMode('Rectangle')"> Rectangle </button> <br> <br>
-		<button onclick="UpdateMode('Grid')"> Grid </button>
-		<button onclick="UpdateMode('Circle1')"> Circle1 </button>
-		<button onclick="UpdateMode('Circle2')"> Circle2 </button>
-		<button onclick="UpdateMode('Circle3')"> Circle3 </button> <br> <br>
-		<button onclick="UpdateMode('Freedraw')"> Freedraw </button>
+		<p> Current: <span id="currentMode">Point</span> </p>
+		<select id="modeSelect" onchange="var me=document.getElementById('modeSelect');UpdateMode(me.options[me.selectedIndex].value);">
+			<option value='Point'> Point </option>
+			<option value='Iterate'> Iterate </option>
+			<option value='Line'> Line </option>
+			<option value='Rectangle'> Rectangle </option>
+			<option value='Grid'> Grid </option>
+			<option value='Circle1'> Circle1 </option>
+			<option value='Circle2'> Circle2 </option>
+			<option value='Circle3'> Circle3 </option>
+			<option value='Freedraw'> Freedraw </option>
+		</select>
 	</div>
 		
 	<div id="grSettings">
 		<h2> Graphs </h2>
 		<button id="CopyL" onclick="CopyGraph(0)"> Copy --> </button>
-		<input type="button" id="graphButton" value="Submit" onclick="UpdateGraphs()">
-		<button id="CopyR" onclick="CopyGraph(1)"> Copy <-- </button>
+6:59 PM 4/5/2015		<button id="CopyR" onclick="CopyGraph(1)"> Copy <-- </button>
 		<form id="graphSettings" method="POST">
+		
 		<div id="lGraph">	
 			<div id="LxMin" class="lGraph">
-				x Min: <input type="text" id="LxMinBox" value="-2">
+				x Min: <input type="text" id="LxMinBox" value="-2" onchange="UpdateGraphs()">
 			</div>
 			<div id="LxMax" class="lGraph">
-				x Max: <input type="text" id="LxMaxBox" value="2">
+				x Max: <input type="text" id="LxMaxBox" value="2" onchange="UpdateGraphs()">
 			</div>	
 			<div id="LyMin" class="lGraph">
-				y Min: <input type="text" id="LyMinBox" value="-2">
+				y Min: <input type="text" id="LyMinBox" value="-2" onchange="UpdateGraphs()">
 			</div>
 			<div id="LyMax" class="lGraph">
-				y Max: <input type="text" id="LyMaxBox" value="2">
+				y Max: <input type="text" id="LyMaxBox" value="2" onchange="UpdateGraphs()">
 			</div>	
 			<div id="LScale" class="lGraph">
-				Scale: <input type="text" id="LScaleBox" value=".5">
+				Scale: <input type="text" id="LScaleBox" value=".5" onchange="UpdateGraphs()">
 			</div>
 		</div>
 		<br>			
 		<div id="rGraph">
 			<div id="RxMin" class="rGraph">
-				<span>x Min: <input type="text" id="RxMinBox" value="-2"></span>
+				x Min: <input type="text" id="RxMinBox" value="-2" onchange="UpdateGraphs()">
 			</div>
 			
 			<div id="RxMax" class="rGraph">
-				x Max: <input type="text" id="RxMaxBox" value="2">
+				x Max: <input type="text" id="RxMaxBox" value="2" onchange="UpdateGraphs()">
 			</div>
 			<div id="RyMin" class="rGraph">
-				y Min: <input type="text" id="RyMinBox" value="-2">
+				y Min: <input type="text" id="RyMinBox" value="-2" onchange="UpdateGraphs()">
 			</div>
 			<div id="RyMax" class="rGraph">
-				y Max: <input type="text" id="RyMaxBox" value="2">
+				y Max: <input type="text" id="RyMaxBox" value="2" onchange="UpdateGraphs()">
 			</div>
 			<div id="RScale" class="rGraph">
-				Scale: <input type="text" id="RScaleBox" value=".5">
+				Scale: <input type="text" id="RScaleBox" value=".5" onchange="UpdateGraphs()">
 			</div>
 		</div>
 		</form>

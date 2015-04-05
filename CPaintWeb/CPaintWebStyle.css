@@ -17,14 +17,14 @@ h2 {
 
 #presets { 
 	position: absolute;
-	left: 315px;
-	top: 85px;
+	left: 275px;
+	top: 46px;
 }
 
 #modes {
 	position: absolute;
-	left: 650px;
-	top: 85px;
+	left: 275px;
+	top: 140px;
 }
 
 #current {
@@ -35,23 +35,18 @@ h2 {
 
 #grSettings {
 	position: absolute;
-	left: 895px;
-	top: 85px;
+	left: 450px;
+	top: 46px;
 }
 
 #CopyL {
 	position: relative;
-	left: 75px;
-}
-
-#graphButton {
-	position: relative;
-	left: 115px;
+	left: 90px;
 }
 
 #CopyR {
 	position: relative;
-	left: 175px;
+	left: 247px;
 }
 
 #lGraph {
