@@ -76,13 +76,14 @@ h2 {
 }
 
 #graphs {
-	position: relative;
-	top: 160px;
+	position: absolute;
+	top: 309px;
 }
 
 #clear {
 	position: relative;
 	left: 560px;
+	top: -5px;
 }
 
 #debug {

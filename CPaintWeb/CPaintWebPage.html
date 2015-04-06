@@ -2,6 +2,13 @@
 
 <head>
 	<title>Complex Paint Revamped</title>
+	<!--
+	<link rel="stylesheet" href="https://googledrive.com/host/0B56X1tFo10fgflZDUmRidUltR1hZVTlZMlk1QlJEUXExU1FvaTZIY1pvc1RULURSQ3VZSU0/CPaintWebStyle.css">
+	
+	<script src="https://googledrive.com/host/0B56X1tFo10fgflZDUmRidUltR1hZVTlZMlk1QlJEUXExU1FvaTZIY1pvc1RULURSQ3VZSU0/math.min.js"> </script>
+	<script src="https://googledrive.com/host/0B56X1tFo10fgflZDUmRidUltR1hZVTlZMlk1QlJEUXExU1FvaTZIY1pvc1RULURSQ3VZSU0/CPaintWebScript.js"> </script>
+	-->
+	
 	<link rel="stylesheet" href="CPaintWebStyle.css">
 	<script src="math.min.js"> </script>
 	<script src="CPaintWebScript.js"> </script>
@@ -13,17 +20,17 @@
 	<div id="eqSettings">
 		<h2> Equation </h2>
 		<form id="equation" method="POST">
-			Equation: <input type="text" id	="eqBox" onchange="UpdateEquation()">
-			<div id="vars">
+			Equation: <input type="text" id	="eqBox" onchange="UpdateEquation()" value="z">
+			<div id="params">
 			</div>
 		</form>
 	</div>
 	
 	<div id="presets">
 		<h2> Load Preset </h2>	
-		<select id="presetSelect" onchange="var me=document.getElementById('presetSelect');Preset(me.options[me.selectedIndex].value);">
-			<option value="(A*z + B" >Linear</option>
-			<option value="R*cos(2*pi*T)+R*sin(2*pi*T)*i)*z+B" >Polar Linear</option>
+		<select id="presetSelect" onchange="Preset(this.value);">
+			<option value="A*z + B" >Linear</option>
+			<option value="(R*cos(2*pi*T)+R*sin(2*pi*T)*i)*z+B" >Polar Linear</option>
 			<option value="z^2 + C"  >Quadratic</option>
 			<option value="rpm() * sqrt(z - C)" >Inverse Quad</option>
 		</select>
@@ -46,8 +53,8 @@
 		
 	<div id="grSettings">
 		<h2> Graphs </h2>
-		<button id="CopyL" onclick="CopyGraph(0)"> Copy --> </button>
-		<button id="CopyR" onclick="CopyGraph(1)"> Copy <-- </button>
+		<button id="CopyL" onclick="CopyGraph(true)"> Copy --> </button>
+		<button id="CopyR" onclick="CopyGraph(false)"> Copy <-- </button>
 		<form id="graphSettings" method="POST">
 		
 		<div id="lGraph">	
