@@ -306,7 +306,12 @@ void Runner::Iterate(bool keepIterating, cx* newPos) {
 
     /// Draw over last drawn point, so it's no longer red
     graphCoords = sf::Vector2f(lastPoint.real(), lastPoint.imag()); // Location of the last drawn point (currently red)
-    DrawPoint(point, graphCoords, lastGraph); // Draw over it in black
+    if(mode == mIterative) {                   // Iterate mode draws to both windows
+        DrawPoint(point, graphCoords, true);   // Draw over it in black
+        DrawPoint(point, graphCoords, false);
+    } else {
+        DrawPoint(point, graphCoords, lastGraph);
+    }
     if(newPos != NULL) { // We've been given a new starting position
         /// Draw over the previous first point, so it's no longer green
         if(lastStartPos != NULL) { // We have a green point currently on the screen
@@ -348,7 +353,7 @@ void Runner::Iterate(bool keepIterating, cx* newPos) {
 
         graphCoords = sf::Vector2f(lastPoint.real(), lastPoint.imag()); // Coordinates of the last drawn point
         if(iii == numIterations - 1)
-            point.setFillColor(sf::Color::Red);    // First point, so draw it in red
+            point.setFillColor(sf::Color::Red);    // Last point, so draw it in red
         else
             point.setFillColor(sf::Color::Black);  // Otherwise, it's black
         if(mode == mIterative) {                    // Iterate mode draws to both windows; other modes only draw to one
