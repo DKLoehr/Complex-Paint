@@ -1,12 +1,17 @@
 #include "runner.h"
-//#include "ResourcePath.hpp" // For Macs; comment out if on Windows or Linux
+#ifdef __APPLE__
+#include "ResourcePath.hpp"
+#endif
 
 int main() {
     sf::Font inFont;
-    if(!inFont.loadFromFile("VeraMono.ttf")) // For Windows & Linux; comment out if on Mac
+    #ifdef __APPLE__
+    if(!inFont.loadFromFile(resourcePath() + "VeraMono.ttf"))
         return -1;
-    //if(!inFont.loadFromFile(resourcePath() + "VeraMono.ttf")) // For Macs; comment out if on Windows or Linux
-    //    return -1;
+    #else
+    if(!inFont.loadFromFile("VeraMono.ttf"))
+        return -1;
+    #endif
 
     sf::RenderWindow window(sf::VideoMode(1200, 724), "Complex Paint Revamped", sf::Style::Titlebar | sf::Style::Close);
     window.setPosition(sf::Vector2i(0, 0));
