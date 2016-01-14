@@ -11,10 +11,10 @@ Extract the .zip file to whatever directory you wish to keep it in.
 For Windows, ensure that the file VeraMono.ttf is in the same directory as CPaintWin.exe
 To run, double-click the .exe file (Windows) or the app (Macs)
 
-
+===================
 Usage Instructions:
 
-======================
+
 I: Entering Equations: The box in the top left corner is the equation input box. Equations should be typed in according to the following rules: 
 
 * 'z' or 'Z' (both are equivalent) is the input (the number corresponding to where you clicked on the graph).
@@ -23,7 +23,7 @@ I: Entering Equations: The box in the top left corner is the equation input box.
 
 * You can currently perform the four basic operations (+,-,*,/) as you'd expect, but you must use an operator: If you type in "AB", the program will crash; type "A * B" instead. You may also use ^ for exponentiation (A^2) = A * A = "A squared".
 
-* Functions you can use: sin(x), cos(x), tan(x), asin(x), acos(x), atan(x), sqrt(x), abs(x), ln(x), rpm(). All of these should be fairly self-explanatory, except rpm(), which just generates randomly either 1 or -1. Used for Julia sets.
+* Functions you can use: sin(x), cos(x), tan(x), asin(x), acos(x), atan(x), sinh(x), cosh(x), tanh(x), sqrt(x), abs(x), ln(x), rpm(). All of these should be fairly self-explanatory, except rpm(), which just generates randomly either 1 or -1. Used for Julia sets.
 
 * Constants you may use: 'pi', 'phi', 'e': These should be all lowercase to distinguish them from the all-uppercase parameters. Note that phi is the golden ratio.
 
@@ -31,13 +31,13 @@ I: Entering Equations: The box in the top left corner is the equation input box.
 
 * Once you have entered your equation, press the nearby "Save Changes" button. This will adjust the parameters below the equation box to show the ones you've used. You may then edit the values of those parameters. Once you have done this, hit the "Save Changes" button again. Note that the border of the "Save Changes" button will be red if you have unsaved changes for either the equation or the parameters.
 
-* You may click on any of the four presets to get pre-written equations that are often used. This automatically saves changes. The presets are:
+* You may click on any of the four presets to get pre-written equations that are often used. This automatically saves changes.
 	* Linear: 	Az + B
 	* Polar Linear: (R*cos(2*pi*T)+R*sin(2*pi*T)*i)*z+B
 	* Quadratic: 	z^2 + C
 	* Inverse Quad: rpm() * sqrt(z - C)
 
-================================
+============================
 II: Changing the Graph Settings: 
 
 The set of buttons in the top-right corner of the screen control the graph settings: size, location, and format. The column on the left controls the graph on the left; the right column is similar. The buttons have the following meanings:
@@ -59,7 +59,7 @@ The set of buttons in the top-right corner of the screen control the graph setti
 
 * Once you have made your changes, hit the "Save Changes" button below the columns to see them go into effect. Note that the border of this button will be red if you have unsaved changes.
 
-==================================
+====================
 III: Drawing things: The fun part!
 
 Once you have entered your equation and parameter values, moving your mouse in one of the two graphs on the bottom of the screen will cause the other graph to display a point that moves with your mouse, showing where you would end up if you applied that equation to your current location. 
@@ -91,14 +91,18 @@ Note that the code also tracks if you are drawing a Julia set: this is assumed t
 
 Hitting the "Clear Graph" button will clear anything drawn on the regular layer (leaving the Julia set layer untouched); Hitting the "Clear Julia" button will clear anything drawn on the Julia Set layer (leaving the regular layer untouched.)
 
-=================================
-IV: Known Issues and Workarounds:
+=============
+Known Issues and Workarounds:
 
 * Negative numbers are not parsed properly; e.g. "5*-5" will cause the program to crash. Workaround: Put parentheses around the negative number; e.g. "5*(-5)" is parsed correctly
 * "-i" is replaced with "-1i" when entered into an equation or variable; this should not affect usage, and is in fact a workaround for a problem related to parsing "-i"
 
 =============
 V: Changelog:
+
+1.5.1
+* Fixed a bug where red points were not properly cleaned up in iterate mode
+* Added Hyperbolic trig functions
 
 1.5:
 * Made the mouse pointer dot slightly larger and colored red.

@@ -23,7 +23,7 @@ I: Entering Equations: The box in the top left corner is the equation input box.
 
 * You can currently perform the four basic operations (+,-,*,/) as you'd expect, but you must use an operator: If you type in "AB", the program will crash; type "A * B" instead. You may also use ^ for exponentiation (A^2) = A * A = "A squared".
 
-* Functions you can use: sin(x), cos(x), tan(x), asin(x), acos(x), atan(x), sqrt(x), abs(x), ln(x), rpm(). All of these should be fairly self-explanatory, except rpm(), which just generates randomly either 1 or -1. Used for Julia sets.
+* Functions you can use: sin(x), cos(x), tan(x), asin(x), acos(x), atan(x), sinh(x), cosh(x), tanh(x), sqrt(x), abs(x), ln(x), rpm(). All of these should be fairly self-explanatory, except rpm(), which just generates randomly either 1 or -1. Used for Julia sets.
 
 * Constants you may use: 'pi', 'phi', 'e': These should be all lowercase to distinguish them from the all-uppercase parameters. Note that phi is the golden ratio.
 
@@ -99,6 +99,10 @@ Known Issues and Workarounds:
 
 =============
 V: Changelog:
+
+1.5.1
+* Fixed a bug where red points were not properly cleaned up in iterate mode
+* Added Hyperbolic trig functions
 
 1.5:
 * Made the mouse pointer dot slightly larger and colored red.
