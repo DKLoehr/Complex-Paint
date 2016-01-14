@@ -21,7 +21,7 @@
 #define MIN_FCT_LEN 2
 #define NUM_ARITH_OPS 5
 #define NUM_FCT_LEN 3
-#define FCT_LEN_OFFSET (-3)
+#define FCT_LEN(x) (-1*(x)+9)
 #define MAX_CONST_LEN 3
 using namespace std;
 
@@ -49,6 +49,9 @@ cx tan(cx a, cx b = 0);
 cx asin(cx a, cx b = 0);
 cx acos(cx a, cx b = 0);
 cx atan(cx a, cx b = 0);
+cx sinh(cx a, cx b = 0);
+cx cosh(cx a, cx b = 0);
+cx tanh(cx a, cx b = 0);
 cx sqrt(cx a, cx b = 0);
 cx abs(cx a, cx b = 0);
 cx rpm(cx a = 0, cx b = 0);
@@ -68,6 +71,9 @@ cx (* const ptan)(cx, cx) = parser::tan;
 cx (* const pasin)(cx, cx) = parser::asin;
 cx (* const pacos)(cx, cx) = parser::acos;
 cx (* const patan)(cx, cx) = parser::atan;
+cx (* const psinh)(cx, cx) = parser::sinh;
+cx (* const pcosh)(cx, cx) = parser::cosh;
+cx (* const ptanh)(cx, cx) = parser::tanh;
 cx (* const psqrt)(cx, cx) = parser::sqrt;
 cx (* const pabs)(cx, cx) = parser::abs;
 cx (* const prpm)(cx, cx) = parser::rpm;

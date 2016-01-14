@@ -97,6 +97,15 @@ cx acos(cx a, cx b) {
 cx atan(cx a, cx b) {
 	return std::atan(b);
 }
+cx sinh(cx a, cx b) {
+    return std::sinh(b);
+}
+cx cosh(cx a, cx b) {
+    return std::cosh(b);
+}
+cx tanh(cx a, cx b) {
+    return std::tanh(b);
+}
 cx sqrt(cx a, cx b) {
 	return std::sqrt(b);
 }
@@ -124,7 +133,8 @@ string Node::toString() {
 }
 
 //	TREE
-string Tree::delim[] = {"+", "-", "*", "/", "^", "ln;", "rpm;sin;cos;tan;log;abs;", "sqrt;asin;acos;atan;", "ABCDEFGHIJKLMNOPQRSTUVWXYZ","pi;e;phi;"};
+string Tree::delim[] = {"+", "-", "*", "/", "^", "sqrt;asin;acos;atan;sinh;cosh;tanh;", "rpm;sin;cos;tan;log;abs;", "ln;",
+                        "ABCDEFGHIJKLMNOPQRSTUVWXYZ","pi;e;phi;"};
 bool Tree::initd = false;
 std::unordered_map<std::string, cx (* const)(cx,cx)> Tree::parseops = std::unordered_map<std::string, cx (* const)(cx,cx)>();
 std::unordered_map<std::string, Tree*> Tree::variables = std::unordered_map<std::string, Tree*>();
@@ -162,6 +172,9 @@ void Tree::init() {
 	Tree::parseops.emplace("asin",pasin);
 	Tree::parseops.emplace("acos",pacos);
 	Tree::parseops.emplace("atan",patan);
+	Tree::parseops.emplace("sinh",psin);
+	Tree::parseops.emplace("cosh",pcos);
+	Tree::parseops.emplace("tanh",ptan);
 	Tree::parseops.emplace("sqrt",psqrt);
 	Tree::parseops.emplace("abs", pabs);
 	Tree::parseops.emplace("rpm", prpm);
@@ -274,7 +287,7 @@ int Tree::parse(Node *root) {
 				}
 				// Functions
 				else if(delimind >= NUM_ARITH_OPS) {
-					int fLen = delimind + FCT_LEN_OFFSET;
+					int fLen = FCT_LEN(delimind);
 					if(delim[delimind].find( s.substr(i, i + fLen) + ";" ) != -1) {
 						foundDelim = true;
 						root->m_left = new Node(root, s.substr(0, i));
