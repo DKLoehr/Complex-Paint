@@ -1,7 +1,7 @@
 Complex-Paint
 =============
 
-This is a remake of a very old program known as Complex Paint. Its purpose is to allow visualization of functions over the complex numbers by displaying input sets and output side by side.
+This is a remake of a very old program known as Complex Paint, originally made by Marc Parmet for Cornell University Prof. John Hubbard. Its purpose is to allow visualization of functions over the complex numbers by displaying input sets and output side by side.
 
 The source code was written in C++ and uses the SFML Library. The source code is available at https://github.com/DKLoehr/Complex-Paint
 
