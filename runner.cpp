@@ -230,6 +230,8 @@ void Runner::HandleEvents() {
                 StepActiveElement(!(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) ||
                                     sf::Keyboard::isKeyPressed(sf::Keyboard::RShift)));
                 break;
+            case sf::Keyboard::Delete:
+                elements[activeBox]->OnTextEntered(127);
             default:
                 elements[activeBox]->OnKeyPressed(event.key.code);
                 break;

@@ -100,6 +100,10 @@ Known Issues and Workarounds:
 =============
 V: Changelog:
 
+1.5.2
+* Added an ini file
+* The delete key now works in text boxes
+
 1.5.1
 * Fixed a bug where red points were not properly cleaned up in iterate mode
 * Added Hyperbolic trig functions

@@ -98,18 +98,24 @@ void InputBox::OnTextEntered(char n) {
 }
 
 void InputBox::EnterText(char n) {
+    std::cout << (int)n << "\n";
     if(IsValid(n)) { // n is a valid character
         std::string temp = m_text.getString();
-        if(n != 8) { // Some character
-            m_text.setString(temp.substr(0, m_stringPos) + n + temp.substr(m_stringPos, temp.length()));
-            SetCursor(m_cursorPos + 1);
-        } else if(n == 8) { // Backspace
+        if(n == 8) { // Backspace
             if(m_stringPos > 0)
                 m_text.setString(temp.substr(0, m_stringPos - 1) + temp.substr(m_stringPos, temp.length()));
             if(((std::string)m_text.getString()).length() * 9 <= m_rectangle.getSize().x)
                 SetCursor(m_cursorPos - 1);
             else
                 SetCursor(m_cursorPos);
+        } else if(n == 127) { // Delete
+            if(m_stringPos < temp.length()) {
+                std::cout << "Foo\n";
+                m_text.setString(temp.substr(0, m_stringPos) + temp.substr(m_stringPos + 1, temp.length()));
+            }
+        } else { // Some character
+            m_text.setString(temp.substr(0, m_stringPos) + n + temp.substr(m_stringPos, temp.length()));
+            SetCursor(m_cursorPos + 1);
         }
     }
 }
