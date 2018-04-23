@@ -10,6 +10,8 @@ Installation Instructions:
 Extract the .zip file to whatever directory you wish to keep it in. 
 For Windows, ensure that the file VeraMono.ttf is in the same directory as CPaintWin.exe
 To run, double-click the .exe file (Windows) or the app (Macs)
+There is a config file in which you may designate a text file (by default, VeraMono.ttf) and
+screen dimensions (default: 1200x724)
 
 ===================
 Usage Instructions:
@@ -21,7 +23,7 @@ I: Entering Equations: The box in the top left corner is the equation input box.
 
 * Parameters should be uppercase: e.g. 'A' 'B', but not 'a' or 'c'. You may use up to 8 parameters due to space constraints.
 
-* You can currently perform the four basic operations (+,-,*,/) as you'd expect, but you must use an operator: If you type in "AB", the program will crash; type "A * B" instead. You may also use ^ for exponentiation (A^2) = A * A = "A squared".
+* You can currently perform the four basic operations (+,-,*,/) as you'd expect, but you must use an operator: If you type in "AB", the program will crash; type "A * B" instead. You may also use ^ for exponentiation: (A^2) = A * A = "A squared".
 
 * Functions you can use: sin(x), cos(x), tan(x), asin(x), acos(x), atan(x), sinh(x), cosh(x), tanh(x), sqrt(x), abs(x), ln(x), rpm(). All of these should be fairly self-explanatory, except rpm(), which just generates randomly either 1 or -1. Used for Julia sets.
 

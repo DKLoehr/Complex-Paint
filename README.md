@@ -100,6 +100,9 @@ Known Issues and Workarounds:
 =============
 V: Changelog:
 
+1.5.3
+* Fix bug where grid mode would sometimes continue horizontal lines off the edge of the screen.
+
 1.5.2
 * Added an ini file
 * The delete key now works in text boxes

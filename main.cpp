@@ -7,7 +7,7 @@
 
 int main() {
     ini_data options = parse_ini("CPaint.ini");
-    std::cout << options.font << ", " << options.height << "x" << options.width << "\n";
+    std::cout << "Options: " << options.font << ", " << options.height << "x" << options.width << "\n";
 
     sf::Font inFont;
     std::string font_file = options.font;
