@@ -12,7 +12,7 @@ int main() {
     sf::Font inFont;
     std::string font_file = options.font;
     #ifdef __APPLE__
-    if !options.font.compare("VeraMono.ttf")
+    if(!options.font.compare("VeraMono.ttf"))
         font_file = resourcePath() + "VeraMono.ttf";
     #endif
     if(!inFont.loadFromFile(font_file)) {
